@@ -11,8 +11,8 @@ import guepardoapps.library.openweather.common.enums.ForecastListType;
 import guepardoapps.library.openweather.common.enums.WeatherCondition;
 import guepardoapps.library.openweather.converter.WeatherConverter;
 
-import guepardoapps.toolset.common.Logger;
-import guepardoapps.toolset.common.StringHelper;
+import guepardoapps.library.toolset.common.Logger;
+import guepardoapps.library.toolset.common.StringHelper;
 
 public class ForecastWeatherModel implements Serializable {
 
@@ -39,7 +39,7 @@ public class ForecastWeatherModel implements Serializable {
 
 	public ForecastWeatherModel(JSONObject json) {
 		_logger = new Logger(TAG);
-		_logger.Info(ForecastWeatherModel.class.getName() + " created " + ForecastListType.FORECAST.toString());
+		_logger.Info(TAG + " created " + ForecastListType.FORECAST.toString());
 		_logger.Info("json: " + json.toString());
 
 		_listType = ForecastListType.FORECAST;

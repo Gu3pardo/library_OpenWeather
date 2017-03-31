@@ -14,8 +14,8 @@ import guepardoapps.library.openweather.R;
 import guepardoapps.library.openweather.common.enums.ForecastDayTime;
 import guepardoapps.library.openweather.common.enums.WeatherCondition;
 
-import guepardoapps.toolset.common.Logger;
-import guepardoapps.toolset.common.classes.NotificationContent;
+import guepardoapps.library.toolset.common.Logger;
+import guepardoapps.library.toolset.common.classes.NotificationContent;
 
 public class ForecastModel implements Serializable {
 
@@ -30,7 +30,7 @@ public class ForecastModel implements Serializable {
 
 	public ForecastModel(JSONObject json) {
 		_logger = new Logger(TAG);
-		_logger.Info(ForecastModel.class.getName() + " created...");
+		_logger.Info(TAG + " created...");
 		_logger.Info("json: " + json.toString());
 
 		try {

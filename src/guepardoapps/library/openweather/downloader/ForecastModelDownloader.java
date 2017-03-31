@@ -19,7 +19,7 @@ import guepardoapps.library.openweather.common.OWBroadcasts;
 import guepardoapps.library.openweather.common.OWBundles;
 import guepardoapps.library.openweather.common.model.ForecastModel;
 
-import guepardoapps.toolset.common.Logger;
+import guepardoapps.library.toolset.common.Logger;
 
 public class ForecastModelDownloader {
 
@@ -33,7 +33,7 @@ public class ForecastModelDownloader {
 
 	public ForecastModelDownloader(Context context, String city) {
 		_logger = new Logger(TAG);
-		_logger.Debug(ForecastModelDownloader.class.getName() + " created...");
+		_logger.Debug(TAG + " created...");
 
 		_context = context;
 		_city = city;

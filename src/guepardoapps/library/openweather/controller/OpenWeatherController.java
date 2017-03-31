@@ -7,9 +7,9 @@ import guepardoapps.library.openweather.R;
 import guepardoapps.library.openweather.downloader.ForecastModelDownloader;
 import guepardoapps.library.openweather.downloader.WeatherModelDownloader;
 
-import guepardoapps.toolset.common.Logger;
-import guepardoapps.toolset.controller.DialogController;
-import guepardoapps.toolset.controller.NetworkController;
+import guepardoapps.library.toolset.common.Logger;
+import guepardoapps.library.toolset.controller.DialogController;
+import guepardoapps.library.toolset.controller.NetworkController;
 
 public class OpenWeatherController {
 
@@ -26,7 +26,7 @@ public class OpenWeatherController {
 
 	public OpenWeatherController(Context context, String city) {
 		_logger = new Logger(TAG);
-		_logger.Debug(OpenWeatherController.class.getName() + " created...");
+		_logger.Debug(TAG + " created...");
 
 		_context = context;
 

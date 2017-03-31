@@ -2,7 +2,7 @@ package guepardoapps.library.openweather.common.model;
 
 import java.io.Serializable;
 
-import guepardoapps.toolset.common.Logger;
+import guepardoapps.library.toolset.common.Logger;
 
 public class WeatherConditionModel implements Serializable {
 
@@ -18,7 +18,7 @@ public class WeatherConditionModel implements Serializable {
 
 	public WeatherConditionModel(int count, String weekendTipp, String workdayTipp, int icon) {
 		_logger = new Logger(TAG);
-		_logger.Debug(WeatherConditionModel.class.getName() + " created...");
+		_logger.Debug(TAG + " created...");
 
 		_count = count;
 		_weekendTipp = weekendTipp;

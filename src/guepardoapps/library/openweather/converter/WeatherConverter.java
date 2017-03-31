@@ -5,7 +5,7 @@ import android.annotation.SuppressLint;
 import guepardoapps.library.openweather.R;
 import guepardoapps.library.openweather.common.enums.WeatherCondition;
 
-import guepardoapps.toolset.common.Logger;
+import guepardoapps.library.toolset.common.Logger;
 
 @SuppressLint("DefaultLocale")
 public class WeatherConverter {

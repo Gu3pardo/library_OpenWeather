@@ -8,8 +8,8 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import guepardoapps.toolset.common.Logger;
-import guepardoapps.toolset.common.classes.SerializableTime;
+import guepardoapps.library.toolset.common.Logger;
+import guepardoapps.library.toolset.common.classes.SerializableTime;
 
 public class WeatherModel implements Serializable {
 
@@ -36,7 +36,7 @@ public class WeatherModel implements Serializable {
 	@SuppressWarnings("deprecation")
 	public WeatherModel(JSONObject json, SerializableTime lastUpdate) {
 		_logger = new Logger(TAG);
-		_logger.Debug(WeatherModel.class.getName() + " created...");
+		_logger.Debug(TAG + " created...");
 		_logger.Debug("json: " + json.toString());
 		_logger.Debug("lastUpdate: " + lastUpdate.toString());
 
