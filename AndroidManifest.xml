@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="guepardoapps.library.openweather"
-    android:versionCode="101"
-    android:versionName="0.1.1.170330" >
+    android:versionCode="102"
+    android:versionName="0.1.2.170428" >
 
     <uses-sdk android:minSdkVersion="21" />
 

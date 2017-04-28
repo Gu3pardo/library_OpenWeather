@@ -201,6 +201,8 @@ public class ForecastModel implements Serializable {
 				"Snow today. Think twice taking your bike!", R.drawable.weather_snow);
 		WeatherConditionModel fog = new WeatherConditionModel(0, "You're not gonna see your hand today! :P",
 				"Find your way to work today :P", R.drawable.weather_fog);
+		WeatherConditionModel sleet = new WeatherConditionModel(0, "Today will be a freezy and slittering day!",
+				"Take care outside today!", R.drawable.weather_sleet);
 
 		String notificationForecast = "";
 		int notificationForecastCount = 0;
@@ -218,6 +220,8 @@ public class ForecastModel implements Serializable {
 				snow.AddCount(1);
 			} else if (entry.GetCondition() == WeatherCondition.FOG) {
 				fog.AddCount(1);
+			} else if (entry.GetCondition() == WeatherCondition.SLEET) {
+				sleet.AddCount(1);
 			}
 		}
 
@@ -226,6 +230,7 @@ public class ForecastModel implements Serializable {
 		conditionCount.add(cloud);
 		conditionCount.add(snow);
 		conditionCount.add(fog);
+		conditionCount.add(sleet);
 
 		for (WeatherConditionModel model : conditionCount) {
 			if (model.GetCount() > notificationForecastCount) {

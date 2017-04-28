@@ -54,6 +54,10 @@ public class WeatherConverter {
 				|| description.toUpperCase().contains(WeatherCondition.HAZE.toString())
 				|| description.contains(WeatherCondition.HAZE.toString().toUpperCase())) {
 			iconId = R.drawable.weather_haze;
+		} else if (description.contains(WeatherCondition.SLEET.toString())
+				|| description.toUpperCase().contains(WeatherCondition.SLEET.toString())
+				|| description.contains(WeatherCondition.SLEET.toString().toUpperCase())) {
+			iconId = R.drawable.weather_sleet;
 		} else {
 			_logger.Warn("Description: " + description);
 			iconId = R.drawable.weather_dummy;
@@ -104,6 +108,10 @@ public class WeatherConverter {
 				|| description.toUpperCase().contains(WeatherCondition.HAZE.toString())
 				|| description.contains(WeatherCondition.HAZE.toString().toUpperCase())) {
 			condition = WeatherCondition.HAZE;
+		} else if (description.contains(WeatherCondition.SLEET.toString())
+				|| description.toUpperCase().contains(WeatherCondition.SLEET.toString())
+				|| description.contains(WeatherCondition.SLEET.toString().toUpperCase())) {
+			condition = WeatherCondition.SLEET;
 		} else {
 			_logger.Warn("Description: " + description);
 			condition = WeatherCondition.NULL;

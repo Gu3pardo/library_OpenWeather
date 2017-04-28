@@ -13,7 +13,8 @@ public enum WeatherCondition implements Serializable {
 	FOG("fog"), 
 	MIST("mist"), 
 	SUN("sun"), 
-	HAZE("haze");
+	HAZE("haze"), 
+	SLEET("sleet");
 
 	private String _value;
 
