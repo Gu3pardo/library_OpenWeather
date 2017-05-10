@@ -35,8 +35,6 @@ public class ForecastWeatherModel implements Serializable {
 	private ForecastListType _listType;
 	private WeatherCondition _condition;
 
-	private int _icon;
-
 	public ForecastWeatherModel(JSONObject json) {
 		_logger = new Logger(TAG);
 		_logger.Info(TAG + " created " + ForecastListType.FORECAST.toString());
@@ -65,7 +63,7 @@ public class ForecastWeatherModel implements Serializable {
 				_logger.Error(ex.toString());
 			}
 
-			SetConditionAndIcon();
+			_condition = WeatherConverter.GetWeatherCondition(_weatherDescription);
 
 		} catch (JSONException e) {
 			_logger.Error(e.toString());
@@ -89,7 +87,7 @@ public class ForecastWeatherModel implements Serializable {
 		_date = date;
 		_time = "";
 
-		SetConditionAndIcon();
+		_condition = WeatherConverter.GetWeatherCondition(_weatherDescription);
 	}
 
 	public String GetTempMin() {
@@ -156,15 +154,6 @@ public class ForecastWeatherModel implements Serializable {
 
 	public ForecastListType GetForecastListType() {
 		return _listType;
-	}
-
-	public int GetIcon() {
-		return _icon;
-	}
-
-	private void SetConditionAndIcon() {
-		_icon = WeatherConverter.GetIconId(_weatherDescription);
-		_condition = WeatherConverter.GetWeatherCondition(_weatherDescription);
 	}
 
 	@Override

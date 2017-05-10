@@ -191,46 +191,51 @@ public class ForecastModel implements Serializable {
 
 		List<WeatherConditionModel> conditionCount = new ArrayList<WeatherConditionModel>();
 
-		WeatherConditionModel clearsky = new WeatherConditionModel(0, "Enjoy the sunny weather today and chill!",
+		WeatherConditionModel clear = new WeatherConditionModel(0, "Enjoy the sunny weather today and chill!",
 				"Today will be sunny! Get out for lunch!", R.drawable.weather_clear);
-		WeatherConditionModel rain = new WeatherConditionModel(0, "It's a rainy day! Chill at home ;)",
-				"It will rain today! Take an umbrella or take your car to work.", R.drawable.weather_rain);
 		WeatherConditionModel cloud = new WeatherConditionModel(0, "Sun is hiding today.",
 				"No sun today. Not bad to work...", R.drawable.weather_cloud);
-		WeatherConditionModel snow = new WeatherConditionModel(0, "Today will be a snowy day!",
-				"Snow today. Think twice taking your bike!", R.drawable.weather_snow);
 		WeatherConditionModel fog = new WeatherConditionModel(0, "You're not gonna see your hand today! :P",
 				"Find your way to work today :P", R.drawable.weather_fog);
+		WeatherConditionModel haze = new WeatherConditionModel(0, "Will be haze today!", "Search your way, master!",
+				R.drawable.weather_haze);
+		WeatherConditionModel rain = new WeatherConditionModel(0, "It's a rainy day! Chill at home ;)",
+				"It will rain today! Take an umbrella or take your car to work.", R.drawable.weather_rain);
 		WeatherConditionModel sleet = new WeatherConditionModel(0, "Today will be a freezy and slittering day!",
 				"Take care outside today!", R.drawable.weather_sleet);
+		WeatherConditionModel snow = new WeatherConditionModel(0, "Today will be a snowy day!",
+				"Snow today. Think twice taking your bike!", R.drawable.weather_snow);
 
 		String notificationForecast = "";
 		int notificationForecastCount = 0;
 		double notificationForecastMaxTemp = -273.15;
-		int notifiactionIcon = 0;
+		int notificationIcon = R.drawable.weather_dummy;
 
 		for (ForecastWeatherModel entry : weatherList) {
 			if (entry.GetCondition() == WeatherCondition.CLEAR) {
-				clearsky.AddCount(1);
-			} else if (entry.GetCondition() == WeatherCondition.RAIN) {
-				rain.AddCount(1);
+				clear.IncreaseCount();
 			} else if (entry.GetCondition() == WeatherCondition.CLOUD) {
-				cloud.AddCount(1);
-			} else if (entry.GetCondition() == WeatherCondition.SNOW) {
-				snow.AddCount(1);
+				cloud.IncreaseCount();
 			} else if (entry.GetCondition() == WeatherCondition.FOG) {
-				fog.AddCount(1);
+				fog.IncreaseCount();
+			} else if (entry.GetCondition() == WeatherCondition.HAZE) {
+				haze.IncreaseCount();
+			} else if (entry.GetCondition() == WeatherCondition.RAIN) {
+				rain.IncreaseCount();
 			} else if (entry.GetCondition() == WeatherCondition.SLEET) {
-				sleet.AddCount(1);
+				sleet.IncreaseCount();
+			} else if (entry.GetCondition() == WeatherCondition.SNOW) {
+				snow.IncreaseCount();
 			}
 		}
 
-		conditionCount.add(clearsky);
-		conditionCount.add(rain);
+		conditionCount.add(clear);
 		conditionCount.add(cloud);
-		conditionCount.add(snow);
 		conditionCount.add(fog);
+		conditionCount.add(haze);
+		conditionCount.add(rain);
 		conditionCount.add(sleet);
+		conditionCount.add(snow);
 
 		for (WeatherConditionModel model : conditionCount) {
 			if (model.GetCount() > notificationForecastCount) {
@@ -243,7 +248,7 @@ public class ForecastModel implements Serializable {
 					notificationForecast = model.GetWorkdayTipp();
 				}
 				notificationForecastCount = model.GetCount();
-				notifiactionIcon = model.GetIcon();
+				notificationIcon = model.GetIcon();
 			}
 		}
 
@@ -255,7 +260,7 @@ public class ForecastModel implements Serializable {
 
 		return new NotificationContent("Hey you!",
 				notificationForecast + "\nIt's getting up to " + String.valueOf(notificationForecastMaxTemp) + "°C",
-				notifiactionIcon);
+				notificationIcon);
 	}
 
 	@Override

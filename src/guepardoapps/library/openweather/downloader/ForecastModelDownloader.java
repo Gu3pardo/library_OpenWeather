@@ -13,11 +13,16 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import guepardoapps.library.openweather.common.OWAction;
 import guepardoapps.library.openweather.common.OWBroadcasts;
 import guepardoapps.library.openweather.common.OWBundles;
+import guepardoapps.library.openweather.common.OWDefinitions;
+import guepardoapps.library.openweather.common.OWKeys;
 import guepardoapps.library.openweather.common.model.ForecastModel;
+
+import guepardoapps.library.toastview.ToastView;
 
 import guepardoapps.library.toolset.common.Logger;
 
@@ -43,6 +48,13 @@ public class ForecastModelDownloader {
 
 	public void GetJson() {
 		_logger.Debug("GetJson");
+
+		if (OWKeys.OPEN_WEATHER_KEY == null || OWKeys.OPEN_WEATHER_KEY == "") {
+			_logger.Error("Please enter your openweathermap key!");
+			ToastView.error(_context, "Please enter your openweathermap key!", Toast.LENGTH_LONG).show();
+			return;
+		}
+
 		CallWeatherTask task = new CallWeatherTask();
 		task.execute(new String[] { "" });
 	}
@@ -59,7 +71,7 @@ public class ForecastModelDownloader {
 					if (_city != null) {
 						url = new URL(String.format(OWAction.CALL_FORECAST_WEATHER, _city));
 					} else {
-						url = new URL(String.format(OWAction.CALL_FORECAST_WEATHER, "Erlangen,DE"));
+						url = new URL(String.format(OWAction.CALL_FORECAST_WEATHER, OWDefinitions.DEFAULT_CITY));
 					}
 					_logger.Debug("Url: " + String.valueOf(url));
 
@@ -69,14 +81,20 @@ public class ForecastModelDownloader {
 					InputStream inputStream = urlConnection.getInputStream();
 					_logger.Debug("Created inputStream...");
 
-					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+					InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+					_logger.Debug("Created inputStreamReader...");
+
+					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 					_logger.Debug("Created bufferedReader...");
 
 					StringBuffer json = new StringBuffer(1024);
 					while ((response = bufferedReader.readLine()) != null) {
 						json.append(response).append("\n");
 					}
+
 					bufferedReader.close();
+					inputStreamReader.close();
+					inputStream.close();
 
 					JSONObject data = new JSONObject(json.toString());
 					_logger.Debug("Data: " + data.toString());

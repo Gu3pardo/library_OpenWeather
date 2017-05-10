@@ -5,4 +5,6 @@ public class OWDefinitions {
 	public static final int MORNING_HOUR = 8;
 	public static final int MIDDAY_HOUR = 14;
 	public static final int EVENING_HOUR = 20;
+	
+	public static final String DEFAULT_CITY = "Muenchen, DE";
 }

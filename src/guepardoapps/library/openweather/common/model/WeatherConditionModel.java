@@ -54,6 +54,10 @@ public class WeatherConditionModel implements Serializable {
 				"Tomorrow is");
 	}
 
+	public void IncreaseCount() {
+		_count++;
+	}
+
 	public void AddCount(int addValue) {
 		_count += addValue;
 	}

@@ -8,6 +8,8 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import guepardoapps.library.openweather.common.enums.WeatherCondition;
+import guepardoapps.library.openweather.converter.WeatherConverter;
 import guepardoapps.library.toolset.common.Logger;
 import guepardoapps.library.toolset.common.classes.SerializableTime;
 
@@ -33,6 +35,8 @@ public class WeatherModel implements Serializable {
 
 	private SerializableTime _lastUpdate;
 
+	private WeatherCondition _condition;
+
 	@SuppressWarnings("deprecation")
 	public WeatherModel(JSONObject json, SerializableTime lastUpdate) {
 		_logger = new Logger(TAG);
@@ -48,6 +52,7 @@ public class WeatherModel implements Serializable {
 			JSONObject main = json.getJSONObject("main");
 
 			_description = details.getString("description").toUpperCase(Locale.GERMANY);
+			_condition = WeatherConverter.GetWeatherCondition(_description);
 
 			_temperature = main.getDouble("temp");
 			_temperatureString = String.format("%.2f", _temperature) + "°C";
@@ -130,6 +135,10 @@ public class WeatherModel implements Serializable {
 	public String GetExtendedText() {
 		return _city + ", " + _country + "\nTemperature: " + _temperatureString + "\n" + _description + "\nHumidity: "
 				+ _humidity + "\nPressure: " + _pressure;
+	}
+
+	public WeatherCondition GetCondition() {
+		return _condition;
 	}
 
 	@Override
