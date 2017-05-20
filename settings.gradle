@@ -1,0 +1,2 @@
+include ':lib_openweather', ':lib_toolset'
+project(':lib_toolset').projectDir = new File(settingsDir, '../Toolset/lib_toolset')
