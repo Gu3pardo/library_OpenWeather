@@ -14,8 +14,9 @@ public class WeatherConditionModel implements Serializable {
     private String _weekendTip;
     private String _workdayTip;
     private int _icon;
+    private int _wallpaper;
 
-    public WeatherConditionModel(int count, String weekendTip, String workdayTip, int icon) {
+    public WeatherConditionModel(int count, String weekendTip, String workdayTip, int icon, int wallpaper) {
         Logger logger = new Logger(TAG);
         logger.Debug(TAG + " created...");
 
@@ -23,11 +24,13 @@ public class WeatherConditionModel implements Serializable {
         _weekendTip = weekendTip;
         _workdayTip = workdayTip;
         _icon = icon;
+        _wallpaper = wallpaper;
 
         logger.Debug("_count: " + String.valueOf(_count));
         logger.Debug("_weekendTip: " + _weekendTip);
         logger.Debug("_workdayTip: " + _workdayTip);
         logger.Debug("_icon: " + String.valueOf(_icon));
+        logger.Debug("_wallpaper: " + String.valueOf(_wallpaper));
     }
 
     public int GetCount() {
@@ -44,6 +47,10 @@ public class WeatherConditionModel implements Serializable {
 
     public int GetIcon() {
         return _icon;
+    }
+
+    public int GetWallpaper() {
+        return _wallpaper;
     }
 
     public void ChangeTipsToTomorrow() {

@@ -103,8 +103,11 @@ public class ForecastModel implements Serializable {
         }
 
         if (nextWeather.size() > 0) {
-            return new NotificationContent("Next Weather", nextWeather.get(0).GetWeatherDescription(),
-                    R.drawable.weather_dummy);
+            return new NotificationContent(
+                    "Next Weather",
+                    nextWeather.get(0).GetWeatherDescription(),
+                    R.drawable.weather_dummy,
+                    R.drawable.wallpaper_dummy);
         }
 
         return null;
@@ -125,10 +128,18 @@ public class ForecastModel implements Serializable {
             for (ForecastWeatherModel entry : todayWeather) {
                 weatherDescriptionToday += entry.GetWeatherDescription() + ";";
             }
-            return new NotificationContent("Weather today", weatherDescriptionToday, R.drawable.weather_dummy);
+            return new NotificationContent(
+                    "Weather today",
+                    weatherDescriptionToday,
+                    R.drawable.weather_dummy,
+                    R.drawable.wallpaper_dummy);
         }
 
-        return new NotificationContent("Error", "GetTodayWeather failed!", R.drawable.weather_dummy);
+        return new NotificationContent(
+                "Error",
+                "GetTodayWeather failed!",
+                R.drawable.weather_dummy,
+                R.drawable.wallpaper_dummy);
     }
 
     public NotificationContent TellForecastWeather() {
@@ -186,7 +197,7 @@ public class ForecastModel implements Serializable {
             return createNotificationContent(tomorrowWeather, false, isWeekend);
         }
 
-        return new NotificationContent("Error", "TellForecastWeather failed!", R.drawable.weather_dummy);
+        return new NotificationContent("Error", "TellForecastWeather failed!", R.drawable.weather_dummy, R.drawable.wallpaper_dummy);
     }
 
     private NotificationContent createNotificationContent(List<ForecastWeatherModel> weatherList, boolean today,
@@ -195,58 +206,88 @@ public class ForecastModel implements Serializable {
         List<WeatherConditionModel> conditionCount = new ArrayList<>();
 
         WeatherConditionModel clear = new WeatherConditionModel(0,
-                "Enjoy the sunny weather today and chill!",
-                "Today will be sunny! Get out for lunch!",
-                R.drawable.weather_clear);
+                "Go to the park and enjoy the clear weather today!",
+                "Today will be clear! Get out for lunch!",
+                R.drawable.weather_clear,
+                R.drawable.wallpaper_clear);
         WeatherConditionModel cloud = new WeatherConditionModel(0,
                 "Sun is hiding today.",
                 "No sun today. Not bad to work...",
-                R.drawable.weather_cloud);
+                R.drawable.weather_cloud,
+                R.drawable.wallpaper_cloud);
+        WeatherConditionModel drizzle = new WeatherConditionModel(0,
+                "It's a cold and rainy day!",
+                "There will be drizzle today!",
+                R.drawable.weather_rain,
+                R.drawable.wallpaper_drizzle);
         WeatherConditionModel fog = new WeatherConditionModel(0,
                 "You're not gonna see your hand today! :P",
                 "Find your way to work today :P",
-                R.drawable.weather_fog);
+                R.drawable.weather_fog,
+                R.drawable.wallpaper_fog);
         WeatherConditionModel haze = new WeatherConditionModel(0,
                 "Will be haze today!",
                 "Search your way, master!",
-                R.drawable.weather_haze);
+                R.drawable.weather_haze,
+                R.drawable.wallpaper_haze);
+        WeatherConditionModel mist = new WeatherConditionModel(0,
+                "Will be misty today!",
+                "Watch out today!",
+                R.drawable.weather_haze,
+                R.drawable.wallpaper_mist);
         WeatherConditionModel rain = new WeatherConditionModel(0,
                 "It's a rainy day! Chill at home ;)",
                 "It will rain today! Take an umbrella or take your car to work.",
-                R.drawable.weather_rain);
+                R.drawable.weather_rain,
+                R.drawable.wallpaper_rain);
         WeatherConditionModel sleet = new WeatherConditionModel(0,
                 "Today will be a freezy and slittering day!",
                 "Take care outside today!",
-                R.drawable.weather_sleet);
+                R.drawable.weather_sleet,
+                R.drawable.wallpaper_sleet);
         WeatherConditionModel snow = new WeatherConditionModel(0,
                 "Today will be a snowy day!",
                 "Snow today. Think twice taking your bike!",
-                R.drawable.weather_snow);
+                R.drawable.weather_snow,
+                R.drawable.wallpaper_snow);
+        WeatherConditionModel sun = new WeatherConditionModel(0,
+                "Enjoy the sunny weather today and chill!",
+                "Today will be sunny! Get out for lunch!",
+                R.drawable.weather_clear,
+                R.drawable.wallpaper_sun);
         WeatherConditionModel thunderstorm = new WeatherConditionModel(0,
                 "Thunder is coming today!",
                 "Prepare for a thunderstorm today!",
-                R.drawable.weather_thunderstorm);
+                R.drawable.weather_thunderstorm,
+                R.drawable.wallpaper_thunderstorm);
 
         String notificationForecast = "";
         int notificationForecastCount = 0;
         double notificationForecastMaxTemp = -273.15;
         int notificationIcon = R.drawable.weather_dummy;
+        int notificationBigIcon = R.drawable.wallpaper_dummy;
 
         for (ForecastWeatherModel entry : weatherList) {
             if (entry.GetCondition() == WeatherCondition.CLEAR) {
                 clear.IncreaseCount();
             } else if (entry.GetCondition() == WeatherCondition.CLOUD) {
                 cloud.IncreaseCount();
+            } else if (entry.GetCondition() == WeatherCondition.DRIZZLE) {
+                drizzle.IncreaseCount();
             } else if (entry.GetCondition() == WeatherCondition.FOG) {
                 fog.IncreaseCount();
             } else if (entry.GetCondition() == WeatherCondition.HAZE) {
                 haze.IncreaseCount();
+            } else if (entry.GetCondition() == WeatherCondition.MIST) {
+                mist.IncreaseCount();
             } else if (entry.GetCondition() == WeatherCondition.RAIN) {
                 rain.IncreaseCount();
             } else if (entry.GetCondition() == WeatherCondition.SLEET) {
                 sleet.IncreaseCount();
             } else if (entry.GetCondition() == WeatherCondition.SNOW) {
                 snow.IncreaseCount();
+            } else if (entry.GetCondition() == WeatherCondition.SUN) {
+                sun.IncreaseCount();
             } else if (entry.GetCondition() == WeatherCondition.THUNDERSTORM) {
                 thunderstorm.IncreaseCount();
             }
@@ -254,11 +295,14 @@ public class ForecastModel implements Serializable {
 
         conditionCount.add(clear);
         conditionCount.add(cloud);
+        conditionCount.add(drizzle);
         conditionCount.add(fog);
         conditionCount.add(haze);
+        conditionCount.add(mist);
         conditionCount.add(rain);
         conditionCount.add(sleet);
         conditionCount.add(snow);
+        conditionCount.add(sun);
         conditionCount.add(thunderstorm);
 
         for (WeatherConditionModel model : conditionCount) {
@@ -266,13 +310,16 @@ public class ForecastModel implements Serializable {
                 if (!today) {
                     model.ChangeTipsToTomorrow();
                 }
+
                 if (isWeekend) {
                     notificationForecast = model.GetWeekendTip();
                 } else {
                     notificationForecast = model.GetWorkdayTip();
                 }
+
                 notificationForecastCount = model.GetCount();
                 notificationIcon = model.GetIcon();
+                notificationBigIcon = model.GetWallpaper();
             }
         }
 
@@ -282,9 +329,11 @@ public class ForecastModel implements Serializable {
             }
         }
 
-        return new NotificationContent("Hey you!",
-                notificationForecast + "\nIt's getting up to " + String.valueOf(notificationForecastMaxTemp) + "°C",
-                notificationIcon);
+        return new NotificationContent(
+                "Hey you!",
+                String.format(Locale.GERMAN, "%s\nIt's getting up to %.1f °C", notificationForecast, notificationForecastMaxTemp),
+                notificationIcon,
+                notificationBigIcon);
     }
 
     @Override

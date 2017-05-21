@@ -8,15 +8,15 @@ public enum WeatherCondition implements Serializable {
 
     NULL("null", R.drawable.wallpaper_dummy, R.drawable.weather_dummy),
     CLEAR("clear", R.drawable.wallpaper_clear, R.drawable.weather_clear),
-    RAIN("rain", R.drawable.wallpaper_rain, R.drawable.weather_rain),
-    DRIZZLE("drizzle", R.drawable.wallpaper_drizzle, R.drawable.weather_rain /*TODO*/),
     CLOUD("cloud", R.drawable.wallpaper_cloud, R.drawable.weather_cloud),
-    SNOW("snow", R.drawable.wallpaper_snow, R.drawable.weather_snow),
+    DRIZZLE("drizzle", R.drawable.wallpaper_drizzle, R.drawable.weather_rain /*TODO*/),
     FOG("fog", R.drawable.wallpaper_fog, R.drawable.weather_fog),
-    MIST("mist", R.drawable.wallpaper_mist, R.drawable.weather_fog /*TODO*/),
-    SUN("sun", R.drawable.wallpaper_sun, R.drawable.weather_clear /*TODO*/),
     HAZE("haze", R.drawable.wallpaper_haze, R.drawable.weather_haze),
+    MIST("mist", R.drawable.wallpaper_mist, R.drawable.weather_fog /*TODO*/),
+    RAIN("rain", R.drawable.wallpaper_rain, R.drawable.weather_rain),
     SLEET("sleet", R.drawable.wallpaper_sleet, R.drawable.weather_sleet),
+    SNOW("snow", R.drawable.wallpaper_snow, R.drawable.weather_snow),
+    SUN("sun", R.drawable.wallpaper_sun, R.drawable.weather_clear /*TODO*/),
     THUNDERSTORM("thunderstorm", R.drawable.wallpaper_thunderstorm, R.drawable.weather_thunderstorm);
 
     private String _value;
