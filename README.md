@@ -10,8 +10,12 @@ used in https://github.com/Gu3pardo/LucaHome-AndroidApplication
 
 ---
 
-Example view
 ![alt tag](https://github.com/Gu3pardo/library_OpenWeather/blob/master/screenshots/example_usage.png)
+
+---
+
+IMPORTANT:
+This library uses https://github.com/Gu3pardo/library_GuepardoAppsToolSet!
 
 ---
 
@@ -34,56 +38,56 @@ After registering your Receiver, you call for the data.
 
 ```java
 public class MainActivity extends Activity {
-  
-    private OpenWeatherController _openWeatherController;
-    private ReceiverController _receiverController;
-
-    private BroadcastReceiver _currentWeatherReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ...
-			WeatherModel currentWeather = (WeatherModel) intent.getSerializableExtra(OWBundles.EXTRA_WEATHER_MODEL);
-			...
-        }
-    };
-
-    private BroadcastReceiver _forecastWeatherReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ...
-			ForecastModel forecastWeather = (ForecastModel) intent.getSerializableExtra(OWBundles.EXTRA_FORECAST_MODEL);
-            ...
-        }
-    };
 	
 	...
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.view_skeleton_nested_list);
-
-        ...
-
-        _openWeatherController = new OpenWeatherController(this, "Munich, DE");
-        _receiverController = new ReceiverController(this);
-
-        ...
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
+	private OpenWeatherController _openWeatherController;
+	private ReceiverController _receiverController;
+	
+	private BroadcastReceiver _currentWeatherReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			...
+			WeatherModel currentWeather = (WeatherModel) intent.getSerializableExtra(OWBundles.EXTRA_WEATHER_MODEL);
+			...
+		}
+	};
+	
+	private BroadcastReceiver _forecastWeatherReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			...
+			ForecastModel forecastWeather = (ForecastModel) intent.getSerializableExtra(OWBundles.EXTRA_FORECAST_MODEL);
+			...
+		}
+	};
+	
+	...
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		
-        _receiverController.RegisterReceiver(_currentWeatherReceiver, new String[]{OWBroadcasts.CURRENT_WEATHER_JSON_FINISHED});
-        _receiverController.RegisterReceiver(_forecastWeatherReceiver, new String[]{OWBroadcasts.FORECAST_WEATHER_JSON_FINISHED});
+		...
+		
+		_openWeatherController = new OpenWeatherController(this, "Munich, DE");
+		_receiverController = new ReceiverController(this);
+		
+		...
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		_receiverController.RegisterReceiver(_currentWeatherReceiver, new String[]{OWBroadcasts.CURRENT_WEATHER_JSON_FINISHED});
+		_receiverController.RegisterReceiver(_forecastWeatherReceiver, new String[]{OWBroadcasts.FORECAST_WEATHER_JSON_FINISHED});
         
 		// To load the current weather in your city
 		_openWeatherController.LoadCurrentWeather();
 		
 		// To load forecast weather for your city
 		_openWeatherController.LoadForecastWeather();
-    }
+	}
 }
 ```
 
@@ -91,23 +95,22 @@ To display received data use the customadapter in the library
 
 ```java
 public class MainActivity extends Activity {
-  
-    ...
 
-    private BroadcastReceiver _forecastWeatherReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ...
+	...
+	
+	private BroadcastReceiver _forecastWeatherReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
 			ForecastModel forecastWeather = (ForecastModel) intent.getSerializableExtra(OWBundles.EXTRA_FORECAST_MODEL);
-
-            if (forecastWeather != null) {
+			
+			if (forecastWeather != null) {
 				...
-                List<ForecastWeatherModel> list = forecastWeather.GetList();
-                listView.setAdapter(new ForecastListAdapter(this, list));
-                ...
-            }
-        }
-    };
+				List<ForecastWeatherModel> list = forecastWeather.GetList();
+				listView.setAdapter(new ForecastListAdapter(this, list));
+				...
+			}
+		}
+	};
 	
 	...
 }
