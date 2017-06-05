@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import guepardoapps.library.openweather.common.OWEnables;
 import guepardoapps.library.openweather.R;
 import guepardoapps.library.openweather.common.enums.ForecastDayTime;
 import guepardoapps.library.openweather.common.enums.WeatherCondition;
@@ -29,7 +30,7 @@ public class ForecastModel implements Serializable {
     private List<ForecastWeatherModel> _list = new ArrayList<>();
 
     public ForecastModel(JSONObject json) {
-        _logger = new Logger(TAG);
+        _logger = new Logger(TAG, OWEnables.LOGGING);
         _logger.Info(TAG + " created...");
         _logger.Info("json: " + json.toString());
 

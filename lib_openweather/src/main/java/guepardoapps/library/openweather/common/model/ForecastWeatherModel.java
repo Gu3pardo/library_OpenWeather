@@ -6,6 +6,7 @@ import java.util.Calendar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import guepardoapps.library.openweather.common.OWEnables;
 import guepardoapps.library.openweather.common.OWDefinitions;
 import guepardoapps.library.openweather.common.enums.ForecastDayTime;
 import guepardoapps.library.openweather.common.enums.ForecastListType;
@@ -36,7 +37,7 @@ public class ForecastWeatherModel implements Serializable {
 	private WeatherCondition _condition;
 
 	public ForecastWeatherModel(JSONObject json) {
-		_logger = new Logger(TAG);
+		_logger = new Logger(TAG, OWEnables.LOGGING);
 		_logger.Info(TAG + " created " + ForecastListType.FORECAST.toString());
 		_logger.Info("json: " + json.toString());
 

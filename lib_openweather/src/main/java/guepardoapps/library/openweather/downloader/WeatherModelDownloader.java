@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
@@ -20,6 +21,7 @@ import guepardoapps.library.openweather.common.OWAction;
 import guepardoapps.library.openweather.common.OWBroadcasts;
 import guepardoapps.library.openweather.common.OWBundles;
 import guepardoapps.library.openweather.common.OWDefinitions;
+import guepardoapps.library.openweather.common.OWEnables;
 import guepardoapps.library.openweather.common.OWKeys;
 import guepardoapps.library.openweather.common.model.WeatherModel;
 
@@ -36,8 +38,10 @@ public class WeatherModelDownloader {
     private WeatherModel _weatherModel = null;
     private String _city;
 
-    public WeatherModelDownloader(Context context, String city) {
-        _logger = new Logger(TAG);
+    public WeatherModelDownloader(
+            @NonNull Context context,
+            @NonNull String city) {
+        _logger = new Logger(TAG, OWEnables.LOGGING);
         _logger.Debug(TAG + " created...");
 
         _context = context;

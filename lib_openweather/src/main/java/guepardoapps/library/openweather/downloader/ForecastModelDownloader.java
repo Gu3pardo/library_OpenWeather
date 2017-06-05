@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
@@ -19,6 +20,7 @@ import guepardoapps.library.openweather.common.OWAction;
 import guepardoapps.library.openweather.common.OWBroadcasts;
 import guepardoapps.library.openweather.common.OWBundles;
 import guepardoapps.library.openweather.common.OWDefinitions;
+import guepardoapps.library.openweather.common.OWEnables;
 import guepardoapps.library.openweather.common.OWKeys;
 import guepardoapps.library.openweather.common.model.ForecastModel;
 
@@ -34,8 +36,10 @@ public class ForecastModelDownloader {
     private ForecastModel _forecastModel = null;
     private String _city;
 
-    public ForecastModelDownloader(Context context, String city) {
-        _logger = new Logger(TAG);
+    public ForecastModelDownloader(
+            @NonNull Context context,
+            @NonNull String city) {
+        _logger = new Logger(TAG, OWEnables.LOGGING);
         _logger.Debug(TAG + " created...");
 
         _context = context;
@@ -74,16 +78,9 @@ public class ForecastModelDownloader {
                     _logger.Debug("Url: " + String.valueOf(url));
 
                     URLConnection urlConnection = url.openConnection();
-                    _logger.Debug("Created urlConnection...");
-
                     InputStream inputStream = urlConnection.getInputStream();
-                    _logger.Debug("Created inputStream...");
-
                     InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    _logger.Debug("Created inputStreamReader...");
-
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    _logger.Debug("Created bufferedReader...");
 
                     StringBuilder json = new StringBuilder(1024);
                     while ((response = bufferedReader.readLine()) != null) {
