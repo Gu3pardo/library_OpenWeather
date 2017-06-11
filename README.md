@@ -5,8 +5,8 @@
 <a target="_blank" href="https://android-arsenal.com/api?level=21" title="API21+"><img src="https://img.shields.io/badge/API-21+-blue.svg" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-[![Build](https://img.shields.io/badge/build-success-green.svg)](https://github.com/Gu3pardo/library_OpenWeather)
-[![Version](https://img.shields.io/badge/version-v0.4.0.170605-blue.svg)](https://github.com/Gu3pardo/library_OpenWeather)
+[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/Gu3pardo/library_OpenWeather)
+[![Version](https://img.shields.io/badge/version-v0.4.1.170611-blue.svg)](https://github.com/Gu3pardo/library_OpenWeather)
 
 library for downloading and handling data from openweather
 used in https://github.com/Gu3pardo/LucaHome-AndroidApplication

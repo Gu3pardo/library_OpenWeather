@@ -1,5 +1,7 @@
 package guepardoapps.library.openweather.common.model;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
@@ -38,24 +40,26 @@ public class WeatherModel implements Serializable {
     private WeatherCondition _condition;
 
     @SuppressWarnings("deprecation")
-    public WeatherModel(JSONObject json, SerializableTime lastUpdate) {
+    public WeatherModel(
+            @NonNull JSONObject json,
+            @NonNull SerializableTime lastUpdate) {
         Logger logger = new Logger(TAG, OWEnables.LOGGING);
         logger.Debug(TAG + " created...");
         logger.Debug("json: " + json.toString());
         logger.Debug("lastUpdate: " + lastUpdate.toString());
 
         try {
-            _city = json.getString("name").toUpperCase(Locale.GERMANY);
+            _city = json.getString("name").toUpperCase(Locale.getDefault());
             _country = json.getJSONObject("sys").getString("country");
 
             JSONObject details = json.getJSONArray("weather").getJSONObject(0);
             JSONObject main = json.getJSONObject("main");
 
-            _description = details.getString("description").toUpperCase(Locale.GERMANY);
+            _description = details.getString("description").toUpperCase(Locale.getDefault());
             _condition = WeatherCondition.GetByString(_description);
 
             _temperature = main.getDouble("temp");
-            _temperatureString = String.format(Locale.GERMAN, "%.2f °C", _temperature);
+            _temperatureString = String.format(Locale.getDefault(), "%.2f °C", _temperature);
 
             _humidity = main.getString("humidity") + "%";
             _pressure = main.getString("pressure") + "hPa";
@@ -69,8 +73,7 @@ public class WeatherModel implements Serializable {
             logger.Debug("sunriseDate is " + sunriseDate.toString());
             Time sunriseTime = new Time(sunriseDate.getTime());
             logger.Debug("sunsetTime is " + sunriseTime.toString());
-            _sunriseTime = new SerializableTime(sunriseTime.getHours(), sunriseTime.getMinutes(),
-                    sunriseTime.getSeconds(), 0);
+            _sunriseTime = new SerializableTime(sunriseTime.getHours(), sunriseTime.getMinutes(), sunriseTime.getSeconds(), 0);
 
             long sunsetLong = sys.getLong("sunset") * 1000;
             logger.Debug("sunsetLong is " + String.valueOf(sunsetLong));
@@ -78,8 +81,7 @@ public class WeatherModel implements Serializable {
             logger.Debug("sunsetDate is " + sunsetDate.toString());
             Time sunsetTime = new Time(sunsetDate.getTime());
             logger.Debug("sunsetTime is " + sunsetTime.toString());
-            _sunsetTime = new SerializableTime(sunsetTime.getHours(), sunsetTime.getMinutes(), sunsetTime.getSeconds(),
-                    0);
+            _sunsetTime = new SerializableTime(sunsetTime.getHours(), sunsetTime.getMinutes(), sunsetTime.getSeconds(), 0);
         } catch (JSONException e) {
             logger.Error(e.toString());
         }
@@ -133,8 +135,11 @@ public class WeatherModel implements Serializable {
     }
 
     public String GetExtendedText() {
-        return _city + ", " + _country + "\nTemperature: " + _temperatureString + "\n" + _description + "\nHumidity: "
-                + _humidity + "\nPressure: " + _pressure;
+        return _city + ", " + _country
+                + "\nTemperature: " + _temperatureString + "\n"
+                + _description
+                + "\nHumidity: " + _humidity
+                + "\nPressure: " + _pressure;
     }
 
     public WeatherCondition GetCondition() {
@@ -143,9 +148,15 @@ public class WeatherModel implements Serializable {
 
     @Override
     public String toString() {
-        return "[WeatherModel: City: " + _city + ", Country: " + _country + "; Description: " + _description
-                + "; Temperature: " + _temperatureString + "; Humidity: " + _humidity + "; Pressure: " + _pressure
-                + "; SunriseTime: " + _sunriseTime.toString() + "; SunsetTime: " + _sunsetTime.toString()
+        return "[" + TAG
+                + ": City: " + _city
+                + ", Country: " + _country
+                + "; Description: " + _description
+                + "; Temperature: " + _temperatureString
+                + "; Humidity: " + _humidity
+                + "; Pressure: " + _pressure
+                + "; SunriseTime: " + _sunriseTime.toString()
+                + "; SunsetTime: " + _sunsetTime.toString()
                 + "; LastUpdate: " + _lastUpdate.toString() + "]";
     }
 }
