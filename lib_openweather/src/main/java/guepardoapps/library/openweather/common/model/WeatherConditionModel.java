@@ -4,13 +4,9 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
-import guepardoapps.library.openweather.common.OWEnables;
-
-import guepardoapps.library.toolset.common.Logger;
+import guepardoapps.library.openweather.common.tools.Logger;
 
 public class WeatherConditionModel implements Serializable {
-
-    private static final long serialVersionUID = 5283741583914709641L;
 
     private static final String TAG = WeatherConditionModel.class.getSimpleName();
 
@@ -28,7 +24,7 @@ public class WeatherConditionModel implements Serializable {
             @NonNull String workdayAfterWorkTip,
             int icon,
             int wallpaper) {
-        Logger logger = new Logger(TAG, OWEnables.LOGGING);
+        Logger logger = new Logger(TAG);
         logger.Debug(TAG + " created...");
 
         _count = count;

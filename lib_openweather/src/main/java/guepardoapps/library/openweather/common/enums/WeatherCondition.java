@@ -56,14 +56,4 @@ public enum WeatherCondition implements Serializable {
 
         return WeatherCondition.NULL;
     }
-
-    public static WeatherCondition GetByIcon(int icon) {
-        for (WeatherCondition entry : WeatherCondition.values()) {
-            if (entry._icon == icon) {
-                return entry;
-            }
-        }
-
-        return WeatherCondition.NULL;
-    }
 }

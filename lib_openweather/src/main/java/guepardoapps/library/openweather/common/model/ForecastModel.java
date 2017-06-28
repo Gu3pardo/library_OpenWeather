@@ -12,18 +12,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import guepardoapps.library.openweather.common.OWDefinitions;
-import guepardoapps.library.openweather.common.OWEnables;
 import guepardoapps.library.openweather.R;
+import guepardoapps.library.openweather.common.OWDefinitions;
+import guepardoapps.library.openweather.common.classes.NotificationContent;
 import guepardoapps.library.openweather.common.enums.ForecastDayTime;
 import guepardoapps.library.openweather.common.enums.WeatherCondition;
-
-import guepardoapps.library.toolset.common.Logger;
-import guepardoapps.library.toolset.common.classes.NotificationContent;
+import guepardoapps.library.openweather.common.tools.Logger;
 
 public class ForecastModel implements Serializable {
-
-    private static final long serialVersionUID = 5940897350070310574L;
 
     private static final String TAG = ForecastModel.class.getSimpleName();
     private Logger _logger;
@@ -33,7 +29,7 @@ public class ForecastModel implements Serializable {
     private List<ForecastWeatherModel> _list = new ArrayList<>();
 
     public ForecastModel(@NonNull JSONObject json) {
-        _logger = new Logger(TAG, OWEnables.LOGGING);
+        _logger = new Logger(TAG);
         _logger.Info(TAG + " created...");
         _logger.Info("json: " + json.toString());
 
@@ -341,7 +337,8 @@ public class ForecastModel implements Serializable {
                     notificationForecast = model.GetWeekendTip();
                 } else {
                     Calendar now = Calendar.getInstance();
-                    if (now.get(Calendar.HOUR_OF_DAY) > OWDefinitions.AFTERWORK_HOUR) {
+                    if (now.get(Calendar.HOUR_OF_DAY) > OWDefinitions.AFTERWORK_HOUR
+                            && now.get(Calendar.HOUR_OF_DAY) < OWDefinitions.EVENING_HOUR) {
                         notificationForecast = model.GetWorkdayAfterWorkTip();
                     } else {
                         notificationForecast = model.GetWorkdayTip();

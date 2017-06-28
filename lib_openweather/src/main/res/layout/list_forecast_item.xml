@@ -1,13 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="145dp"
-    android:background="@color/TextIcon">
+    android:background="@color/colorTextIcon">
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_margin="5dp"
-        android:background="@color/Background"
+        android:background="@color/colorPrimary"
         android:padding="2dp">
 
         <ImageView
@@ -30,7 +30,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@+id/weather_item_image"
-            android:background="@color/TextIcon" />
+            android:background="@color/colorTextIcon" />
 
         <TextView
             android:id="@+id/weather_item_description"
@@ -42,7 +42,7 @@
             android:padding="2dp"
             android:text="@string/example"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/TextIcon"
+            android:textColor="@color/colorTextIcon"
             android:textStyle="bold" />
 
         <TextView
@@ -55,7 +55,7 @@
             android:padding="2dp"
             android:text="@string/example"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/TextIcon" />
+            android:textColor="@color/colorTextIcon" />
 
         <TextView
             android:id="@+id/weather_item_humidity"
@@ -66,7 +66,7 @@
             android:layout_toEndOf="@+id/weather_item_border"
             android:text="@string/example"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/TextIcon" />
+            android:textColor="@color/colorTextIcon" />
 
         <TextView
             android:id="@+id/weather_item_pressure"
@@ -78,7 +78,7 @@
             android:layout_toEndOf="@+id/weather_item_border"
             android:text="@string/example"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/TextIcon" />
+            android:textColor="@color/colorTextIcon" />
 
         <TextView
             android:id="@+id/weather_item_time"
@@ -89,7 +89,7 @@
             android:layout_marginEnd="5dp"
             android:text="@string/example"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/TextIcon" />
+            android:textColor="@color/colorTextIcon" />
 
     </RelativeLayout>
 

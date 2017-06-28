@@ -21,12 +21,10 @@ import guepardoapps.library.openweather.common.OWAction;
 import guepardoapps.library.openweather.common.OWBroadcasts;
 import guepardoapps.library.openweather.common.OWBundles;
 import guepardoapps.library.openweather.common.OWDefinitions;
-import guepardoapps.library.openweather.common.OWEnables;
 import guepardoapps.library.openweather.common.OWKeys;
+import guepardoapps.library.openweather.common.classes.SerializableTime;
 import guepardoapps.library.openweather.common.model.WeatherModel;
-
-import guepardoapps.library.toolset.common.Logger;
-import guepardoapps.library.toolset.common.classes.SerializableTime;
+import guepardoapps.library.openweather.common.tools.Logger;
 
 public class WeatherModelDownloader {
 
@@ -41,7 +39,7 @@ public class WeatherModelDownloader {
     public WeatherModelDownloader(
             @NonNull Context context,
             @NonNull String city) {
-        _logger = new Logger(TAG, OWEnables.LOGGING);
+        _logger = new Logger(TAG);
         _logger.Debug(TAG + " created...");
 
         _context = context;

@@ -1,13 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/TextIcon">
+    android:background="@color/colorTextIcon">
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:background="@color/Background"
+        android:background="@color/colorPrimaryDark"
         android:padding="2dp" />
 
 </RelativeLayout>

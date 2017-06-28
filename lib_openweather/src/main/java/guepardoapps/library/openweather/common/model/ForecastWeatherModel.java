@@ -8,18 +8,14 @@ import java.util.Calendar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import guepardoapps.library.openweather.common.OWEnables;
 import guepardoapps.library.openweather.common.OWDefinitions;
 import guepardoapps.library.openweather.common.enums.ForecastDayTime;
 import guepardoapps.library.openweather.common.enums.ForecastListType;
 import guepardoapps.library.openweather.common.enums.WeatherCondition;
-
-import guepardoapps.library.toolset.common.Logger;
-import guepardoapps.library.toolset.common.StringHelper;
+import guepardoapps.library.openweather.common.tools.Logger;
+import guepardoapps.library.openweather.common.tools.StringHelper;
 
 public class ForecastWeatherModel implements Serializable {
-
-    private static final long serialVersionUID = -7845325750001478724L;
 
     private static final String TAG = ForecastWeatherModel.class.getSimpleName();
     private Logger _logger;
@@ -39,7 +35,7 @@ public class ForecastWeatherModel implements Serializable {
     private WeatherCondition _condition;
 
     public ForecastWeatherModel(@NonNull JSONObject json) {
-        _logger = new Logger(TAG, OWEnables.LOGGING);
+        _logger = new Logger(TAG);
         _logger.Info(TAG + " created " + ForecastListType.FORECAST.toString());
         _logger.Info("json: " + json.toString());
 

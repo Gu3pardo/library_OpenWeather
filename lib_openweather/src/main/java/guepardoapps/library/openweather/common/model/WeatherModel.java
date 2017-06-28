@@ -10,15 +10,11 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import guepardoapps.library.openweather.common.OWEnables;
+import guepardoapps.library.openweather.common.classes.SerializableTime;
 import guepardoapps.library.openweather.common.enums.WeatherCondition;
-
-import guepardoapps.library.toolset.common.Logger;
-import guepardoapps.library.toolset.common.classes.SerializableTime;
+import guepardoapps.library.openweather.common.tools.Logger;
 
 public class WeatherModel implements Serializable {
-
-    private static final long serialVersionUID = 5604464899374651609L;
 
     private static final String TAG = WeatherModel.class.getSimpleName();
 
@@ -43,7 +39,7 @@ public class WeatherModel implements Serializable {
     public WeatherModel(
             @NonNull JSONObject json,
             @NonNull SerializableTime lastUpdate) {
-        Logger logger = new Logger(TAG, OWEnables.LOGGING);
+        Logger logger = new Logger(TAG);
         logger.Debug(TAG + " created...");
         logger.Debug("json: " + json.toString());
         logger.Debug("lastUpdate: " + lastUpdate.toString());
