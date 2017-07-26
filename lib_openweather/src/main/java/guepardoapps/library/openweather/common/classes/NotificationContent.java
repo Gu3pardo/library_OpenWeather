@@ -42,11 +42,6 @@ public class NotificationContent {
 
     @Override
     public String toString() {
-        return String.format(Locale.GERMAN, "{%s:{Title:%s};{Text:%s};{Icon:%d};{BigIcon:%d};}",
-                TAG,
-                _title,
-                _text,
-                _icon,
-                _bigIcon);
+        return String.format(Locale.GERMAN, "{%s:{Title:%s};{Text:%s};{Icon:%d};{BigIcon:%d};}", TAG, _title, _text, _icon, _bigIcon);
     }
 }

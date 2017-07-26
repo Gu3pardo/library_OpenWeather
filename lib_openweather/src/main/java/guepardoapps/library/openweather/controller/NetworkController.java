@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 import java.util.Locale;
 
-import guepardoapps.library.openweather.common.tools.Logger;
+import guepardoapps.library.openweather.common.utils.Logger;
 
 public class NetworkController {
 

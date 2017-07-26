@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 601
-        versionName '0.6.1.170629'
+        versionCode 700
+        versionName '0.7.0.170726'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -38,5 +38,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26+'
     compile 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'
-    compile 'com.github.GrenderG:Toasty:1.2.5'
 }

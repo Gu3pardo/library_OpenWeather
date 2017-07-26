@@ -14,21 +14,19 @@ import java.util.List;
 import java.util.Locale;
 
 import guepardoapps.library.openweather.R;
-import guepardoapps.library.openweather.common.enums.ForecastListType;
-import guepardoapps.library.openweather.common.model.ForecastWeatherModel;
-import guepardoapps.library.openweather.common.tools.Logger;
+import guepardoapps.library.openweather.common.utils.Logger;
+import guepardoapps.library.openweather.models.ForecastPartModel;
 
 public class ForecastListAdapter extends BaseAdapter {
-
     private static final String TAG = ForecastListAdapter.class.getSimpleName();
     private Logger _logger;
 
-    private List<ForecastWeatherModel> _forecastList;
+    private List<ForecastPartModel> _forecastList;
     private static LayoutInflater _inflater = null;
 
     public ForecastListAdapter(
             @NonNull Context context,
-            @NonNull List<ForecastWeatherModel> forecastList) {
+            @NonNull List<ForecastPartModel> forecastList) {
         _logger = new Logger(TAG);
 
         _forecastList = forecastList;
@@ -67,18 +65,18 @@ public class ForecastListAdapter extends BaseAdapter {
     @Override
     public View getView(final int index, View convertView, ViewGroup parent) {
         final Holder holder = new Holder();
-        ForecastWeatherModel entry = _forecastList.get(index);
+        ForecastPartModel entry = _forecastList.get(index);
         View rowView;
         _logger.Debug(String.format("ForecastWeatherModel is %s!", entry));
 
-        if (entry.GetForecastListType() == ForecastListType.FORECAST) {
+        if (entry.GetForecastListType() == ForecastPartModel.ForecastListType.FORECAST) {
             rowView = _inflater.inflate(R.layout.list_forecast_item, null);
 
             holder._image = rowView.findViewById(R.id.weather_item_image);
             holder._image.setImageResource(entry.GetCondition().GetIcon());
 
             holder._description = rowView.findViewById(R.id.weather_item_description);
-            holder._description.setText(entry.GetWeatherDescription());
+            holder._description.setText(entry.GetDescription());
 
             holder._temperature = rowView.findViewById(R.id.weather_item_temperatures);
             holder._temperature.setText(entry.GetTempMin() + "-" + entry.GetTempMax());
@@ -91,7 +89,7 @@ public class ForecastListAdapter extends BaseAdapter {
 
             holder._time = rowView.findViewById(R.id.weather_item_time);
             holder._time.setText(entry.GetTime());
-        } else if (entry.GetForecastListType() == ForecastListType.DATE_DIVIDER) {
+        } else if (entry.GetForecastListType() == ForecastPartModel.ForecastListType.DATE_DIVIDER) {
             rowView = _inflater.inflate(R.layout.list_forecast_divider_item, null);
 
             holder._time = rowView.findViewById(R.id.date_textView);

@@ -1,4 +1,4 @@
-package guepardoapps.library.openweather.common.tools;
+package guepardoapps.library.openweather.common.utils;
 
 import android.support.annotation.NonNull;
 

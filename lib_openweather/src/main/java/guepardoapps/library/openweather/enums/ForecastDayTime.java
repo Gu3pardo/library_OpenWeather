@@ -1,4 +1,4 @@
-package guepardoapps.library.openweather.common.enums;
+package guepardoapps.library.openweather.enums;
 
 import java.io.Serializable;
 

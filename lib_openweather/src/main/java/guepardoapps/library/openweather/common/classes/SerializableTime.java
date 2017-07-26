@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Locale;
 
-import guepardoapps.library.openweather.common.tools.Logger;
+import guepardoapps.library.openweather.common.utils.Logger;
 
 public class SerializableTime implements Serializable {
 
@@ -74,7 +74,7 @@ public class SerializableTime implements Serializable {
                 setDefaultValues();
             }
         } else {
-            _logger.Warn(String.format(Locale.getDefault(), "Invalid data count %d!", timeArray.length));
+            _logger.Warning(String.format(Locale.getDefault(), "Invalid data count %d!", timeArray.length));
             setDefaultValues();
         }
 
@@ -142,14 +142,14 @@ public class SerializableTime implements Serializable {
         return HH() + ":" + MM() + ":" + SS() + ":" + mm();
     }
 
-    public boolean isAfter(SerializableTime compareTime) {
+    public boolean isAfter(@NonNull SerializableTime compareTime) {
         if (compareTime.toMilliSecond() > toMilliSecond()) {
             return true;
         }
         return false;
     }
 
-    public boolean isBefore(SerializableTime compareTime) {
+    public boolean isBefore(@NonNull SerializableTime compareTime) {
         if (compareTime.toMilliSecond() < toMilliSecond()) {
             return true;
         }

@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather)
-[![Version](https://img.shields.io/badge/version-v0.6.1.170629-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
+[![Version](https://img.shields.io/badge/version-v0.7.0.170726-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
 
 library for downloading and handling data from openweather
 used in https://github.com/GuepardoApps/LucaHome-AndroidApplication
@@ -27,7 +27,7 @@ Then enter your key in following class:
 package guepardoapps.library.openweather.common;
 
 public class OWKeys {
-	public static final String OPEN_WEATHER_KEY = ENTER_YOUR_KEY_HERE;
+	public static final String OPEN_WEATHER_KEY = "ENTER_YOUR_KEY_HERE";
 }
 ```
 
@@ -38,14 +38,15 @@ After registering your Receiver, you call for the data.
 public class MainActivity extends Activity {
 	
 	...
-	private OpenWeatherController _openWeatherController;
+	private OpenWeatherService _openWeatherService;
 	private ReceiverController _receiverController;
 	
 	private BroadcastReceiver _currentWeatherReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			...
-			WeatherModel currentWeather = (WeatherModel) intent.getSerializableExtra(OWBundles.EXTRA_WEATHER_MODEL);
+            OpenWeatherService.CurrentWeatherDownloadFinishedContent content = (OpenWeatherService.CurrentWeatherDownloadFinishedContent) intent.getSerializableExtra(OpenWeatherService.CurrentWeatherDownloadFinishedBundle);
+			WeatherModel currentWeather = content.CurrentWeather;
+			// Do whatever you want with the data
 			...
 		}
 	};
@@ -53,8 +54,9 @@ public class MainActivity extends Activity {
 	private BroadcastReceiver _forecastWeatherReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			...
-			ForecastModel forecastWeather = (ForecastModel) intent.getSerializableExtra(OWBundles.EXTRA_FORECAST_MODEL);
+			OpenWeatherService.ForecastWeatherDownloadFinishedContent content = (OpenWeatherService.ForecastWeatherDownloadFinishedContent) intent.getSerializableExtra(OpenWeatherService.ForecastWeatherDownloadFinishedBundle);
+			ForecastModel forecastWeather = content.ForecastModel;
+			// Do whatever you want with the data
 			...
 		}
 	};
@@ -67,7 +69,16 @@ public class MainActivity extends Activity {
 		
 		...
 		
-		_openWeatherController = new OpenWeatherController(this, "Munich, DE");
+		// Get the instance of the singleton service
+		_openWeatherService = new OpenWeatherService.getInstance();
+		
+		// initialize the service with the current context and a city
+		_openWeatherService.Initialize(this, "Munich, DE");
+		// or initialize the service with the current context, a city and the enable/disable for notifications
+		_openWeatherService.Initialize(this, "Munich, DE", true);
+		// or initialize the service with the current context, a city, the enable/disable for notifications and activities which will be started after clicking on the notifications
+		_openWeatherService.Initialize(this, "Munich, DE", true, YourCurrentWeatherActiviy.class, MyForecastActiviy.class);
+		
 		_receiverController = new ReceiverController(this);
 		
 		...
@@ -77,14 +88,35 @@ public class MainActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		
-		_receiverController.RegisterReceiver(_currentWeatherReceiver, new String[]{OWBroadcasts.CURRENT_WEATHER_JSON_FINISHED});
-		_receiverController.RegisterReceiver(_forecastWeatherReceiver, new String[]{OWBroadcasts.FORECAST_WEATHER_JSON_FINISHED});
+		// register the receiver to get the data from the service
+		_receiverController.RegisterReceiver(_currentWeatherReceiver, new String[]{OpenWeatherService.CurrentWeatherDownloadFinishedBroadcast});
+		_receiverController.RegisterReceiver(_forecastWeatherReceiver, new String[]{OpenWeatherService.ForecastWeatherDownloadFinishedBroadcast});
         
 		// To load the current weather in your city
-		_openWeatherController.LoadCurrentWeather();
+		_openWeatherService.LoadCurrentWeather();
 		
 		// To load forecast weather for your city
-		_openWeatherController.LoadForecastWeather();
+		_openWeatherService.LoadForecastWeather();
+	}
+	
+	...
+	
+	public void SomeMethod() {
+		// you can also get the data from the service if it already downloaded it
+		WeatherModel currentWeather = _openWeatherService.CurrentWeather()
+		ForecastModel forecastWeather = _openWeatherService.ForecastWeather()
+		
+		// you can change the city on the fly and the service starts with the download for the city as it was set
+		_openWeatherService.SetCity("Another city")
+		
+		// you can disable/enable notifications
+		// notifications will be displayed if they are enabled and a download was finished
+		_openWeatherService.SetDisplayNotification(false);
+		_openWeatherService.SetDisplayNotification(true);
+		
+		// you can set a activity which will be started after clicking on a notifications
+		_openWeatherService.SetCurrentWeatherReceiverActivity(YourCurrentWeatherActiviy.class);
+		_openWeatherService.SetForecastWeatherReceiverActivity(MyForecastActiviy.class);
 	}
 }
 ```
@@ -99,7 +131,8 @@ public class MainActivity extends Activity {
 	private BroadcastReceiver _forecastWeatherReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			ForecastModel forecastWeather = (ForecastModel) intent.getSerializableExtra(OWBundles.EXTRA_FORECAST_MODEL);
+			OpenWeatherService.ForecastWeatherDownloadFinishedContent content = (OpenWeatherService.ForecastWeatherDownloadFinishedContent) intent.getSerializableExtra(OpenWeatherService.ForecastWeatherDownloadFinishedBundle);
+			ForecastModel forecastWeather = content.ForecastModel;
 			
 			if (forecastWeather != null) {
 				...
