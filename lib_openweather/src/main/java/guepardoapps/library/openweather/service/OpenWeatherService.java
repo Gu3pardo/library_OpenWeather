@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import guepardoapps.library.openweather.common.OWBroadcasts;
@@ -20,10 +22,11 @@ import guepardoapps.library.openweather.converter.JsonToWeatherConverter;
 import guepardoapps.library.openweather.converter.NotificationContentConverter;
 import guepardoapps.library.openweather.downloader.OpenWeatherDownloader;
 import guepardoapps.library.openweather.models.ForecastModel;
+import guepardoapps.library.openweather.models.ForecastPartModel;
 import guepardoapps.library.openweather.models.WeatherModel;
 
 public class OpenWeatherService {
-    public class CurrentWeatherDownloadFinishedContent implements Serializable {
+    public static class CurrentWeatherDownloadFinishedContent implements Serializable {
         public WeatherModel CurrentWeather;
         public boolean Success;
         public String Response;
@@ -35,7 +38,7 @@ public class OpenWeatherService {
         }
     }
 
-    public class ForecastWeatherDownloadFinishedContent implements Serializable {
+    public static class ForecastWeatherDownloadFinishedContent implements Serializable {
         public ForecastModel ForecastWeather;
         public boolean Success;
         public String Response;
@@ -72,7 +75,8 @@ public class OpenWeatherService {
     private WeatherModel _currentWeather;
     private ForecastModel _forecastWeather;
 
-    private boolean _displayNotification;
+    private boolean _displayCurrentWeatherNotification;
+    private boolean _displayForecastWeatherNotification;
     private Class<?> _currentWeatherReceiverActivity;
     private Class<?> _forecastWeatherReceiverActivity;
 
@@ -108,7 +112,7 @@ public class OpenWeatherService {
                     CurrentWeatherDownloadFinishedBundle,
                     new CurrentWeatherDownloadFinishedContent(_currentWeather, true, result));
 
-            if (_displayNotification) {
+            if (_displayCurrentWeatherNotification) {
                 NotificationContent notificationContent = new NotificationContent(
                         _currentWeather.GetCondition().GetDescription(),
                         _currentWeather.GetCondition().GetWorkdayTip(),
@@ -154,7 +158,7 @@ public class OpenWeatherService {
                     ForecastWeatherDownloadFinishedBundle,
                     new ForecastWeatherDownloadFinishedContent(_forecastWeather, true, result));
 
-            if (_displayNotification) {
+            if (_displayForecastWeatherNotification) {
                 NotificationContent notificationContent = _notificationContentConverter.TellForecastWeather(_forecastWeather.GetList());
                 _notificationController.CreateNotification(
                         OWIds.FORECAST_NOTIFICATION_ID,
@@ -176,7 +180,8 @@ public class OpenWeatherService {
     public void Initialize(
             @NonNull Context context,
             @NonNull String city,
-            boolean displayNotification,
+            boolean displayCurrentWeatherNotification,
+            boolean displayForecastWeatherNotification,
             Class<?> currentWeatherReceiverActivity,
             Class<?> forecastWeatherReceiverActivity) {
         _logger.Debug("initialize");
@@ -187,7 +192,8 @@ public class OpenWeatherService {
         }
 
         _city = city;
-        _displayNotification = displayNotification;
+        _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
+        _displayForecastWeatherNotification = displayForecastWeatherNotification;
         _currentWeatherReceiverActivity = currentWeatherReceiverActivity;
         _forecastWeatherReceiverActivity = forecastWeatherReceiverActivity;
 
@@ -209,14 +215,15 @@ public class OpenWeatherService {
     public void Initialize(
             @NonNull Context context,
             @NonNull String city,
-            boolean displayNotification) {
-        Initialize(context, city, displayNotification, null, null);
+            boolean displayCurrentWeatherNotification,
+            boolean displayForecastWeatherNotification) {
+        Initialize(context, city, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null);
     }
 
     public void Initialize(
             @NonNull Context context,
             @NonNull String city) {
-        Initialize(context, city, true);
+        Initialize(context, city, true, true);
     }
 
     public void Dispose() {
@@ -236,14 +243,24 @@ public class OpenWeatherService {
         LoadForecastWeather();
     }
 
-    public boolean GetDisplayNotification() {
-        return _displayNotification;
+    public boolean GetDisplayCurrentWeatherNotification() {
+        return _displayCurrentWeatherNotification;
     }
 
-    public void SetDisplayNotification(boolean displayNotification) {
-        _displayNotification = displayNotification;
-        if (!_displayNotification) {
+    public void SetDisplayCurrentWeatherNotification(boolean displayCurrentWeatherNotification) {
+        _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
+        if (!_displayCurrentWeatherNotification) {
             _notificationController.CloseNotification(OWIds.CURRENT_NOTIFICATION_ID);
+        }
+    }
+
+    public boolean GetDisplayForecastWeatherNotification() {
+        return _displayForecastWeatherNotification;
+    }
+
+    public void SetDisplayForecastWeatherNotification(boolean displayForecastWeatherNotification) {
+        _displayForecastWeatherNotification = displayForecastWeatherNotification;
+        if (!_displayForecastWeatherNotification) {
             _notificationController.CloseNotification(OWIds.FORECAST_NOTIFICATION_ID);
         }
     }
@@ -270,6 +287,26 @@ public class OpenWeatherService {
 
     public ForecastModel ForecastWeather() {
         return _forecastWeather;
+    }
+
+    public List<ForecastPartModel> FoundForcastItem(@NonNull String searchKey) {
+        List<ForecastPartModel> foundEntries = new ArrayList<>();
+
+        for (int index = 0; index < _forecastWeather.GetList().size(); index++) {
+            ForecastPartModel entry = _forecastWeather.GetList().get(index);
+
+            if (entry.GetCondition().toString().contains(searchKey)
+                    || entry.GetDate().contains(searchKey)
+                    || entry.GetTime().contains(searchKey)
+                    || entry.GetDescription().contains(searchKey)
+                    || entry.GetTemperatureString().contains(searchKey)
+                    || entry.GetHumidityString().contains(searchKey)
+                    || entry.GetPressureString().contains(searchKey)) {
+                foundEntries.add(entry);
+            }
+        }
+
+        return foundEntries;
     }
 
     public void LoadCurrentWeather() {

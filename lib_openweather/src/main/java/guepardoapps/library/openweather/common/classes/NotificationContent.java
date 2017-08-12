@@ -2,9 +2,10 @@ package guepardoapps.library.openweather.common.classes;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.Locale;
 
-public class NotificationContent {
+public class NotificationContent implements Serializable {
 
     private static final String TAG = NotificationContent.class.getSimpleName();
 

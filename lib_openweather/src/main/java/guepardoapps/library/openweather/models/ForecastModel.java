@@ -7,11 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import guepardoapps.library.openweather.common.utils.Logger;
+import guepardoapps.library.openweather.converter.NotificationContentConverter;
 
 public class ForecastModel implements Serializable {
 
     private static final String TAG = ForecastModel.class.getSimpleName();
     private Logger _logger;
+
+    private NotificationContentConverter _notificationContentConverter;
 
     private String _city;
     private String _country;
@@ -22,6 +25,8 @@ public class ForecastModel implements Serializable {
             @NonNull String country,
             @NonNull List<ForecastPartModel> list) {
         _logger = new Logger(TAG);
+
+        _notificationContentConverter = new NotificationContentConverter();
 
         _city = city;
         _country = country;
@@ -38,6 +43,10 @@ public class ForecastModel implements Serializable {
 
     public List<ForecastPartModel> GetList() {
         return _list;
+    }
+
+    public int GetWallpaper() {
+        return _notificationContentConverter.MostNextWeatherCondition(_list).GetWallpaper();
     }
 
     @Override

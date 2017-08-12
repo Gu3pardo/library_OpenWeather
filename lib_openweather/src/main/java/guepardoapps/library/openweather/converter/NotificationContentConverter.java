@@ -2,6 +2,7 @@ package guepardoapps.library.openweather.converter;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -15,7 +16,7 @@ import guepardoapps.library.openweather.enums.ForecastDayTime;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 
-public class NotificationContentConverter {
+public class NotificationContentConverter implements Serializable {
     private final static String TAG = NotificationContentConverter.class.getSimpleName();
     private Logger _logger;
 
@@ -133,7 +134,45 @@ public class NotificationContentConverter {
         return new NotificationContent("Error", "TellForecastWeather failed!", R.drawable.weather_dummy, R.drawable.wallpaper_dummy);
     }
 
+    public WeatherCondition MostNextWeatherCondition(@NonNull List<ForecastPartModel> weatherList) {
+        return getMostWeatherCondition(weatherList);
+    }
+
     private NotificationContent createNotificationContent(@NonNull List<ForecastPartModel> weatherList, boolean today, boolean isWeekend) {
+        WeatherCondition weatherCondition = getMostWeatherCondition(weatherList);
+
+        String notificationForecast;
+        double notificationForecastMaxTemp = -273.15;
+
+        if (!today) {
+            weatherCondition.ChangeTipsToTomorrow();
+        }
+        if (isWeekend) {
+            notificationForecast = weatherCondition.GetWeekendTip();
+        } else {
+            Calendar now = Calendar.getInstance();
+            if (now.get(Calendar.HOUR_OF_DAY) > OWDefinitions.AFTERWORK_HOUR
+                    && now.get(Calendar.HOUR_OF_DAY) < OWDefinitions.EVENING_HOUR) {
+                notificationForecast = weatherCondition.GetWorkdayAfterWorkTip();
+            } else {
+                notificationForecast = weatherCondition.GetWorkdayTip();
+            }
+        }
+
+        for (ForecastPartModel model : weatherList) {
+            if (model.GetTempMax() > notificationForecastMaxTemp) {
+                notificationForecastMaxTemp = model.GetTempMax();
+            }
+        }
+
+        return new NotificationContent(
+                "Hey you!",
+                String.format(Locale.getDefault(), "%s\nIt's getting up to %.1f °C", notificationForecast, notificationForecastMaxTemp),
+                weatherCondition.GetIcon(),
+                weatherCondition.GetWallpaper());
+    }
+
+    private WeatherCondition getMostWeatherCondition(@NonNull List<ForecastPartModel> weatherList) {
         List<WeatherCondition> conditionCount = new ArrayList<>();
         WeatherCondition clear = WeatherCondition.CLEAR;
         WeatherCondition cloud = WeatherCondition.CLOUD;
@@ -146,12 +185,6 @@ public class NotificationContentConverter {
         WeatherCondition snow = WeatherCondition.SNOW;
         WeatherCondition sun = WeatherCondition.SUN;
         WeatherCondition thunderstorm = WeatherCondition.THUNDERSTORM;
-
-        String notificationForecast = "";
-        int notificationForecastCount = 0;
-        double notificationForecastMaxTemp = -273.15;
-        int notificationIcon = R.drawable.weather_dummy;
-        int notificationBigIcon = R.drawable.wallpaper_dummy;
 
         for (ForecastPartModel entry : weatherList) {
             if (entry.GetCondition() == WeatherCondition.CLEAR) {
@@ -191,40 +224,16 @@ public class NotificationContentConverter {
         conditionCount.add(sun);
         conditionCount.add(thunderstorm);
 
-        for (WeatherCondition model : conditionCount) {
-            if (model.GetCount() > notificationForecastCount) {
-                if (!today) {
-                    model.ChangeTipsToTomorrow();
-                }
+        int mostCount = 0;
+        WeatherCondition mostWeatherCondition = null;
 
-                if (isWeekend) {
-                    notificationForecast = model.GetWeekendTip();
-                } else {
-                    Calendar now = Calendar.getInstance();
-                    if (now.get(Calendar.HOUR_OF_DAY) > OWDefinitions.AFTERWORK_HOUR
-                            && now.get(Calendar.HOUR_OF_DAY) < OWDefinitions.EVENING_HOUR) {
-                        notificationForecast = model.GetWorkdayAfterWorkTip();
-                    } else {
-                        notificationForecast = model.GetWorkdayTip();
-                    }
-                }
-
-                notificationForecastCount = model.GetCount();
-                notificationIcon = model.GetIcon();
-                notificationBigIcon = model.GetWallpaper();
+        for (WeatherCondition weatherCondition : conditionCount) {
+            if (weatherCondition.GetCount() > mostCount) {
+                mostCount = weatherCondition.GetCount();
+                mostWeatherCondition = weatherCondition;
             }
         }
 
-        for (ForecastPartModel model : weatherList) {
-            if (model.GetTempMax() > notificationForecastMaxTemp) {
-                notificationForecastMaxTemp = model.GetTempMax();
-            }
-        }
-
-        return new NotificationContent(
-                "Hey you!",
-                String.format(Locale.getDefault(), "%s\nIt's getting up to %.1f °C", notificationForecast, notificationForecastMaxTemp),
-                notificationIcon,
-                notificationBigIcon);
+        return mostWeatherCondition;
     }
 }

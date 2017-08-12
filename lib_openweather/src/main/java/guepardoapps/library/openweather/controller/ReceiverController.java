@@ -37,13 +37,13 @@ public class ReceiverController implements Serializable {
             downloadStateFilter.addAction(action);
         }
 
-        UnregisterReceiver(receiver);
+        unregisterReceiver(receiver);
 
         _context.registerReceiver(receiver, downloadStateFilter);
         _registeredReceiver.add(receiver);
     }
 
-    public void UnregisterReceiver(@NonNull BroadcastReceiver receiver) {
+    private void unregisterReceiver(@NonNull BroadcastReceiver receiver) {
         _logger.Debug("Trying to unregister receiver " + receiver.toString());
 
         for (int index = 0; index < _registeredReceiver.size(); index++) {

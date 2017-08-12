@@ -74,7 +74,7 @@ public class OpenWeatherDownloader {
     }
 
     private class CallWeatherTask extends AsyncTask<String, Void, String> {
-        public WeatherDownloadType CurrentWeatherDownloadType;
+        WeatherDownloadType CurrentWeatherDownloadType;
 
         @Override
         protected String doInBackground(String... actions) {
