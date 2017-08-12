@@ -15,17 +15,13 @@ import java.util.Locale;
 public class Tools {
     private static final String TAG = Tools.class.getSimpleName();
 
-    public Tools() {
-    }
-
-    public Bitmap GetCircleBitmap(@NonNull Bitmap bitmap) {
-        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+    public static Bitmap GetCircleBitmap(@NonNull Bitmap bitmap) {
+        final Bitmap output = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
 
         final int color = Color.BLACK;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final Rect rect = new Rect(0, 0, bitmap.getHeight(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);
 
         paint.setAntiAlias(true);

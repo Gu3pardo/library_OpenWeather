@@ -79,7 +79,7 @@ public class ForecastListAdapter extends BaseAdapter {
             holder._description.setText(entry.GetDescription());
 
             holder._temperature = rowView.findViewById(R.id.weatherTemperatureTextView);
-            holder._temperature.setText(entry.GetTempMin() + "-" + entry.GetTempMax());
+            holder._temperature.setText("Temperature: " + entry.GetTempMin() + "°C - " + entry.GetTempMax() + "°C");
 
             holder._humidity = rowView.findViewById(R.id.weatherHumidityTextView);
             holder._humidity.setText(String.format(Locale.getDefault(), "Humidity: %s", entry.GetHumidity()));

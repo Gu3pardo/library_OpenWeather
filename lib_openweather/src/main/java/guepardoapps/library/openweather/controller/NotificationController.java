@@ -16,12 +16,10 @@ public class NotificationController {
     private static final String TAG = NotificationController.class.getSimpleName();
 
     private Context _context;
-    private Tools _tools;
     private NotificationManager _notificationManager;
 
     public NotificationController(@NonNull Context context) {
         _context = context;
-        _tools = new Tools();
         _notificationManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
@@ -30,7 +28,7 @@ public class NotificationController {
             Class<?> receiverActivity,
             @NonNull NotificationContent notificationContent) {
         Bitmap bitmap = BitmapFactory.decodeResource(_context.getResources(), notificationContent.GetBigIcon());
-        bitmap = _tools.GetCircleBitmap(bitmap);
+        bitmap = Tools.GetCircleBitmap(bitmap);
 
         Notification.Builder builder = new Notification.Builder(_context);
         builder

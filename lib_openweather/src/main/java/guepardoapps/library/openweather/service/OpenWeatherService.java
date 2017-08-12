@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -115,7 +116,7 @@ public class OpenWeatherService {
             if (_displayCurrentWeatherNotification) {
                 NotificationContent notificationContent = new NotificationContent(
                         _currentWeather.GetCondition().GetDescription(),
-                        _currentWeather.GetCondition().GetWorkdayTip(),
+                        String.format(Locale.getDefault(), "%.2f °C | %.2f %% | %.2f hPa", _currentWeather.GetTemperature(), _currentWeather.GetHumidity(), _currentWeather.GetPressure()),
                         _currentWeather.GetCondition().GetIcon(),
                         _currentWeather.GetCondition().GetWallpaper());
                 _notificationController.CreateNotification(
@@ -295,14 +296,31 @@ public class OpenWeatherService {
         for (int index = 0; index < _forecastWeather.GetList().size(); index++) {
             ForecastPartModel entry = _forecastWeather.GetList().get(index);
 
-            if (entry.GetCondition().toString().contains(searchKey)
-                    || entry.GetDate().contains(searchKey)
-                    || entry.GetTime().contains(searchKey)
-                    || entry.GetDescription().contains(searchKey)
-                    || entry.GetTemperatureString().contains(searchKey)
-                    || entry.GetHumidityString().contains(searchKey)
-                    || entry.GetPressureString().contains(searchKey)) {
-                foundEntries.add(entry);
+            if (searchKey.contentEquals("Today") || searchKey.contentEquals("Heute")) {
+                Calendar today = Calendar.getInstance();
+                int dayOfMonth = today.get(Calendar.DAY_OF_MONTH);
+                if (entry.GetDate().endsWith(String.valueOf(dayOfMonth))) {
+                    foundEntries.add(entry);
+                }
+
+            } else if (searchKey.contentEquals("Tomorrow") || searchKey.contains("Morgen")) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH) + 1);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                if (entry.GetDate().endsWith(String.valueOf(dayOfMonth))) {
+                    foundEntries.add(entry);
+                }
+
+            } else {
+                if (entry.GetCondition().toString().contains(searchKey)
+                        || entry.GetDate().contains(searchKey)
+                        || entry.GetTime().contains(searchKey)
+                        || entry.GetDescription().contains(searchKey)
+                        || entry.GetTemperatureString().contains(searchKey)
+                        || entry.GetHumidityString().contains(searchKey)
+                        || entry.GetPressureString().contains(searchKey)) {
+                    foundEntries.add(entry);
+                }
             }
         }
 

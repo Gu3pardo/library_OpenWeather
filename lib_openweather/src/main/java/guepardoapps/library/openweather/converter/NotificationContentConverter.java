@@ -73,7 +73,7 @@ public class NotificationContentConverter implements Serializable {
                 "Error",
                 "GetTodayWeather failed!",
                 R.drawable.weather_dummy,
-                R.drawable.wallpaper_dummy);
+                R.drawable.weather_wallpaper_dummy);
     }
 
     public NotificationContent TellForecastWeather(@NonNull List<ForecastPartModel> weatherList) {
@@ -131,7 +131,7 @@ public class NotificationContentConverter implements Serializable {
             return createNotificationContent(tomorrowWeather, false, isWeekend);
         }
 
-        return new NotificationContent("Error", "TellForecastWeather failed!", R.drawable.weather_dummy, R.drawable.wallpaper_dummy);
+        return new NotificationContent("Error", "TellForecastWeather failed!", R.drawable.weather_dummy, R.drawable.weather_wallpaper_dummy);
     }
 
     public WeatherCondition MostNextWeatherCondition(@NonNull List<ForecastPartModel> weatherList) {

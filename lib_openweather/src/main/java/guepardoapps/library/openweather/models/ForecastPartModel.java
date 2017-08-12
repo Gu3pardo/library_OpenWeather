@@ -96,7 +96,7 @@ public class ForecastPartModel implements Serializable {
     }
 
     public String GetHumidityString() {
-        return String.format(Locale.getDefault(), "%.2f%", _humidity);
+        return String.format(Locale.getDefault(), "%.2f%%", _humidity);
     }
 
     public double GetPressure() {
@@ -104,7 +104,7 @@ public class ForecastPartModel implements Serializable {
     }
 
     public String GetPressureString() {
-        return String.format(Locale.getDefault(), "%.2f%", _pressure);
+        return String.format(Locale.getDefault(), "%.2f%%", _pressure);
     }
 
     public String GetDate() {
