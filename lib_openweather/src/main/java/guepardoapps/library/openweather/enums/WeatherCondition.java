@@ -9,7 +9,7 @@ import guepardoapps.library.openweather.R;
 public enum WeatherCondition implements Serializable {
 
     NULL(0, "null", R.drawable.weather_wallpaper_dummy, R.drawable.weather_dummy, "", "", "", 0),
-    CLEAR(1, "clear", R.drawable.weather_wallpaper_sun, R.drawable.weather_clear,
+    CLEAR(1, "clear", R.drawable.weather_wallpaper_clear, R.drawable.weather_clear,
             "Go to the park or river and enjoy the clear weather today!",
             "Today will be clear! Get out for lunch!",
             "Enjoy your day after work! Today will be clear!",
