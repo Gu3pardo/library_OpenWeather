@@ -1,10 +1,13 @@
 package guepardoapps.library.openweather.service;
 
+import android.app.WallpaperManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,6 +66,8 @@ public class OpenWeatherService {
     private static final String TAG = OpenWeatherService.class.getSimpleName();
     private Logger _logger;
 
+    private Context _context;
+
     private OpenWeatherDownloader _openWeatherDownloader;
 
     private JsonToWeatherConverter _jsonToWeatherConverter;
@@ -80,6 +85,20 @@ public class OpenWeatherService {
     private boolean _displayForecastWeatherNotification;
     private Class<?> _currentWeatherReceiverActivity;
     private Class<?> _forecastWeatherReceiverActivity;
+
+    private static final int TIMEOUT_MS = 5 * 60 * 1000;
+    private Handler _reloadHandler = new Handler();
+    private Runnable _reloadRunnable = new Runnable() {
+        @Override
+        public void run() {
+            _logger.Debug("_reloadListRunnable run");
+            LoadCurrentWeather();
+            LoadForecastWeather();
+            _reloadHandler.postDelayed(_reloadRunnable, TIMEOUT_MS);
+        }
+    };
+
+    private boolean _changeWallpaper;
 
     private BroadcastReceiver _currentWeatherDownloadFinishedReceiver = new BroadcastReceiver() {
         @Override
@@ -114,15 +133,11 @@ public class OpenWeatherService {
                     new CurrentWeatherDownloadFinishedContent(_currentWeather, true, result));
 
             if (_displayCurrentWeatherNotification) {
-                NotificationContent notificationContent = new NotificationContent(
-                        _currentWeather.GetCondition().GetDescription(),
-                        String.format(Locale.getDefault(), "%.2f °C | %.2f %% | %.2f hPa", _currentWeather.GetTemperature(), _currentWeather.GetHumidity(), _currentWeather.GetPressure()),
-                        _currentWeather.GetCondition().GetIcon(),
-                        _currentWeather.GetCondition().GetWallpaper());
-                _notificationController.CreateNotification(
-                        OWIds.CURRENT_NOTIFICATION_ID,
-                        _currentWeatherReceiverActivity,
-                        notificationContent);
+                displayCurrentWeatherNotification();
+            }
+
+            if (_changeWallpaper) {
+                changeWallpaper();
             }
         }
     };
@@ -160,11 +175,7 @@ public class OpenWeatherService {
                     new ForecastWeatherDownloadFinishedContent(_forecastWeather, true, result));
 
             if (_displayForecastWeatherNotification) {
-                NotificationContent notificationContent = _notificationContentConverter.TellForecastWeather(_forecastWeather.GetList());
-                _notificationController.CreateNotification(
-                        OWIds.FORECAST_NOTIFICATION_ID,
-                        _forecastWeatherReceiverActivity,
-                        notificationContent);
+                displayForecastWeatherNotification();
             }
         }
     };
@@ -184,7 +195,8 @@ public class OpenWeatherService {
             boolean displayCurrentWeatherNotification,
             boolean displayForecastWeatherNotification,
             Class<?> currentWeatherReceiverActivity,
-            Class<?> forecastWeatherReceiverActivity) {
+            Class<?> forecastWeatherReceiverActivity,
+            boolean changeWallpaper) {
         _logger.Debug("initialize");
 
         if (_isInitialized) {
@@ -198,14 +210,20 @@ public class OpenWeatherService {
         _currentWeatherReceiverActivity = currentWeatherReceiverActivity;
         _forecastWeatherReceiverActivity = forecastWeatherReceiverActivity;
 
-        _openWeatherDownloader = new OpenWeatherDownloader(context, _city);
+        _changeWallpaper = changeWallpaper;
+
+        _context = context;
+
+        _reloadHandler.postDelayed(_reloadRunnable, TIMEOUT_MS);
+
+        _openWeatherDownloader = new OpenWeatherDownloader(_context, _city);
 
         _jsonToWeatherConverter = new JsonToWeatherConverter();
         _notificationContentConverter = new NotificationContentConverter();
 
-        _broadcastController = new BroadcastController(context);
-        _notificationController = new NotificationController(context);
-        _receiverController = new ReceiverController(context);
+        _broadcastController = new BroadcastController(_context);
+        _notificationController = new NotificationController(_context);
+        _receiverController = new ReceiverController(_context);
 
         _receiverController.RegisterReceiver(_currentWeatherDownloadFinishedReceiver, new String[]{OWBroadcasts.WEATHER_DOWNLOAD_FINISHED});
         _receiverController.RegisterReceiver(_forecastWeatherDownloadFinishedReceiver, new String[]{OWBroadcasts.WEATHER_DOWNLOAD_FINISHED});
@@ -217,19 +235,21 @@ public class OpenWeatherService {
             @NonNull Context context,
             @NonNull String city,
             boolean displayCurrentWeatherNotification,
-            boolean displayForecastWeatherNotification) {
-        Initialize(context, city, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null);
+            boolean displayForecastWeatherNotification,
+            boolean changeWallpaper) {
+        Initialize(context, city, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null, changeWallpaper);
     }
 
     public void Initialize(
             @NonNull Context context,
             @NonNull String city) {
-        Initialize(context, city, true, true);
+        Initialize(context, city, false, false, false);
     }
 
     public void Dispose() {
         _logger.Debug("Dispose");
         _receiverController.Dispose();
+        _reloadHandler.removeCallbacks(_reloadRunnable);
         _isInitialized = false;
     }
 
@@ -252,6 +272,8 @@ public class OpenWeatherService {
         _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
         if (!_displayCurrentWeatherNotification) {
             _notificationController.CloseNotification(OWIds.CURRENT_NOTIFICATION_ID);
+        } else {
+            displayCurrentWeatherNotification();
         }
     }
 
@@ -263,6 +285,8 @@ public class OpenWeatherService {
         _displayForecastWeatherNotification = displayForecastWeatherNotification;
         if (!_displayForecastWeatherNotification) {
             _notificationController.CloseNotification(OWIds.FORECAST_NOTIFICATION_ID);
+        } else {
+            displayForecastWeatherNotification();
         }
     }
 
@@ -282,6 +306,17 @@ public class OpenWeatherService {
         _forecastWeatherReceiverActivity = forecastWeatherReceiverActivity;
     }
 
+    public boolean GetChangeWallpaper() {
+        return _changeWallpaper;
+    }
+
+    public void SetChangeWallpaper(boolean changeWallpaper) {
+        _changeWallpaper = changeWallpaper;
+        if (_changeWallpaper) {
+            changeWallpaper();
+        }
+    }
+
     public WeatherModel CurrentWeather() {
         return _currentWeather;
     }
@@ -290,7 +325,7 @@ public class OpenWeatherService {
         return _forecastWeather;
     }
 
-    public List<ForecastPartModel> FoundForcastItem(@NonNull String searchKey) {
+    public ForecastModel FoundForecastItem(@NonNull String searchKey) {
         List<ForecastPartModel> foundEntries = new ArrayList<>();
 
         for (int index = 0; index < _forecastWeather.GetList().size(); index++) {
@@ -324,7 +359,7 @@ public class OpenWeatherService {
             }
         }
 
-        return foundEntries;
+        return new ForecastModel(_forecastWeather.GetCity(), _forecastWeather.GetCountry(), foundEntries);
     }
 
     public void LoadCurrentWeather() {
@@ -349,6 +384,53 @@ public class OpenWeatherService {
         }
 
         _openWeatherDownloader.DownloadForecastWeatherJson();
+    }
+
+    private void displayCurrentWeatherNotification() {
+        if (_currentWeather == null) {
+            _logger.Warning("_currentWeather is null!");
+            return;
+        }
+
+        NotificationContent notificationContent = new NotificationContent(
+                _currentWeather.GetCondition().GetDescription(),
+                String.format(Locale.getDefault(), "%.2f °C | %.2f %% | %.2f hPa", _currentWeather.GetTemperature(), _currentWeather.GetHumidity(), _currentWeather.GetPressure()),
+                _currentWeather.GetCondition().GetIcon(),
+                _currentWeather.GetCondition().GetWallpaper());
+
+        _notificationController.CreateNotification(
+                OWIds.CURRENT_NOTIFICATION_ID,
+                _currentWeatherReceiverActivity,
+                notificationContent);
+    }
+
+    private void displayForecastWeatherNotification() {
+        if (_forecastWeather == null) {
+            _logger.Warning("_forecastWeather is null!");
+            return;
+        }
+
+        NotificationContent notificationContent = _notificationContentConverter.TellForecastWeather(_forecastWeather.GetList());
+
+        _notificationController.CreateNotification(
+                OWIds.FORECAST_NOTIFICATION_ID,
+                _forecastWeatherReceiverActivity,
+                notificationContent);
+    }
+
+    private void changeWallpaper() {
+        if (_currentWeather == null) {
+            _logger.Warning("_currentWeather is null!");
+            return;
+        }
+
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(_context.getApplicationContext());
+
+        try {
+            wallpaperManager.setResource(_currentWeather.GetCondition().GetWallpaper());
+        } catch (IOException exception) {
+            _logger.Error(exception.getMessage());
+        }
     }
 
     private void sendFailedCurrentWeatherBroadcast(@NonNull String response) {

@@ -24,7 +24,6 @@ public class NotificationContentConverter implements Serializable {
         _logger = new Logger(TAG);
     }
 
-
     public NotificationContent GetNextWeather(@NonNull List<ForecastPartModel> weatherList) {
         List<ForecastPartModel> nextWeather = new ArrayList<>();
 
