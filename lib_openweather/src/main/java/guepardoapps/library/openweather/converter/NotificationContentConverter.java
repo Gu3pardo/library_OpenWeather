@@ -165,8 +165,8 @@ public class NotificationContentConverter implements Serializable {
         }
 
         return new NotificationContent(
-                "Hey you!",
-                String.format(Locale.getDefault(), "%s\nIt's getting up to %.1f °C", notificationForecast, notificationForecastMaxTemp),
+                String.format(Locale.getDefault(), "It's getting up to %.1f °C", notificationForecastMaxTemp),
+                notificationForecast,
                 weatherCondition.GetIcon(),
                 weatherCondition.GetWallpaper());
     }

@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather)
-[![Version](https://img.shields.io/badge/version-v0.10.0.170818-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
+[![Version](https://img.shields.io/badge/version-v0.11.0.170819-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
 
 library for downloading and handling data from openweather
 used in https://github.com/GuepardoApps/LucaHome-AndroidApplication
@@ -74,10 +74,10 @@ public class MainActivity extends Activity {
 		
 		// initialize the service with the current context and a city
 		_openWeatherService.Initialize(this, "Munich, DE");
-		// or initialize the service with the current context, a city and the enable/disable for notifications
-		_openWeatherService.Initialize(this, "Munich, DE", true);
+		// or initialize the service with the current context, a city and the enable/disable for notifications, changing the launcher wallpaper and enable for automatic data reload and timeout (in ms)
+		_openWeatherService.Initialize(this, "Munich, DE", true, true, true, true, 5 * 60 * 1000);
 		// or initialize the service with the current context, a city, the enable/disable for notifications and activities which will be started after clicking on the notifications
-		_openWeatherService.Initialize(this, "Munich, DE", true, YourCurrentWeatherActiviy.class, MyForecastActiviy.class);
+		_openWeatherService.Initialize(this, "Munich, DE", true, true, YourCurrentWeatherActiviy.class, MyForecastActiviy.class, true, true, 5 * 60 * 1000);
 		
 		_receiverController = new ReceiverController(this);
 		

@@ -86,7 +86,12 @@ public class OpenWeatherService {
     private Class<?> _currentWeatherReceiverActivity;
     private Class<?> _forecastWeatherReceiverActivity;
 
-    private static final int TIMEOUT_MS = 5 * 60 * 1000;
+    private static final int MIN_TIMEOUT_MS = 5 * 60 * 1000;
+    private static final int MAX_TIMEOUT_MS = 24 * 60 * 60 * 1000;
+    private static final int TIMEOUT_MS = 15 * 60 * 1000;
+
+    private boolean _reloadEnabled;
+    private int _reloadTimeout;
     private Handler _reloadHandler = new Handler();
     private Runnable _reloadRunnable = new Runnable() {
         @Override
@@ -94,7 +99,9 @@ public class OpenWeatherService {
             _logger.Debug("_reloadListRunnable run");
             LoadCurrentWeather();
             LoadForecastWeather();
-            _reloadHandler.postDelayed(_reloadRunnable, TIMEOUT_MS);
+            if (_reloadEnabled) {
+                _reloadHandler.postDelayed(_reloadRunnable, _reloadTimeout);
+            }
         }
     };
 
@@ -196,7 +203,9 @@ public class OpenWeatherService {
             boolean displayForecastWeatherNotification,
             Class<?> currentWeatherReceiverActivity,
             Class<?> forecastWeatherReceiverActivity,
-            boolean changeWallpaper) {
+            boolean changeWallpaper,
+            boolean reloadEnabled,
+            int reloadTimeout) {
         _logger.Debug("initialize");
 
         if (_isInitialized) {
@@ -211,10 +220,9 @@ public class OpenWeatherService {
         _forecastWeatherReceiverActivity = forecastWeatherReceiverActivity;
 
         _changeWallpaper = changeWallpaper;
+        _reloadEnabled = reloadEnabled;
 
         _context = context;
-
-        _reloadHandler.postDelayed(_reloadRunnable, TIMEOUT_MS);
 
         _openWeatherDownloader = new OpenWeatherDownloader(_context, _city);
 
@@ -228,6 +236,8 @@ public class OpenWeatherService {
         _receiverController.RegisterReceiver(_currentWeatherDownloadFinishedReceiver, new String[]{OWBroadcasts.WEATHER_DOWNLOAD_FINISHED});
         _receiverController.RegisterReceiver(_forecastWeatherDownloadFinishedReceiver, new String[]{OWBroadcasts.WEATHER_DOWNLOAD_FINISHED});
 
+        SetReloadTimeout(reloadTimeout);
+
         _isInitialized = true;
     }
 
@@ -236,14 +246,16 @@ public class OpenWeatherService {
             @NonNull String city,
             boolean displayCurrentWeatherNotification,
             boolean displayForecastWeatherNotification,
-            boolean changeWallpaper) {
-        Initialize(context, city, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null, changeWallpaper);
+            boolean changeWallpaper,
+            boolean reloadEnabled,
+            int reloadTimeout) {
+        Initialize(context, city, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null, changeWallpaper, reloadEnabled, reloadTimeout);
     }
 
     public void Initialize(
             @NonNull Context context,
             @NonNull String city) {
-        Initialize(context, city, false, false, false);
+        Initialize(context, city, false, false, false, false, TIMEOUT_MS);
     }
 
     public void Dispose() {
@@ -314,6 +326,39 @@ public class OpenWeatherService {
         _changeWallpaper = changeWallpaper;
         if (_changeWallpaper) {
             changeWallpaper();
+        }
+    }
+
+    public boolean GetReloadEnabled() {
+        return _reloadEnabled;
+    }
+
+    public void SetReloadEnabled(boolean reloadEnabled) {
+        _reloadEnabled = reloadEnabled;
+        if (_reloadEnabled) {
+            _reloadHandler.removeCallbacks(_reloadRunnable);
+            _reloadHandler.postDelayed(_reloadRunnable, _reloadTimeout);
+        }
+    }
+
+    public int GetReloadTimeout() {
+        return _reloadTimeout;
+    }
+
+    public void SetReloadTimeout(int reloadTimeout) {
+        if (reloadTimeout < MIN_TIMEOUT_MS) {
+            _logger.Warning(String.format(Locale.getDefault(), "reloadTimeout %d is lower then MIN_TIMEOUT_MS %d! Setting to MIN_TIMEOUT_MS!", reloadTimeout, MIN_TIMEOUT_MS));
+            reloadTimeout = MIN_TIMEOUT_MS;
+        }
+        if (reloadTimeout > MAX_TIMEOUT_MS) {
+            _logger.Warning(String.format(Locale.getDefault(), "reloadTimeout %d is higher then MAX_TIMEOUT_MS %d! Setting to MAX_TIMEOUT_MS!", reloadTimeout, MAX_TIMEOUT_MS));
+            reloadTimeout = MAX_TIMEOUT_MS;
+        }
+
+        _reloadTimeout = reloadTimeout;
+        if (_reloadEnabled) {
+            _reloadHandler.removeCallbacks(_reloadRunnable);
+            _reloadHandler.postDelayed(_reloadRunnable, _reloadTimeout);
         }
     }
 
@@ -394,7 +439,7 @@ public class OpenWeatherService {
 
         NotificationContent notificationContent = new NotificationContent(
                 _currentWeather.GetCondition().GetDescription(),
-                String.format(Locale.getDefault(), "%.2f °C | %.2f %% | %.2f hPa", _currentWeather.GetTemperature(), _currentWeather.GetHumidity(), _currentWeather.GetPressure()),
+                String.format(Locale.getDefault(), "%.1f °C | %.2f %% | %.2f mBar", _currentWeather.GetTemperature(), _currentWeather.GetHumidity(), _currentWeather.GetPressure()),
                 _currentWeather.GetCondition().GetIcon(),
                 _currentWeather.GetCondition().GetWallpaper());
 
