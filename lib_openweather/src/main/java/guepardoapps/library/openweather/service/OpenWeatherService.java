@@ -20,6 +20,7 @@ import guepardoapps.library.openweather.common.OWIds;
 import guepardoapps.library.openweather.common.classes.NotificationContent;
 import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.controller.BroadcastController;
+import guepardoapps.library.openweather.controller.NetworkController;
 import guepardoapps.library.openweather.controller.NotificationController;
 import guepardoapps.library.openweather.controller.ReceiverController;
 import guepardoapps.library.openweather.converter.JsonToWeatherConverter;
@@ -74,6 +75,7 @@ public class OpenWeatherService {
     private NotificationContentConverter _notificationContentConverter;
 
     private BroadcastController _broadcastController;
+    private NetworkController _networkController;
     private NotificationController _notificationController;
     private ReceiverController _receiverController;
 
@@ -99,7 +101,7 @@ public class OpenWeatherService {
             _logger.Debug("_reloadListRunnable run");
             LoadCurrentWeather();
             LoadForecastWeather();
-            if (_reloadEnabled) {
+            if (_reloadEnabled && _networkController.IsNetworkAvailable()) {
                 _reloadHandler.postDelayed(_reloadRunnable, _reloadTimeout);
             }
         }
@@ -230,6 +232,7 @@ public class OpenWeatherService {
         _notificationContentConverter = new NotificationContentConverter();
 
         _broadcastController = new BroadcastController(_context);
+        _networkController = new NetworkController(_context);
         _notificationController = new NotificationController(_context);
         _receiverController = new ReceiverController(_context);
 
@@ -335,7 +338,7 @@ public class OpenWeatherService {
 
     public void SetReloadEnabled(boolean reloadEnabled) {
         _reloadEnabled = reloadEnabled;
-        if (_reloadEnabled) {
+        if (_reloadEnabled && _networkController.IsNetworkAvailable()) {
             _reloadHandler.removeCallbacks(_reloadRunnable);
             _reloadHandler.postDelayed(_reloadRunnable, _reloadTimeout);
         }
