@@ -19,7 +19,7 @@ used in https://github.com/GuepardoApps/LucaHome-AndroidApplication
 
 # Integration
 
-First you have to register an account at http://www.openweathermap.org/
+First you have to register an account at [OpenWeatherMap.org](http://www.openweathermap.org/) and get an API key.
 
 Then enter your key in following class:
 
