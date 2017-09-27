@@ -79,13 +79,13 @@ public class ForecastListAdapter extends BaseAdapter {
             holder._description.setText(entry.GetDescription());
 
             holder._temperature = rowView.findViewById(R.id.weatherTemperatureTextView);
-            holder._temperature.setText("Temperature: " + entry.GetTempMin() + "°C - " + entry.GetTempMax() + "°C");
+            holder._temperature.setText(String.format(Locale.getDefault(), "Temperature: %.2f Â°C - %.2f Â°C", entry.GetTempMin(), entry.GetTempMax()));
 
             holder._humidity = rowView.findViewById(R.id.weatherHumidityTextView);
-            holder._humidity.setText(String.format(Locale.getDefault(), "Humidity: %s", entry.GetHumidity()));
+            holder._humidity.setText(String.format(Locale.getDefault(), "Humidity: %s %%", entry.GetHumidity()));
 
             holder._pressure = rowView.findViewById(R.id.weatherPressureTextView);
-            holder._pressure.setText(String.format(Locale.getDefault(), "Pressure: %s", entry.GetPressure()));
+            holder._pressure.setText(String.format(Locale.getDefault(), "Pressure: %s mBar", entry.GetPressure()));
 
             holder._time = rowView.findViewById(R.id.weatherTimeTextView);
             holder._time.setText(entry.GetTime());
