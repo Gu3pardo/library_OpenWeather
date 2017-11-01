@@ -12,7 +12,6 @@ import java.util.List;
 import guepardoapps.library.openweather.common.utils.Logger;
 
 public class ReceiverController implements Serializable {
-
     private static final long serialVersionUID = 2288241732336744506L;
 
     private static String TAG = ReceiverController.class.getSimpleName();

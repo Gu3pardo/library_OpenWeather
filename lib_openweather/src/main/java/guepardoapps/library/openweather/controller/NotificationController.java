@@ -13,8 +13,6 @@ import guepardoapps.library.openweather.common.classes.NotificationContent;
 import guepardoapps.library.openweather.common.utils.Tools;
 
 public class NotificationController {
-    private static final String TAG = NotificationController.class.getSimpleName();
-
     private Context _context;
     private NotificationManager _notificationManager;
 

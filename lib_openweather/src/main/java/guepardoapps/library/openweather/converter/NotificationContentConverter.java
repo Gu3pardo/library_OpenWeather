@@ -55,15 +55,15 @@ public class NotificationContentConverter implements Serializable {
         }
 
         if (todayWeather.size() > 0) {
-            String weatherDescriptionToday = "";
+            StringBuilder weatherDescriptionToday = new StringBuilder();
 
             for (ForecastPartModel entry : todayWeather) {
-                weatherDescriptionToday += entry.GetDescription() + ";";
+                weatherDescriptionToday.append(entry.GetDescription()).append(";");
             }
 
             return new NotificationContent(
                     "Weather today",
-                    weatherDescriptionToday,
+                    weatherDescriptionToday.toString(),
                     todayWeather.get(0).GetCondition().GetIcon(),
                     todayWeather.get(0).GetCondition().GetWallpaper());
         }

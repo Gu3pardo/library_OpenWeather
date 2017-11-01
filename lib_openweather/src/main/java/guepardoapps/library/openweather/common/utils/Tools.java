@@ -10,11 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 
-import java.util.Locale;
-
 public class Tools {
-    private static final String TAG = Tools.class.getSimpleName();
-
     public static Bitmap GetCircleBitmap(@NonNull Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);

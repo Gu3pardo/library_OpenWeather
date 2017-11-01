@@ -9,7 +9,6 @@ import java.util.Locale;
 import guepardoapps.library.openweather.common.utils.Logger;
 
 public class SerializableTime implements Serializable {
-
     private static final String TAG = SerializableTime.class.getSimpleName();
     private Logger _logger;
 
@@ -109,9 +108,7 @@ public class SerializableTime implements Serializable {
         int secondTo = _second * 1000;
         int milliSecondTo = _millisecond;
 
-        int calculatedMillisecond = hourTo + minuteTo + secondTo + milliSecondTo;
-
-        return calculatedMillisecond;
+        return hourTo + minuteTo + secondTo + milliSecondTo;
     }
 
     public String HH() {
@@ -143,31 +140,19 @@ public class SerializableTime implements Serializable {
     }
 
     public boolean isAfter(@NonNull SerializableTime compareTime) {
-        if (compareTime.toMilliSecond() > toMilliSecond()) {
-            return true;
-        }
-        return false;
+        return compareTime.toMilliSecond() > toMilliSecond();
     }
 
     public boolean isBefore(@NonNull SerializableTime compareTime) {
-        if (compareTime.toMilliSecond() < toMilliSecond()) {
-            return true;
-        }
-        return false;
+        return compareTime.toMilliSecond() < toMilliSecond();
     }
 
     public boolean isAfterNow() {
-        if (toMilliSecond() > calculateMillisOfDay()) {
-            return true;
-        }
-        return false;
+        return toMilliSecond() > calculateMillisOfDay();
     }
 
     public boolean isBeforeNow() {
-        if (toMilliSecond() < calculateMillisOfDay()) {
-            return true;
-        }
-        return false;
+        return toMilliSecond() < calculateMillisOfDay();
     }
 
     @Override

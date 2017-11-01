@@ -5,14 +5,9 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 
 import guepardoapps.library.openweather.common.classes.SerializableTime;
-import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 
 public class WeatherModel implements Serializable {
-
-    private static final String TAG = WeatherModel.class.getSimpleName();
-    private Logger _logger;
-
     private String _city;
     private String _country;
 
@@ -40,8 +35,6 @@ public class WeatherModel implements Serializable {
             @NonNull SerializableTime sunset,
             @NonNull SerializableTime lastUpdate,
             @NonNull WeatherCondition condition) {
-        _logger = new Logger(TAG);
-
         _city = city;
         _country = country;
         _description = description;

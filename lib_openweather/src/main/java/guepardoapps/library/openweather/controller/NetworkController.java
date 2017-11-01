@@ -10,7 +10,6 @@ import java.util.Locale;
 import guepardoapps.library.openweather.common.utils.Logger;
 
 public class NetworkController {
-
     private static final String TAG = NetworkController.class.getSimpleName();
     private Logger _logger;
 
@@ -25,12 +24,17 @@ public class NetworkController {
 
     public boolean IsNetworkAvailable() {
         _logger.Debug("IsNetworkAvailable...");
-        ConnectivityManager connectivityManager = (ConnectivityManager) _context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            _logger.Error("connectivityManager is null!");
+            return false;
+        }
+
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         boolean isNetworkAvailable = activeNetworkInfo != null && activeNetworkInfo.isConnected();
         _logger.Debug(String.format(Locale.getDefault(), "Network is available: %s", isNetworkAvailable));
+
         return isNetworkAvailable;
     }
 }

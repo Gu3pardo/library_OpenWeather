@@ -11,7 +11,6 @@ import java.io.Serializable;
 import guepardoapps.library.openweather.common.utils.Logger;
 
 public class BroadcastController {
-
     private static String TAG = BroadcastController.class.getSimpleName();
     private Logger _logger;
 

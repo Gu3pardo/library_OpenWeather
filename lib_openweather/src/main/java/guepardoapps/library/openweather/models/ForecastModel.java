@@ -6,13 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.converter.NotificationContentConverter;
 
 public class ForecastModel implements Serializable {
-
     private static final String TAG = ForecastModel.class.getSimpleName();
-    private Logger _logger;
 
     private NotificationContentConverter _notificationContentConverter;
 
@@ -24,8 +21,6 @@ public class ForecastModel implements Serializable {
             @NonNull String city,
             @NonNull String country,
             @NonNull List<ForecastPartModel> list) {
-        _logger = new Logger(TAG);
-
         _notificationContentConverter = new NotificationContentConverter();
 
         _city = city;
@@ -51,13 +46,13 @@ public class ForecastModel implements Serializable {
 
     @Override
     public String toString() {
-        String toString = "[" + TAG + ": City: " + _city + ", Country: " + _country;
+        StringBuilder toString = new StringBuilder("[" + TAG + ": City: " + _city + ", Country: " + _country);
 
         for (ForecastPartModel entry : _list) {
-            toString += ";" + entry.toString();
+            toString.append(";").append(entry.toString());
         }
 
-        toString += "]";
-        return toString;
+        toString.append("]");
+        return toString.toString();
     }
 }
