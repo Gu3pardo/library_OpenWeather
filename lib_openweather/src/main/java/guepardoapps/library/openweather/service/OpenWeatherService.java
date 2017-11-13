@@ -18,6 +18,7 @@ import guepardoapps.library.openweather.common.OWBroadcasts;
 import guepardoapps.library.openweather.common.OWBundles;
 import guepardoapps.library.openweather.common.OWIds;
 import guepardoapps.library.openweather.common.classes.NotificationContent;
+import guepardoapps.library.openweather.common.classes.SerializableTime;
 import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.controller.BroadcastController;
 import guepardoapps.library.openweather.controller.NetworkController;
@@ -26,6 +27,7 @@ import guepardoapps.library.openweather.controller.ReceiverController;
 import guepardoapps.library.openweather.converter.JsonToWeatherConverter;
 import guepardoapps.library.openweather.converter.NotificationContentConverter;
 import guepardoapps.library.openweather.downloader.OpenWeatherDownloader;
+import guepardoapps.library.openweather.enums.WeatherCondition;
 import guepardoapps.library.openweather.models.ForecastModel;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 import guepardoapps.library.openweather.models.WeatherModel;
@@ -366,6 +368,14 @@ public class OpenWeatherService {
     }
 
     public WeatherModel CurrentWeather() {
+        if(_currentWeather == null){
+            return new WeatherModel(
+                    "Null", "Null", "Null",
+                    -273.15, -1, -1,
+                    new SerializableTime(), new SerializableTime(), new SerializableTime(),
+                    WeatherCondition.NULL);
+        }
+
         return _currentWeather;
     }
 
