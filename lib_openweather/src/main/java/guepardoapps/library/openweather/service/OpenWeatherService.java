@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -68,6 +69,8 @@ public class OpenWeatherService {
 
     private static final String TAG = OpenWeatherService.class.getSimpleName();
     private Logger _logger;
+
+    private Date _lastUpdate;
 
     private Context _context;
 
@@ -136,6 +139,8 @@ public class OpenWeatherService {
                 return;
             }
 
+            _lastUpdate = new Date();
+
             _currentWeather = currentWeather;
 
             _broadcastController.SendSerializableBroadcast(
@@ -178,6 +183,8 @@ public class OpenWeatherService {
                 return;
             }
 
+            _lastUpdate = new Date();
+
             _forecastWeather = forecastWeather;
 
             _broadcastController.SendSerializableBroadcast(
@@ -216,6 +223,8 @@ public class OpenWeatherService {
             _logger.Warning("Already initialized!");
             return;
         }
+
+        _lastUpdate = new Date();
 
         _city = city;
         _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
@@ -368,7 +377,7 @@ public class OpenWeatherService {
     }
 
     public WeatherModel CurrentWeather() {
-        if(_currentWeather == null){
+        if (_currentWeather == null) {
             return new WeatherModel(
                     "Null", "Null", "Null",
                     -273.15, -1, -1,
@@ -442,6 +451,10 @@ public class OpenWeatherService {
         }
 
         _openWeatherDownloader.DownloadForecastWeatherJson();
+    }
+
+    public Date GetLastUpdate() {
+        return _lastUpdate;
     }
 
     private void displayCurrentWeatherNotification() {
