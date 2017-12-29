@@ -8,7 +8,7 @@
         is a library used for calling current weather or forecast weather for a given location.
         It also provides notifications and wallpaper to display.
     </string>
-    <string name="library_OpenWeather_libraryVersion">0.11.8.171115</string>
+    <string name="library_OpenWeather_libraryVersion">0.12.0.171229</string>
     <string name="library_OpenWeather_libraryWebsite">https://github.com/Gu3pardo/library_OpenWeather/</string>
     <string name="library_OpenWeather_licenseId">mit</string>
     <string name="library_OpenWeather_isOpenSource">true</string>

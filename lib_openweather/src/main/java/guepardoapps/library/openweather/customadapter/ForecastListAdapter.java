@@ -19,7 +19,6 @@ import guepardoapps.library.openweather.models.ForecastPartModel;
 
 public class ForecastListAdapter extends BaseAdapter {
     private static final String TAG = ForecastListAdapter.class.getSimpleName();
-    private Logger _logger;
 
     private List<ForecastPartModel> _forecastList;
     private static LayoutInflater _inflater = null;
@@ -27,13 +26,7 @@ public class ForecastListAdapter extends BaseAdapter {
     public ForecastListAdapter(
             @NonNull Context context,
             @NonNull List<ForecastPartModel> forecastList) {
-        _logger = new Logger(TAG);
-
         _forecastList = forecastList;
-        for (int index = 0; index < _forecastList.size(); index++) {
-            _logger.Debug(_forecastList.get(index).toString());
-        }
-
         _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -67,7 +60,6 @@ public class ForecastListAdapter extends BaseAdapter {
         final Holder holder = new Holder();
         ForecastPartModel entry = _forecastList.get(index);
         View rowView;
-        _logger.Debug(String.format("ForecastWeatherModel is %s!", entry));
 
         if (entry.GetForecastListType() == ForecastPartModel.ForecastListType.FORECAST) {
             rowView = _inflater.inflate(R.layout.listview_card_forecast, null);
@@ -95,7 +87,7 @@ public class ForecastListAdapter extends BaseAdapter {
             holder._time = rowView.findViewById(R.id.dividerCardTitleText);
             holder._time.setText(entry.GetDate());
         } else {
-            _logger.Error(String.format("Invalid ForecastListType %s!", entry.GetForecastListType()));
+            Logger.getInstance().Error(TAG, String.format("Invalid ForecastListType %s!", entry.GetForecastListType()));
             rowView = _inflater.inflate(R.layout.listview_card_divider, null);
 
             holder._time = rowView.findViewById(R.id.dividerCardTitleText);

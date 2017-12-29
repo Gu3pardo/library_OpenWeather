@@ -20,7 +20,6 @@ public class OpenWeatherDownloader {
     public enum WeatherDownloadType {CurrentWeather, ForecastWeather}
 
     private static final String TAG = OpenWeatherDownloader.class.getSimpleName();
-    private Logger _logger;
 
     private BroadcastController _broadcastController;
 
@@ -29,14 +28,8 @@ public class OpenWeatherDownloader {
     public OpenWeatherDownloader(
             @NonNull Context context,
             @NonNull String city) {
-        _logger = new Logger(TAG);
-        _logger.Debug(TAG + " created...");
-
         _broadcastController = new BroadcastController(context);
-
         _city = city;
-
-        _logger.Debug("_city: " + _city);
     }
 
     public String GetCity() {
@@ -49,7 +42,7 @@ public class OpenWeatherDownloader {
 
     public void DownloadCurrentWeatherJson() {
         if (_city == null || _city.length() == 0) {
-            _logger.Warning("You have to set the city before calling the weather!");
+            Logger.getInstance().Warning(TAG, "You have to set the city before calling the weather!");
             return;
         }
 
@@ -62,7 +55,7 @@ public class OpenWeatherDownloader {
 
     public void DownloadForecastWeatherJson() {
         if (_city == null || _city.length() == 0) {
-            _logger.Warning("You have to set the city before calling the weather!");
+            Logger.getInstance().Warning(TAG, "You have to set the city before calling the weather!");
             return;
         }
 
@@ -82,8 +75,6 @@ public class OpenWeatherDownloader {
             StringBuilder json = new StringBuilder(2048);
 
             for (String action : actions) {
-                _logger.Debug("Action: " + action);
-
                 try {
                     URL url = new URL(action);
                     URLConnection urlConnection = url.openConnection();
@@ -102,7 +93,7 @@ public class OpenWeatherDownloader {
                     inputStream.close();
 
                 } catch (Exception exception) {
-                    _logger.Error(exception.toString());
+                    Logger.getInstance().Error(TAG, exception.getMessage());
                 }
             }
 

@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Locale;
 
 public class NotificationContent implements Serializable {
-
     private static final String TAG = NotificationContent.class.getSimpleName();
 
     private String _title;

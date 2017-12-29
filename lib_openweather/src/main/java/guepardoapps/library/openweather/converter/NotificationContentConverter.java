@@ -11,17 +11,20 @@ import java.util.Locale;
 import guepardoapps.library.openweather.R;
 import guepardoapps.library.openweather.common.OWDefinitions;
 import guepardoapps.library.openweather.common.classes.NotificationContent;
-import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.enums.ForecastDayTime;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 
 public class NotificationContentConverter implements Serializable {
-    private final static String TAG = NotificationContentConverter.class.getSimpleName();
-    private Logger _logger;
+    //private final static String TAG = NotificationContentConverter.class.getSimpleName();
 
-    public NotificationContentConverter() {
-        _logger = new Logger(TAG);
+    private static final NotificationContentConverter SINGLETON = new NotificationContentConverter();
+
+    public static NotificationContentConverter getInstance() {
+        return SINGLETON;
+    }
+
+    private NotificationContentConverter() {
     }
 
     public NotificationContent GetNextWeather(@NonNull List<ForecastPartModel> weatherList) {
@@ -49,7 +52,6 @@ public class NotificationContentConverter implements Serializable {
 
         for (ForecastPartModel entry : weatherList) {
             if (entry.GetCalendarDay().get(Calendar.DAY_OF_MONTH) == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)) {
-                _logger.Debug("entry: " + entry.toString());
                 todayWeather.add(entry);
             }
         }
@@ -76,8 +78,6 @@ public class NotificationContentConverter implements Serializable {
     }
 
     public NotificationContent TellForecastWeather(@NonNull List<ForecastPartModel> weatherList) {
-        _logger.Debug("TellForecastWeather");
-
         List<ForecastPartModel> todayWeather = new ArrayList<>();
         List<ForecastPartModel> tomorrowWeather = new ArrayList<>();
 
@@ -86,20 +86,16 @@ public class NotificationContentConverter implements Serializable {
 
         for (ForecastPartModel entry : weatherList) {
             if (entry.GetCalendarDay().get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)) {
-                _logger.Debug("entry for today: " + entry.toString());
                 todayWeather.add(entry);
             } else {
                 Calendar tomorrow = Calendar.getInstance();
                 tomorrow.set(Calendar.DAY_OF_MONTH, today.get(Calendar.DAY_OF_MONTH) + 1);
-                _logger.Debug(String.format(Locale.getDefault(), "tomorrow is %s", tomorrow));
 
                 if (tomorrow.get(Calendar.DAY_OF_MONTH) > today.getActualMaximum(Calendar.DAY_OF_MONTH)) {
                     tomorrow.set(Calendar.DAY_OF_MONTH, tomorrow.get(Calendar.DAY_OF_MONTH) - today.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    _logger.Debug(String.format(Locale.getDefault(), "tomorrow is too big %s > %s", tomorrow, today.getActualMaximum(Calendar.DAY_OF_MONTH)));
                 }
 
                 if (entry.GetCalendarDay().get(Calendar.DAY_OF_MONTH) == tomorrow.get(Calendar.DAY_OF_MONTH)) {
-                    _logger.Debug("entry for tomorrow: " + entry.toString());
                     tomorrowWeather.add(entry);
                 }
             }
@@ -107,12 +103,9 @@ public class NotificationContentConverter implements Serializable {
 
         if (todayWeather.size() > 2) {
             int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
-            _logger.Debug(String.format("DayOfWeek is %s", dayOfWeek));
-
             if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY) {
                 isWeekend = true;
             }
-            _logger.Debug(String.format(Locale.getDefault(), "today is weekend is %s", isWeekend));
 
             return createNotificationContent(todayWeather, true, isWeekend);
         } else if (tomorrowWeather.size() > 2) {
@@ -120,12 +113,10 @@ public class NotificationContentConverter implements Serializable {
             if (tomorrowDayOfWeek > 7) {
                 tomorrowDayOfWeek = 1;
             }
-            _logger.Debug(String.format("tomorrowDayOfWeek is %s", tomorrowDayOfWeek));
 
             if (tomorrowDayOfWeek == Calendar.SUNDAY || tomorrowDayOfWeek == Calendar.SATURDAY) {
                 isWeekend = true;
             }
-            _logger.Debug(String.format("tomorrow is weekend is %s", isWeekend));
 
             return createNotificationContent(tomorrowWeather, false, isWeekend);
         }

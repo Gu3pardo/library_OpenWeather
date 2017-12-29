@@ -15,7 +15,6 @@ public class ForecastPartModel implements Serializable {
     public enum ForecastListType {FORECAST, DATE_DIVIDER}
 
     private static final String TAG = ForecastPartModel.class.getSimpleName();
-    private Logger _logger;
 
     private String _description;
 
@@ -40,8 +39,6 @@ public class ForecastPartModel implements Serializable {
             @NonNull String date,
             @NonNull String time,
             @NonNull WeatherCondition condition) {
-        _logger = new Logger(TAG);
-
         _description = description;
 
         _tempMin = tempMin;
@@ -58,8 +55,6 @@ public class ForecastPartModel implements Serializable {
     }
 
     public ForecastPartModel(@NonNull String date) {
-        _logger = new Logger(TAG);
-
         _description = "";
 
         _tempMin = 0;
@@ -135,7 +130,7 @@ public class ForecastPartModel implements Serializable {
         } else if (hour > OWDefinitions.EVENING_HOUR && hour <= OWDefinitions.NIGHT_HOUR) {
             return ForecastDayTime.EVENING;
         } else {
-            _logger.Warning("Returning ForecastDayTime.NULL!");
+            Logger.getInstance().Warning(TAG, "Returning ForecastDayTime.NULL!");
             return ForecastDayTime.NULL;
         }
     }

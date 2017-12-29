@@ -7,5 +7,5 @@ public class OWDefinitions {
 	public static final int AFTERWORK_HOUR = 15;
 	public static final int EVENING_HOUR = 18;
 	
-	public static final String DEFAULT_CITY = "Munich, DE";
+	public static final String DEFAULT_CITY = "Nuremberg, DE";
 }

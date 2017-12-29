@@ -16,12 +16,10 @@ public class ReceiverController implements Serializable {
 
     private static String TAG = ReceiverController.class.getSimpleName();
 
-    private Logger _logger;
     private Context _context;
     private List<BroadcastReceiver> _registeredReceiver;
 
     public ReceiverController(@NonNull Context context) {
-        _logger = new Logger(TAG);
         _context = context;
         _registeredReceiver = new ArrayList<>();
     }
@@ -29,8 +27,6 @@ public class ReceiverController implements Serializable {
     public void RegisterReceiver(
             @NonNull BroadcastReceiver receiver,
             @NonNull String[] actions) {
-        _logger.Debug("Registering new receiver! " + receiver.toString());
-
         IntentFilter downloadStateFilter = new IntentFilter();
         for (String action : actions) {
             downloadStateFilter.addAction(action);
@@ -43,15 +39,13 @@ public class ReceiverController implements Serializable {
     }
 
     private void unregisterReceiver(@NonNull BroadcastReceiver receiver) {
-        _logger.Debug("Trying to unregister receiver " + receiver.toString());
-
         for (int index = 0; index < _registeredReceiver.size(); index++) {
             if (_registeredReceiver.get(index) == receiver) {
                 try {
                     _context.unregisterReceiver(receiver);
                     _registeredReceiver.remove(index);
-                } catch (Exception e) {
-                    _logger.Error(e.toString());
+                } catch (Exception exception) {
+                    Logger.getInstance().Error(TAG, exception.getMessage());
                 }
                 break;
             }
@@ -59,14 +53,12 @@ public class ReceiverController implements Serializable {
     }
 
     public void Dispose() {
-        _logger.Debug("Dispose");
-
         for (int index = 0; index < _registeredReceiver.size(); index++) {
             try {
                 _context.unregisterReceiver(_registeredReceiver.get(index));
                 _registeredReceiver.remove(index);
-            } catch (Exception e) {
-                _logger.Error(e.toString());
+            } catch (Exception exception) {
+                Logger.getInstance().Error(TAG, exception.getMessage());
             }
         }
     }

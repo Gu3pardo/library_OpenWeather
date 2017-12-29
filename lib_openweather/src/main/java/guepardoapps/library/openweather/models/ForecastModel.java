@@ -11,8 +11,6 @@ import guepardoapps.library.openweather.converter.NotificationContentConverter;
 public class ForecastModel implements Serializable {
     private static final String TAG = ForecastModel.class.getSimpleName();
 
-    private NotificationContentConverter _notificationContentConverter;
-
     private String _city;
     private String _country;
     private List<ForecastPartModel> _list = new ArrayList<>();
@@ -21,8 +19,6 @@ public class ForecastModel implements Serializable {
             @NonNull String city,
             @NonNull String country,
             @NonNull List<ForecastPartModel> list) {
-        _notificationContentConverter = new NotificationContentConverter();
-
         _city = city;
         _country = country;
         _list = list;
@@ -41,7 +37,7 @@ public class ForecastModel implements Serializable {
     }
 
     public int GetWallpaper() {
-        return _notificationContentConverter.MostNextWeatherCondition(_list).GetWallpaper();
+        return NotificationContentConverter.getInstance().MostNextWeatherCondition(_list).GetWallpaper();
     }
 
     @Override

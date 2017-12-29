@@ -68,16 +68,12 @@ public class OpenWeatherService {
     private boolean _isInitialized;
 
     private static final String TAG = OpenWeatherService.class.getSimpleName();
-    private Logger _logger;
 
     private Date _lastUpdate;
 
     private Context _context;
 
     private OpenWeatherDownloader _openWeatherDownloader;
-
-    private JsonToWeatherConverter _jsonToWeatherConverter;
-    private NotificationContentConverter _notificationContentConverter;
 
     private BroadcastController _broadcastController;
     private NetworkController _networkController;
@@ -103,7 +99,6 @@ public class OpenWeatherService {
     private Runnable _reloadRunnable = new Runnable() {
         @Override
         public void run() {
-            _logger.Debug("_reloadListRunnable run");
             LoadCurrentWeather();
             LoadForecastWeather();
             if (_reloadEnabled && _networkController.IsNetworkAvailable()) {
@@ -117,24 +112,22 @@ public class OpenWeatherService {
     private BroadcastReceiver _currentWeatherDownloadFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            _logger.Debug("_currentWeatherDownloadFinishedReceiver");
             String type = intent.getStringExtra(OWBundles.DOWNLOAD_TYPE);
 
             if (!type.contains(OpenWeatherDownloader.WeatherDownloadType.CurrentWeather.toString())) {
-                _logger.Debug(String.format(Locale.getDefault(), "Received download finished with downloadType %s", type));
                 return;
             }
 
             String result = intent.getStringExtra(OWBundles.WEATHER_DOWNLOAD);
             if (result == null || result.length() == 0) {
-                _logger.Error("Result is null!");
+                Logger.getInstance().Error(TAG, "Result is null!");
                 sendFailedCurrentWeatherBroadcast("Result is null!");
                 return;
             }
 
-            WeatherModel currentWeather = _jsonToWeatherConverter.ConvertFromJsonToWeatherModel(result);
+            WeatherModel currentWeather = JsonToWeatherConverter.getInstance().ConvertFromJsonToWeatherModel(result);
             if (currentWeather == null) {
-                _logger.Error("Converted currentWeather is null!");
+                Logger.getInstance().Error(TAG, "Converted currentWeather is null!");
                 sendFailedCurrentWeatherBroadcast("Converted currentWeather is null!");
                 return;
             }
@@ -161,24 +154,22 @@ public class OpenWeatherService {
     private BroadcastReceiver _forecastWeatherDownloadFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            _logger.Debug("_forecastWeatherDownloadFinishedReceiver");
             String type = intent.getStringExtra(OWBundles.DOWNLOAD_TYPE);
 
             if (!type.contains(OpenWeatherDownloader.WeatherDownloadType.ForecastWeather.toString())) {
-                _logger.Debug(String.format(Locale.getDefault(), "Received download finished with downloadType %s", type));
                 return;
             }
 
             String result = intent.getStringExtra(OWBundles.WEATHER_DOWNLOAD);
             if (result == null || result.length() == 0) {
-                _logger.Error("Result is null!");
+                Logger.getInstance().Error(TAG, "Result is null!");
                 sendFailedForecastWeatherBroadcast("Result is null!");
                 return;
             }
 
-            ForecastModel forecastWeather = _jsonToWeatherConverter.ConvertFromJsonToForecastModel(result);
+            ForecastModel forecastWeather = JsonToWeatherConverter.getInstance().ConvertFromJsonToForecastModel(result);
             if (forecastWeather == null) {
-                _logger.Error("Converted forecastWeather is null!");
+                Logger.getInstance().Error(TAG, "Converted forecastWeather is null!");
                 sendFailedForecastWeatherBroadcast("Converted forecastWeather is null!");
                 return;
             }
@@ -199,8 +190,6 @@ public class OpenWeatherService {
     };
 
     private OpenWeatherService() {
-        _logger = new Logger(TAG);
-        _logger.Debug("Created...");
     }
 
     public static OpenWeatherService getInstance() {
@@ -217,10 +206,8 @@ public class OpenWeatherService {
             boolean changeWallpaper,
             boolean reloadEnabled,
             int reloadTimeout) {
-        _logger.Debug("initialize");
-
         if (_isInitialized) {
-            _logger.Warning("Already initialized!");
+            Logger.getInstance().Warning(TAG, "Already initialized!");
             return;
         }
 
@@ -238,9 +225,6 @@ public class OpenWeatherService {
         _context = context;
 
         _openWeatherDownloader = new OpenWeatherDownloader(_context, _city);
-
-        _jsonToWeatherConverter = new JsonToWeatherConverter();
-        _notificationContentConverter = new NotificationContentConverter();
 
         _broadcastController = new BroadcastController(_context);
         _networkController = new NetworkController(_context);
@@ -273,7 +257,6 @@ public class OpenWeatherService {
     }
 
     public void Dispose() {
-        _logger.Debug("Dispose");
         _receiverController.Dispose();
         _reloadHandler.removeCallbacks(_reloadRunnable);
         _isInitialized = false;
@@ -361,11 +344,9 @@ public class OpenWeatherService {
 
     public void SetReloadTimeout(int reloadTimeout) {
         if (reloadTimeout < MIN_TIMEOUT_MS) {
-            _logger.Warning(String.format(Locale.getDefault(), "reloadTimeout %d is lower then MIN_TIMEOUT_MS %d! Setting to MIN_TIMEOUT_MS!", reloadTimeout, MIN_TIMEOUT_MS));
             reloadTimeout = MIN_TIMEOUT_MS;
         }
         if (reloadTimeout > MAX_TIMEOUT_MS) {
-            _logger.Warning(String.format(Locale.getDefault(), "reloadTimeout %d is higher then MAX_TIMEOUT_MS %d! Setting to MAX_TIMEOUT_MS!", reloadTimeout, MAX_TIMEOUT_MS));
             reloadTimeout = MAX_TIMEOUT_MS;
         }
 
@@ -430,26 +411,20 @@ public class OpenWeatherService {
     }
 
     public void LoadCurrentWeather() {
-        _logger.Debug("LoadCurrentWeather");
-
         if (!_isInitialized || _city == null || _city.length() == 0) {
-            _logger.Error("Failure in LoadCurrentWeather!");
+            Logger.getInstance().Error(TAG, "Failure in LoadCurrentWeather!");
             sendFailedCurrentWeatherBroadcast("Not initialized or no city given!");
             return;
         }
-
         _openWeatherDownloader.DownloadCurrentWeatherJson();
     }
 
     public void LoadForecastWeather() {
-        _logger.Debug("LoadForecastWeather");
-
         if (!_isInitialized || _city == null || _city.length() == 0) {
-            _logger.Error("Failure in LoadForecastWeather!");
+            Logger.getInstance().Error(TAG, "Failure in LoadForecastWeather!");
             sendFailedForecastWeatherBroadcast("Not initialized or no city given!");
             return;
         }
-
         _openWeatherDownloader.DownloadForecastWeatherJson();
     }
 
@@ -459,7 +434,7 @@ public class OpenWeatherService {
 
     private void displayCurrentWeatherNotification() {
         if (_currentWeather == null) {
-            _logger.Warning("_currentWeather is null!");
+            Logger.getInstance().Warning(TAG, "_currentWeather is null!");
             return;
         }
 
@@ -477,11 +452,11 @@ public class OpenWeatherService {
 
     private void displayForecastWeatherNotification() {
         if (_forecastWeather == null) {
-            _logger.Warning("_forecastWeather is null!");
+            Logger.getInstance().Warning(TAG, "_forecastWeather is null!");
             return;
         }
 
-        NotificationContent notificationContent = _notificationContentConverter.TellForecastWeather(_forecastWeather.GetList());
+        NotificationContent notificationContent = NotificationContentConverter.getInstance().TellForecastWeather(_forecastWeather.GetList());
 
         _notificationController.CreateNotification(
                 OWIds.FORECAST_NOTIFICATION_ID,
@@ -491,7 +466,7 @@ public class OpenWeatherService {
 
     private void changeWallpaper() {
         if (_currentWeather == null) {
-            _logger.Warning("_currentWeather is null!");
+            Logger.getInstance().Warning(TAG, "_currentWeather is null!");
             return;
         }
 
@@ -500,7 +475,7 @@ public class OpenWeatherService {
         try {
             wallpaperManager.setResource(_currentWeather.GetCondition().GetWallpaper());
         } catch (IOException exception) {
-            _logger.Error(exception.getMessage());
+            Logger.getInstance().Error(TAG, exception.getMessage());
         }
     }
 

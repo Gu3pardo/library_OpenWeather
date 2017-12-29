@@ -22,17 +22,21 @@ import guepardoapps.library.openweather.models.WeatherModel;
 
 public class JsonToWeatherConverter {
     private final static String TAG = JsonToWeatherConverter.class.getSimpleName();
-    private Logger _logger;
 
-    public JsonToWeatherConverter() {
-        _logger = new Logger(TAG);
+    private static final JsonToWeatherConverter SINGLETON = new JsonToWeatherConverter();
+
+    public static JsonToWeatherConverter getInstance() {
+        return SINGLETON;
+    }
+
+    private JsonToWeatherConverter() {
     }
 
     public WeatherModel ConvertFromJsonToWeatherModel(@NonNull String jsonString) {
         try {
             JSONObject json = new JSONObject(jsonString);
             if (json.getInt("cod") != 200) {
-                _logger.Error("Error!");
+                Logger.getInstance().Error(TAG, "Error!");
                 return null;
             }
 
@@ -74,7 +78,7 @@ public class JsonToWeatherConverter {
                     condition);
 
         } catch (Exception exception) {
-            _logger.Error(exception.getMessage());
+            Logger.getInstance().Error(TAG, exception.getMessage());
             return null;
         }
     }
@@ -84,7 +88,7 @@ public class JsonToWeatherConverter {
         try {
             JSONObject json = new JSONObject(jsonString);
             if (json.getInt("cod") != 200) {
-                _logger.Error("Error!");
+                Logger.getInstance().Error(TAG, "Error!");
                 return null;
             }
 
@@ -121,7 +125,7 @@ public class JsonToWeatherConverter {
             return new ForecastModel(city, country, list);
 
         } catch (Exception exception) {
-            _logger.Error(exception.getMessage());
+            Logger.getInstance().Error(TAG, exception.getMessage());
             return null;
         }
     }
@@ -149,7 +153,7 @@ public class JsonToWeatherConverter {
                     weatherCondition);
 
         } catch (JSONException exception) {
-            _logger.Error(exception.toString());
+            Logger.getInstance().Error(TAG, exception.toString());
             return null;
         }
     }
