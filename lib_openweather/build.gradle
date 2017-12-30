@@ -7,13 +7,13 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1200
-        versionName "0.12.0.171229"
+        versionName "0.12.0.171230"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_10
-        targetCompatibility JavaVersion.VERSION_1_10
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
