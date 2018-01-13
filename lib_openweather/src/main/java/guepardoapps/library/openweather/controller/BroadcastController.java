@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 import guepardoapps.library.openweather.common.utils.Logger;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class BroadcastController {
     private static String TAG = BroadcastController.class.getSimpleName();
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import guepardoapps.library.openweather.converter.NotificationContentConverter;
 
+@SuppressWarnings({"unused"})
 public class ForecastModel implements Serializable {
     private static final String TAG = ForecastModel.class.getSimpleName();
 

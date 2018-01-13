@@ -9,10 +9,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 
+import java.util.Locale;
+
 import guepardoapps.library.openweather.common.classes.NotificationContent;
+import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.common.utils.Tools;
 
 public class NotificationController {
+    private static final String TAG = NotificationController.class.getSimpleName();
+
+    public static final int CURRENT_NOTIFICATION_ID = 311295;
+    public static final int FORECAST_NOTIFICATION_ID = 311292;
+
     private Context _context;
     private NotificationManager _notificationManager;
 
@@ -21,10 +29,9 @@ public class NotificationController {
         _notificationManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void CreateNotification(
-            int id,
-            Class<?> receiverActivity,
-            @NonNull NotificationContent notificationContent) {
+    public void CreateNotification(int id, Class<?> receiverActivity, @NonNull NotificationContent notificationContent) {
+        Logger.getInstance().Debug(TAG, String.format(Locale.getDefault(), "CreateNotification with id %d and notificationContent %s", id, notificationContent));
+
         Bitmap bitmap = BitmapFactory.decodeResource(_context.getResources(), notificationContent.GetBigIcon());
         bitmap = Tools.GetCircleBitmap(bitmap);
 

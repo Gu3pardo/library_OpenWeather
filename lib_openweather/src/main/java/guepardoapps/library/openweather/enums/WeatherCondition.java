@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 import guepardoapps.library.openweather.R;
 
+@SuppressWarnings({"unused"})
 public enum WeatherCondition implements Serializable {
 
     NULL(0, "null", R.drawable.weather_wallpaper_dummy, R.drawable.weather_dummy, "", "", "", 0),

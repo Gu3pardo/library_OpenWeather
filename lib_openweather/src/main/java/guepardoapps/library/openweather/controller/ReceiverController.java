@@ -24,16 +24,12 @@ public class ReceiverController implements Serializable {
         _registeredReceiver = new ArrayList<>();
     }
 
-    public void RegisterReceiver(
-            @NonNull BroadcastReceiver receiver,
-            @NonNull String[] actions) {
+    public void RegisterReceiver(@NonNull BroadcastReceiver receiver, @NonNull String[] actions) {
         IntentFilter downloadStateFilter = new IntentFilter();
         for (String action : actions) {
             downloadStateFilter.addAction(action);
         }
-
         unregisterReceiver(receiver);
-
         _context.registerReceiver(receiver, downloadStateFilter);
         _registeredReceiver.add(receiver);
     }
@@ -45,7 +41,7 @@ public class ReceiverController implements Serializable {
                     _context.unregisterReceiver(receiver);
                     _registeredReceiver.remove(index);
                 } catch (Exception exception) {
-                    Logger.getInstance().Error(TAG, exception.getMessage());
+                    Logger.getInstance().Error(TAG, exception.toString());
                 }
                 break;
             }
@@ -58,7 +54,7 @@ public class ReceiverController implements Serializable {
                 _context.unregisterReceiver(_registeredReceiver.get(index));
                 _registeredReceiver.remove(index);
             } catch (Exception exception) {
-                Logger.getInstance().Error(TAG, exception.getMessage());
+                Logger.getInstance().Error(TAG, exception.toString());
             }
         }
     }

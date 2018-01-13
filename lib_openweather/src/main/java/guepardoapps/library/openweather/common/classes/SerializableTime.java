@@ -8,8 +8,14 @@ import java.util.Locale;
 
 import guepardoapps.library.openweather.common.utils.Logger;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class SerializableTime implements Serializable {
     private static final String TAG = SerializableTime.class.getSimpleName();
+
+    private static final int INDEX_HOUR = 0;
+    private static final int INDEX_MINUTE = 1;
+    private static final int INDEX_SECOND = 2;
+    private static final int INDEX_MILLISECOND = 3;
 
     private int _hour;
     private int _minute;
@@ -24,50 +30,21 @@ public class SerializableTime implements Serializable {
     }
 
     public SerializableTime(@NonNull String time) {
-        String[] timeArray = time.split("\\:");
-        if (timeArray.length == 4) {
-            try {
-                _hour = Integer.parseInt(timeArray[0].replace(":", ""));
-                _minute = Integer.parseInt(timeArray[1].replace(":", ""));
-                _second = Integer.parseInt(timeArray[2].replace(":", ""));
-                _millisecond = Integer.parseInt(timeArray[3].replace(":", ""));
-            } catch (Exception exception) {
-                Logger.getInstance().Error(TAG, exception.getMessage());
-                setDefaultValues();
-            }
-        } else if (timeArray.length == 3) {
-            try {
-                _hour = Integer.parseInt(timeArray[0].replace(":", ""));
-                _minute = Integer.parseInt(timeArray[1].replace(":", ""));
-                _second = Integer.parseInt(timeArray[2].replace(":", ""));
-                _millisecond = 0;
-            } catch (Exception exception) {
-                Logger.getInstance().Error(TAG, exception.getMessage());
-                setDefaultValues();
-            }
-        } else if (timeArray.length == 2) {
-            try {
-                _hour = Integer.parseInt(timeArray[0].replace(":", ""));
-                _minute = Integer.parseInt(timeArray[1].replace(":", ""));
-                _second = 0;
-                _millisecond = 0;
-            } catch (Exception exception) {
-                Logger.getInstance().Error(TAG, exception.getMessage());
-                setDefaultValues();
-            }
-        } else if (timeArray.length == 1) {
-            try {
-                _hour = Integer.parseInt(timeArray[0].replace(":", ""));
-                _minute = 0;
-                _second = 0;
-                _millisecond = 0;
-            } catch (Exception exception) {
-                Logger.getInstance().Error(TAG, exception.getMessage());
-                setDefaultValues();
-            }
-        } else {
-            Logger.getInstance().Warning(TAG, String.format(Locale.getDefault(), "Invalid data count %d!", timeArray.length));
-            setDefaultValues();
+        String[] timeArray = time.split(":");
+        setDefaultValues();
+        switch (timeArray.length) {
+            case 4:
+                _millisecond = parseString(timeArray[INDEX_MILLISECOND]);
+            case 3:
+                _second = parseString(timeArray[INDEX_SECOND]);
+            case 2:
+                _minute = parseString(timeArray[INDEX_MINUTE]);
+            case 1:
+                _hour = parseString(timeArray[INDEX_HOUR]);
+                break;
+            default:
+                Logger.getInstance().Warning(TAG, String.format(Locale.getDefault(), "no handling for size %d of timeArray", timeArray.length));
+                break;
         }
     }
 
@@ -168,5 +145,14 @@ public class SerializableTime implements Serializable {
         _second = second % 60;
         _minute = minute % 60;
         _hour = minute / 60;
+    }
+
+    private int parseString(@NonNull String parseString) {
+        try {
+            return Integer.parseInt(parseString);
+        } catch (Exception exception) {
+            Logger.getInstance().Error(TAG, exception.toString());
+            return 0;
+        }
     }
 }

@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Locale;
 
+@SuppressWarnings({"unused", "WeakerAccess "})
 public class Logger implements Serializable {
     private static final long serialVersionUID = -6278387904140900473L;
 

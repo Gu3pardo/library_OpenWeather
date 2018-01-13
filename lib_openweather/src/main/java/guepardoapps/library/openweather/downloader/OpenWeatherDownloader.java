@@ -4,24 +4,43 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.Serializable;
 
-import guepardoapps.library.openweather.common.OWAction;
-import guepardoapps.library.openweather.common.OWBroadcasts;
-import guepardoapps.library.openweather.common.OWBundles;
+import guepardoapps.library.openweather.common.OWKeys;
 import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.controller.BroadcastController;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class OpenWeatherDownloader {
-    public enum WeatherDownloadType {CurrentWeather, ForecastWeather}
+    public enum WeatherDownloadType implements Serializable {CurrentWeather, ForecastWeather}
+
+    public static class DownloadFinishedBroadcastContent implements Serializable {
+        public boolean Success;
+        public WeatherDownloadType CurrentWeatherDownloadType;
+        public String Result;
+
+        public DownloadFinishedBroadcastContent(boolean success, @NonNull WeatherDownloadType currentWeatherDownloadType, @NonNull String result) {
+            Success = success;
+            CurrentWeatherDownloadType = currentWeatherDownloadType;
+            Result = result;
+        }
+    }
+
+    public static final String DownloadFinishedBroadcast = "guepardoapps.library.openweather.downloader.broadcast.finished";
+    public static final String DownloadFinishedBundle = "DownloadFinishedBundle ";
+
+    private static final String CALL_FORECAST_WEATHER = "http://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=" + OWKeys.OPEN_WEATHER_KEY;
+    private static final String CALL_CURRENT_WEATHER = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=" + OWKeys.OPEN_WEATHER_KEY;
 
     private static final String TAG = OpenWeatherDownloader.class.getSimpleName();
 
     private BroadcastController _broadcastController;
+    private OkHttpClient _okHttpClient;
 
     private String _city;
 
@@ -29,6 +48,7 @@ public class OpenWeatherDownloader {
             @NonNull Context context,
             @NonNull String city) {
         _broadcastController = new BroadcastController(context);
+        _okHttpClient = new OkHttpClient();
         _city = city;
     }
 
@@ -43,10 +63,25 @@ public class OpenWeatherDownloader {
     public void DownloadCurrentWeatherJson() {
         if (_city == null || _city.length() == 0) {
             Logger.getInstance().Warning(TAG, "You have to set the city before calling the weather!");
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(false, WeatherDownloadType.CurrentWeather, "Please set the city before calling the weather!")
+            );
             return;
         }
 
-        String action = String.format(OWAction.CALL_CURRENT_WEATHER, _city);
+        if (OWKeys.OPEN_WEATHER_KEY.equals("ENTER_YOUR_KEY_HERE") || OWKeys.OPEN_WEATHER_KEY.equals("")) {
+            Logger.getInstance().Error(TAG, "Please enter a valid  key");
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(false, WeatherDownloadType.CurrentWeather, "Please enter a valid key")
+            );
+            return;
+        }
+
+        String action = String.format(CALL_CURRENT_WEATHER, _city);
 
         CallWeatherTask task = new CallWeatherTask();
         task.CurrentWeatherDownloadType = WeatherDownloadType.CurrentWeather;
@@ -55,11 +90,26 @@ public class OpenWeatherDownloader {
 
     public void DownloadForecastWeatherJson() {
         if (_city == null || _city.length() == 0) {
-            Logger.getInstance().Warning(TAG, "You have to set the city before calling the weather!");
+            Logger.getInstance().Warning(TAG, "Please set the city before calling the weather!");
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(false, WeatherDownloadType.ForecastWeather, "Please set the city before calling the weather!")
+            );
             return;
         }
 
-        String action = String.format(OWAction.CALL_FORECAST_WEATHER, _city);
+        if (OWKeys.OPEN_WEATHER_KEY.equals("ENTER_YOUR_KEY_HERE") || OWKeys.OPEN_WEATHER_KEY.equals("")) {
+            Logger.getInstance().Error(TAG, "Please enter a valid  key");
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(false, WeatherDownloadType.ForecastWeather, "Please enter a valid key")
+            );
+            return;
+        }
+
+        String action = String.format(CALL_FORECAST_WEATHER, _city);
 
         CallWeatherTask task = new CallWeatherTask();
         task.CurrentWeatherDownloadType = WeatherDownloadType.ForecastWeather;
@@ -70,43 +120,33 @@ public class OpenWeatherDownloader {
         WeatherDownloadType CurrentWeatherDownloadType;
 
         @Override
-        protected String doInBackground(String... actions) {
-            String response;
-            StringBuilder json = new StringBuilder(2048);
-
-            for (String action : actions) {
+        protected String doInBackground(String... requestUrls) {
+            for (String requestUrl : requestUrls) {
+                String result = "";
+                boolean success = false;
                 try {
-                    URL url = new URL(action);
-                    URLConnection urlConnection = url.openConnection();
+                    Request request = new Request.Builder().url(requestUrl).build();
+                    Response response = _okHttpClient.newCall(request).execute();
+                    ResponseBody responseBody = response.body();
 
-                    InputStream inputStream = urlConnection.getInputStream();
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                    while ((response = bufferedReader.readLine()) != null) {
-                        json.append(response).append("\n");
+                    if (responseBody != null) {
+                        result = responseBody.string();
+                        success = true;
+                        Logger.getInstance().Debug(TAG, result);
+                    } else {
+                        Logger.getInstance().Error(TAG, "ResponseBody is null!");
                     }
-
-                    bufferedReader.close();
-                    inputStreamReader.close();
-                    inputStream.close();
-
                 } catch (Exception exception) {
-                    Logger.getInstance().Error(TAG, exception.getMessage());
+                    Logger.getInstance().Error(TAG, exception.toString());
+                } finally {
+                    _broadcastController.SendSerializableBroadcast(
+                            DownloadFinishedBroadcast,
+                            DownloadFinishedBundle,
+                            new DownloadFinishedBroadcastContent(success, CurrentWeatherDownloadType, result)
+                    );
                 }
             }
-
-            return json.toString();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            _broadcastController.SendStringArrayBroadcast(
-                    OWBroadcasts.WEATHER_DOWNLOAD_FINISHED,
-                    new String[]{OWBundles.WEATHER_DOWNLOAD, OWBundles.DOWNLOAD_TYPE},
-                    new String[]{result, CurrentWeatherDownloadType.toString()}
-            );
+            return "";
         }
     }
 }

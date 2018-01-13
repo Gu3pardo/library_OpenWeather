@@ -7,6 +7,7 @@ import java.io.Serializable;
 import guepardoapps.library.openweather.common.classes.SerializableTime;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 
+@SuppressWarnings({"unused"})
 public class WeatherModel implements Serializable {
     private String _city;
     private String _country;

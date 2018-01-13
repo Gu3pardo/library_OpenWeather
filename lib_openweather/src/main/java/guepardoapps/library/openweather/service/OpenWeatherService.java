@@ -15,9 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import guepardoapps.library.openweather.common.OWBroadcasts;
-import guepardoapps.library.openweather.common.OWBundles;
-import guepardoapps.library.openweather.common.OWIds;
 import guepardoapps.library.openweather.common.classes.NotificationContent;
 import guepardoapps.library.openweather.common.classes.SerializableTime;
 import guepardoapps.library.openweather.common.utils.Logger;
@@ -33,6 +30,7 @@ import guepardoapps.library.openweather.models.ForecastModel;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 import guepardoapps.library.openweather.models.WeatherModel;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class OpenWeatherService {
     public static class CurrentWeatherDownloadFinishedContent implements Serializable {
         public WeatherModel CurrentWeather;
@@ -112,16 +110,28 @@ public class OpenWeatherService {
     private BroadcastReceiver _currentWeatherDownloadFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String type = intent.getStringExtra(OWBundles.DOWNLOAD_TYPE);
-
-            if (!type.contains(OpenWeatherDownloader.WeatherDownloadType.CurrentWeather.toString())) {
+            OpenWeatherDownloader.DownloadFinishedBroadcastContent content = (OpenWeatherDownloader.DownloadFinishedBroadcastContent) intent.getSerializableExtra(OpenWeatherDownloader.DownloadFinishedBundle);
+            if (content == null) {
+                Logger.getInstance().Error(TAG, "_currentWeatherDownloadFinishedReceiver content is null");
                 return;
             }
 
-            String result = intent.getStringExtra(OWBundles.WEATHER_DOWNLOAD);
+            OpenWeatherDownloader.WeatherDownloadType downloadType = content.CurrentWeatherDownloadType;
+            if (downloadType != OpenWeatherDownloader.WeatherDownloadType.CurrentWeather) {
+                return;
+            }
+
+            String result = content.Result;
             if (result == null || result.length() == 0) {
                 Logger.getInstance().Error(TAG, "Result is null!");
                 sendFailedCurrentWeatherBroadcast("Result is null!");
+                return;
+            }
+
+            boolean succcess = content.Success;
+            if (!succcess) {
+                Logger.getInstance().Error(TAG, result);
+                sendFailedCurrentWeatherBroadcast(result);
                 return;
             }
 
@@ -154,16 +164,28 @@ public class OpenWeatherService {
     private BroadcastReceiver _forecastWeatherDownloadFinishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String type = intent.getStringExtra(OWBundles.DOWNLOAD_TYPE);
-
-            if (!type.contains(OpenWeatherDownloader.WeatherDownloadType.ForecastWeather.toString())) {
+            OpenWeatherDownloader.DownloadFinishedBroadcastContent content = (OpenWeatherDownloader.DownloadFinishedBroadcastContent) intent.getSerializableExtra(OpenWeatherDownloader.DownloadFinishedBundle);
+            if (content == null) {
+                Logger.getInstance().Error(TAG, "_forecastWeatherDownloadFinishedReceiver content is null");
                 return;
             }
 
-            String result = intent.getStringExtra(OWBundles.WEATHER_DOWNLOAD);
+            OpenWeatherDownloader.WeatherDownloadType downloadType = content.CurrentWeatherDownloadType;
+            if (downloadType != OpenWeatherDownloader.WeatherDownloadType.ForecastWeather) {
+                return;
+            }
+
+            String result = content.Result;
             if (result == null || result.length() == 0) {
                 Logger.getInstance().Error(TAG, "Result is null!");
                 sendFailedForecastWeatherBroadcast("Result is null!");
+                return;
+            }
+
+            boolean succcess = content.Success;
+            if (!succcess) {
+                Logger.getInstance().Error(TAG, result);
+                sendFailedCurrentWeatherBroadcast(result);
                 return;
             }
 
@@ -231,8 +253,8 @@ public class OpenWeatherService {
         _notificationController = new NotificationController(_context);
         _receiverController = new ReceiverController(_context);
 
-        _receiverController.RegisterReceiver(_currentWeatherDownloadFinishedReceiver, new String[]{OWBroadcasts.WEATHER_DOWNLOAD_FINISHED});
-        _receiverController.RegisterReceiver(_forecastWeatherDownloadFinishedReceiver, new String[]{OWBroadcasts.WEATHER_DOWNLOAD_FINISHED});
+        _receiverController.RegisterReceiver(_currentWeatherDownloadFinishedReceiver, new String[]{OpenWeatherDownloader.DownloadFinishedBroadcast});
+        _receiverController.RegisterReceiver(_forecastWeatherDownloadFinishedReceiver, new String[]{OpenWeatherDownloader.DownloadFinishedBroadcast});
 
         SetReloadTimeout(reloadTimeout);
 
@@ -280,7 +302,7 @@ public class OpenWeatherService {
     public void SetDisplayCurrentWeatherNotification(boolean displayCurrentWeatherNotification) {
         _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
         if (!_displayCurrentWeatherNotification) {
-            _notificationController.CloseNotification(OWIds.CURRENT_NOTIFICATION_ID);
+            _notificationController.CloseNotification(NotificationController.CURRENT_NOTIFICATION_ID);
         } else {
             displayCurrentWeatherNotification();
         }
@@ -293,7 +315,7 @@ public class OpenWeatherService {
     public void SetDisplayForecastWeatherNotification(boolean displayForecastWeatherNotification) {
         _displayForecastWeatherNotification = displayForecastWeatherNotification;
         if (!_displayForecastWeatherNotification) {
-            _notificationController.CloseNotification(OWIds.FORECAST_NOTIFICATION_ID);
+            _notificationController.CloseNotification(NotificationController.FORECAST_NOTIFICATION_ID);
         } else {
             displayForecastWeatherNotification();
         }
@@ -445,7 +467,7 @@ public class OpenWeatherService {
                 _currentWeather.GetCondition().GetWallpaper());
 
         _notificationController.CreateNotification(
-                OWIds.CURRENT_NOTIFICATION_ID,
+                NotificationController.CURRENT_NOTIFICATION_ID,
                 _currentWeatherReceiverActivity,
                 notificationContent);
     }
@@ -459,7 +481,7 @@ public class OpenWeatherService {
         NotificationContent notificationContent = NotificationContentConverter.getInstance().TellForecastWeather(_forecastWeather.GetList());
 
         _notificationController.CreateNotification(
-                OWIds.FORECAST_NOTIFICATION_ID,
+                NotificationController.FORECAST_NOTIFICATION_ID,
                 _forecastWeatherReceiverActivity,
                 notificationContent);
     }

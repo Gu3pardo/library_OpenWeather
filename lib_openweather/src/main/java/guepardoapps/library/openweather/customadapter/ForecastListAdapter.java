@@ -17,6 +17,7 @@ import guepardoapps.library.openweather.R;
 import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 
+@SuppressWarnings({"unused"})
 public class ForecastListAdapter extends BaseAdapter {
     private static final String TAG = ForecastListAdapter.class.getSimpleName();
 
@@ -61,37 +62,41 @@ public class ForecastListAdapter extends BaseAdapter {
         ForecastPartModel entry = _forecastList.get(index);
         View rowView;
 
-        if (entry.GetForecastListType() == ForecastPartModel.ForecastListType.FORECAST) {
-            rowView = _inflater.inflate(R.layout.listview_card_forecast, null);
+        switch (entry.GetForecastListType()) {
+            case FORECAST:
+                rowView = _inflater.inflate(R.layout.listview_card_forecast, null);
 
-            holder._image = rowView.findViewById(R.id.weatherConditionImageView);
-            holder._image.setImageResource(entry.GetCondition().GetIcon());
+                holder._image = rowView.findViewById(R.id.weatherConditionImageView);
+                holder._image.setImageResource(entry.GetCondition().GetIcon());
 
-            holder._description = rowView.findViewById(R.id.weatherConditionTextView);
-            holder._description.setText(entry.GetDescription());
+                holder._description = rowView.findViewById(R.id.weatherConditionTextView);
+                holder._description.setText(entry.GetDescription());
 
-            holder._temperature = rowView.findViewById(R.id.weatherTemperatureTextView);
-            holder._temperature.setText(String.format(Locale.getDefault(), "Temperature: %.2f °C - %.2f °C", entry.GetTempMin(), entry.GetTempMax()));
+                holder._temperature = rowView.findViewById(R.id.weatherTemperatureTextView);
+                holder._temperature.setText(String.format(Locale.getDefault(), "Temperature: %.2f °C - %.2f °C", entry.GetTempMin(), entry.GetTempMax()));
 
-            holder._humidity = rowView.findViewById(R.id.weatherHumidityTextView);
-            holder._humidity.setText(String.format(Locale.getDefault(), "Humidity: %s %%", entry.GetHumidity()));
+                holder._humidity = rowView.findViewById(R.id.weatherHumidityTextView);
+                holder._humidity.setText(String.format(Locale.getDefault(), "Humidity: %s %%", entry.GetHumidity()));
 
-            holder._pressure = rowView.findViewById(R.id.weatherPressureTextView);
-            holder._pressure.setText(String.format(Locale.getDefault(), "Pressure: %s mBar", entry.GetPressure()));
+                holder._pressure = rowView.findViewById(R.id.weatherPressureTextView);
+                holder._pressure.setText(String.format(Locale.getDefault(), "Pressure: %s mBar", entry.GetPressure()));
 
-            holder._time = rowView.findViewById(R.id.weatherTimeTextView);
-            holder._time.setText(entry.GetTime());
-        } else if (entry.GetForecastListType() == ForecastPartModel.ForecastListType.DATE_DIVIDER) {
-            rowView = _inflater.inflate(R.layout.listview_card_divider, null);
+                holder._time = rowView.findViewById(R.id.weatherTimeTextView);
+                holder._time.setText(entry.GetTime());
+                break;
 
-            holder._time = rowView.findViewById(R.id.dividerCardTitleText);
-            holder._time.setText(entry.GetDate());
-        } else {
-            Logger.getInstance().Error(TAG, String.format("Invalid ForecastListType %s!", entry.GetForecastListType()));
-            rowView = _inflater.inflate(R.layout.listview_card_divider, null);
+            case DATE_DIVIDER:
+                rowView = _inflater.inflate(R.layout.listview_card_divider, null);
+                holder._time = rowView.findViewById(R.id.dividerCardTitleText);
+                holder._time.setText(entry.GetDate());
+                break;
 
-            holder._time = rowView.findViewById(R.id.dividerCardTitleText);
-            holder._time.setText("");
+            default:
+                Logger.getInstance().Error(TAG, String.format("Invalid ForecastListType %s!", entry.GetForecastListType()));
+                rowView = _inflater.inflate(R.layout.listview_card_divider, null);
+                holder._time = rowView.findViewById(R.id.dividerCardTitleText);
+                holder._time.setText("");
+                break;
         }
 
         return rowView;

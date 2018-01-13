@@ -3,6 +3,7 @@ package guepardoapps.library.openweather.common.classes;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class SerializableList<T> implements Serializable {
     private static final long serialVersionUID = -7933419990581963085L;
 

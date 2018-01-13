@@ -20,6 +20,7 @@ import guepardoapps.library.openweather.models.ForecastModel;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 import guepardoapps.library.openweather.models.WeatherModel;
 
+@SuppressWarnings({"deprecation"})
 public class JsonToWeatherConverter {
     private final static String TAG = JsonToWeatherConverter.class.getSimpleName();
 
@@ -78,7 +79,7 @@ public class JsonToWeatherConverter {
                     condition);
 
         } catch (Exception exception) {
-            Logger.getInstance().Error(TAG, exception.getMessage());
+            Logger.getInstance().Error(TAG, exception.toString());
             return null;
         }
     }
@@ -125,7 +126,7 @@ public class JsonToWeatherConverter {
             return new ForecastModel(city, country, list);
 
         } catch (Exception exception) {
-            Logger.getInstance().Error(TAG, exception.getMessage());
+            Logger.getInstance().Error(TAG, exception.toString());
             return null;
         }
     }

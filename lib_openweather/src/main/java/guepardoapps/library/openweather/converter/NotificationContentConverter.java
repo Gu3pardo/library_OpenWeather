@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Locale;
 
 import guepardoapps.library.openweather.R;
-import guepardoapps.library.openweather.common.OWDefinitions;
 import guepardoapps.library.openweather.common.classes.NotificationContent;
 import guepardoapps.library.openweather.enums.ForecastDayTime;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 
+@SuppressWarnings({"unused"})
 public class NotificationContentConverter implements Serializable {
     //private final static String TAG = NotificationContentConverter.class.getSimpleName();
 
@@ -141,11 +141,18 @@ public class NotificationContentConverter implements Serializable {
             notificationForecast = weatherCondition.GetWeekendTip();
         } else {
             Calendar now = Calendar.getInstance();
-            if (now.get(Calendar.HOUR_OF_DAY) > OWDefinitions.AFTERWORK_HOUR
-                    && now.get(Calendar.HOUR_OF_DAY) < OWDefinitions.EVENING_HOUR) {
-                notificationForecast = weatherCondition.GetWorkdayAfterWorkTip();
-            } else {
-                notificationForecast = weatherCondition.GetWorkdayTip();
+            switch (ForecastDayTime.GetByValue(Calendar.HOUR_OF_DAY)) {
+                case AFTERWORK:
+                case EVENING:
+                case NIGHT:
+                    notificationForecast = weatherCondition.GetWorkdayAfterWorkTip();
+                    break;
+                case MORNING:
+                case MIDDAY:
+                case NULL:
+                default:
+                    notificationForecast = weatherCondition.GetWorkdayTip();
+                    break;
             }
         }
 

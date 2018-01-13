@@ -6,15 +6,13 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Locale;
 
-import guepardoapps.library.openweather.common.OWDefinitions;
-import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.enums.ForecastDayTime;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 
 public class ForecastPartModel implements Serializable {
     public enum ForecastListType {FORECAST, DATE_DIVIDER}
 
-    private static final String TAG = ForecastPartModel.class.getSimpleName();
+    //private static final String TAG = ForecastPartModel.class.getSimpleName();
 
     private String _description;
 
@@ -120,19 +118,7 @@ public class ForecastPartModel implements Serializable {
 
     public ForecastDayTime GetDayTime() {
         int hour = Integer.parseInt(_time.substring(0, 2).replace(":", ""));
-
-        if (hour > OWDefinitions.NIGHT_HOUR && hour <= OWDefinitions.MORNING_HOUR) {
-            return ForecastDayTime.NIGHT;
-        } else if (hour > OWDefinitions.MORNING_HOUR && hour <= OWDefinitions.MIDDAY_HOUR) {
-            return ForecastDayTime.MORNING;
-        } else if (hour > OWDefinitions.MIDDAY_HOUR && hour <= OWDefinitions.EVENING_HOUR) {
-            return ForecastDayTime.MIDDAY;
-        } else if (hour > OWDefinitions.EVENING_HOUR && hour <= OWDefinitions.NIGHT_HOUR) {
-            return ForecastDayTime.EVENING;
-        } else {
-            Logger.getInstance().Warning(TAG, "Returning ForecastDayTime.NULL!");
-            return ForecastDayTime.NULL;
-        }
+        return ForecastDayTime.GetByValue(hour);
     }
 
     public Calendar GetCalendarDay() {
