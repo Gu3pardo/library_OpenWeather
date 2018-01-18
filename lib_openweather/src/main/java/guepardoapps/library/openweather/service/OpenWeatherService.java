@@ -78,7 +78,6 @@ public class OpenWeatherService {
     private NotificationController _notificationController;
     private ReceiverController _receiverController;
 
-    private String _city;
     private WeatherModel _currentWeather;
     private ForecastModel _forecastWeather;
 
@@ -221,6 +220,7 @@ public class OpenWeatherService {
     public void Initialize(
             @NonNull Context context,
             @NonNull String city,
+            @NonNull String apiKey,
             boolean displayCurrentWeatherNotification,
             boolean displayForecastWeatherNotification,
             Class<?> currentWeatherReceiverActivity,
@@ -235,7 +235,6 @@ public class OpenWeatherService {
 
         _lastUpdate = new Date();
 
-        _city = city;
         _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
         _displayForecastWeatherNotification = displayForecastWeatherNotification;
         _currentWeatherReceiverActivity = currentWeatherReceiverActivity;
@@ -246,7 +245,7 @@ public class OpenWeatherService {
 
         _context = context;
 
-        _openWeatherDownloader = new OpenWeatherDownloader(_context, _city);
+        _openWeatherDownloader = new OpenWeatherDownloader(_context, city, apiKey);
 
         _broadcastController = new BroadcastController(_context);
         _networkController = new NetworkController(_context);
@@ -264,18 +263,20 @@ public class OpenWeatherService {
     public void Initialize(
             @NonNull Context context,
             @NonNull String city,
+            @NonNull String apiKey,
             boolean displayCurrentWeatherNotification,
             boolean displayForecastWeatherNotification,
             boolean changeWallpaper,
             boolean reloadEnabled,
             int reloadTimeout) {
-        Initialize(context, city, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null, changeWallpaper, reloadEnabled, reloadTimeout);
+        Initialize(context, city, apiKey, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null, changeWallpaper, reloadEnabled, reloadTimeout);
     }
 
     public void Initialize(
             @NonNull Context context,
-            @NonNull String city) {
-        Initialize(context, city, false, false, false, false, TIMEOUT_MS);
+            @NonNull String city,
+            @NonNull String apiKey) {
+        Initialize(context, city, apiKey, false, false, false, false, TIMEOUT_MS);
     }
 
     public void Dispose() {
@@ -284,15 +285,22 @@ public class OpenWeatherService {
         _isInitialized = false;
     }
 
-    public String GetCity() {
-        return _city;
-    }
-
     public void SetCity(@NonNull String city) {
-        _city = city;
-        _openWeatherDownloader.SetCity(_city);
+        _openWeatherDownloader.SetCity(city);
         LoadCurrentWeather();
         LoadForecastWeather();
+    }
+
+    public String GetCity() {
+        return _openWeatherDownloader.GetCity();
+    }
+
+    public void SetApiKey(@NonNull String apiKey) {
+        _openWeatherDownloader.SetApiKey(apiKey);
+    }
+
+    public String GetApiKey() {
+        return _openWeatherDownloader.GetApiKey();
     }
 
     public boolean GetDisplayCurrentWeatherNotification() {
@@ -433,21 +441,17 @@ public class OpenWeatherService {
     }
 
     public void LoadCurrentWeather() {
-        if (!_isInitialized || _city == null || _city.length() == 0) {
+        if (_openWeatherDownloader.DownloadCurrentWeatherJson() != OpenWeatherDownloader.DownloadActionResult.PERFORMING) {
             Logger.getInstance().Error(TAG, "Failure in LoadCurrentWeather!");
-            sendFailedCurrentWeatherBroadcast("Not initialized or no city given!");
-            return;
+            sendFailedCurrentWeatherBroadcast("Not initialized or no city or apikey given!");
         }
-        _openWeatherDownloader.DownloadCurrentWeatherJson();
     }
 
     public void LoadForecastWeather() {
-        if (!_isInitialized || _city == null || _city.length() == 0) {
-            Logger.getInstance().Error(TAG, "Failure in LoadForecastWeather!");
-            sendFailedForecastWeatherBroadcast("Not initialized or no city given!");
-            return;
+        if (_openWeatherDownloader.DownloadForecastWeatherJson() != OpenWeatherDownloader.DownloadActionResult.PERFORMING) {
+            Logger.getInstance().Error(TAG, "Failure in LoadCurrentWeather!");
+            sendFailedCurrentWeatherBroadcast("Not initialized or no city or apikey given!");
         }
-        _openWeatherDownloader.DownloadForecastWeatherJson();
     }
 
     public Date GetLastUpdate() {

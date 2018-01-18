@@ -22,20 +22,28 @@ public class Logger implements Serializable {
 
     private static final Logger SINGLETON = new Logger();
 
-    public static Logger getInstance() {
-        return SINGLETON;
-    }
-
-    private File _documentDir;
+    private File _loggingDir;
     private File _logFile;
     private boolean _debuggingEnabled;
     private boolean _writeToFileEnabled;
 
     private Logger() {
-        _documentDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        _loggingDir = new File(Environment.getExternalStorageDirectory() + "/OpenWeatherLog");
         _debuggingEnabled = true;
         _writeToFileEnabled = false;
         createNewLogFile();
+    }
+
+    public static Logger getInstance() {
+        return SINGLETON;
+    }
+
+    public void SetLoggingDir(@NonNull File loggingDir) {
+        _loggingDir = loggingDir;
+    }
+
+    public File GetLoggingDir() {
+        return _loggingDir;
     }
 
     public void SetDebuggingEnable(boolean debuggingEnabled) {
@@ -181,7 +189,7 @@ public class Logger implements Serializable {
     }
 
     private void createNewLogFile() {
-        _logFile = new File(_documentDir, getFileName());
+        _logFile = new File(_loggingDir, getFileName());
         checkIfLogFileExists();
     }
 

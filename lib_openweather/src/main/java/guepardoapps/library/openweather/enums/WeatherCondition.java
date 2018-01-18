@@ -64,6 +64,11 @@ public enum WeatherCondition implements Serializable {
             "Thunder is coming today!",
             "Prepare for a thunderstorm today!",
             "Today afternoon will be a thunderstorm!",
+            0),
+    SQUALLS(11, "squalls", R.drawable.weather_wallpaper_squalls, R.drawable.weather_squalls,
+            "Don't get blown away!",
+            "Storm is coming today!",
+            "Blowy way home after work today!",
             0);
 
     private int _id;

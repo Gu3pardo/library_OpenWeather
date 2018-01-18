@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
-import guepardoapps.library.openweather.common.OWKeys;
 import guepardoapps.library.openweather.common.utils.Logger;
 import guepardoapps.library.openweather.controller.BroadcastController;
 
@@ -31,11 +30,13 @@ public class OpenWeatherDownloader {
         }
     }
 
+    public enum DownloadActionResult {INVALID_CITY, INVALID_API_KEY, PERFORMING}
+
     public static final String DownloadFinishedBroadcast = "guepardoapps.library.openweather.downloader.broadcast.finished";
     public static final String DownloadFinishedBundle = "DownloadFinishedBundle ";
 
-    private static final String CALL_FORECAST_WEATHER = "http://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=" + OWKeys.OPEN_WEATHER_KEY;
-    private static final String CALL_CURRENT_WEATHER = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=" + OWKeys.OPEN_WEATHER_KEY;
+    private static final String CALL_FORECAST_WEATHER = "http://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=%s";
+    private static final String CALL_CURRENT_WEATHER = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=%s";
 
     private static final String TAG = OpenWeatherDownloader.class.getSimpleName();
 
@@ -43,12 +44,19 @@ public class OpenWeatherDownloader {
     private OkHttpClient _okHttpClient;
 
     private String _city;
+    private String _apiKey = "";
 
     public OpenWeatherDownloader(
             @NonNull Context context,
-            @NonNull String city) {
+            @NonNull String city,
+            @NonNull String apiKey) {
         _broadcastController = new BroadcastController(context);
         _okHttpClient = new OkHttpClient();
+        _city = city;
+        _apiKey = apiKey;
+    }
+
+    public void SetCity(@NonNull String city) {
         _city = city;
     }
 
@@ -56,11 +64,15 @@ public class OpenWeatherDownloader {
         return _city;
     }
 
-    public void SetCity(@NonNull String city) {
-        _city = city;
+    public void SetApiKey(@NonNull String apiKey) {
+        _apiKey = apiKey;
     }
 
-    public void DownloadCurrentWeatherJson() {
+    public String GetApiKey() {
+        return _apiKey;
+    }
+
+    public DownloadActionResult DownloadCurrentWeatherJson() {
         if (_city == null || _city.length() == 0) {
             Logger.getInstance().Warning(TAG, "You have to set the city before calling the weather!");
             _broadcastController.SendSerializableBroadcast(
@@ -68,27 +80,29 @@ public class OpenWeatherDownloader {
                     DownloadFinishedBundle,
                     new DownloadFinishedBroadcastContent(false, WeatherDownloadType.CurrentWeather, "Please set the city before calling the weather!")
             );
-            return;
+            return DownloadActionResult.INVALID_CITY;
         }
 
-        if (OWKeys.OPEN_WEATHER_KEY.equals("ENTER_YOUR_KEY_HERE") || OWKeys.OPEN_WEATHER_KEY.equals("")) {
+        if (_apiKey == null || _apiKey.length() == 0 || _apiKey.equals("") || _apiKey.equals("ENTER_YOUR_KEY_HERE")) {
             Logger.getInstance().Error(TAG, "Please enter a valid  key");
             _broadcastController.SendSerializableBroadcast(
                     DownloadFinishedBroadcast,
                     DownloadFinishedBundle,
                     new DownloadFinishedBroadcastContent(false, WeatherDownloadType.CurrentWeather, "Please enter a valid key")
             );
-            return;
+            return DownloadActionResult.INVALID_API_KEY;
         }
 
-        String action = String.format(CALL_CURRENT_WEATHER, _city);
+        String action = String.format(CALL_CURRENT_WEATHER, _city, _apiKey);
 
         CallWeatherTask task = new CallWeatherTask();
         task.CurrentWeatherDownloadType = WeatherDownloadType.CurrentWeather;
-        task.execute(action);
+
+
+        return DownloadActionResult.PERFORMING;
     }
 
-    public void DownloadForecastWeatherJson() {
+    public DownloadActionResult DownloadForecastWeatherJson() {
         if (_city == null || _city.length() == 0) {
             Logger.getInstance().Warning(TAG, "Please set the city before calling the weather!");
             _broadcastController.SendSerializableBroadcast(
@@ -96,24 +110,26 @@ public class OpenWeatherDownloader {
                     DownloadFinishedBundle,
                     new DownloadFinishedBroadcastContent(false, WeatherDownloadType.ForecastWeather, "Please set the city before calling the weather!")
             );
-            return;
+            return DownloadActionResult.INVALID_CITY;
         }
 
-        if (OWKeys.OPEN_WEATHER_KEY.equals("ENTER_YOUR_KEY_HERE") || OWKeys.OPEN_WEATHER_KEY.equals("")) {
+        if (_apiKey == null || _apiKey.length() == 0 || _apiKey.equals("") || _apiKey.equals("ENTER_YOUR_KEY_HERE")) {
             Logger.getInstance().Error(TAG, "Please enter a valid  key");
             _broadcastController.SendSerializableBroadcast(
                     DownloadFinishedBroadcast,
                     DownloadFinishedBundle,
                     new DownloadFinishedBroadcastContent(false, WeatherDownloadType.ForecastWeather, "Please enter a valid key")
             );
-            return;
+            return DownloadActionResult.INVALID_API_KEY;
         }
 
-        String action = String.format(CALL_FORECAST_WEATHER, _city);
+        String action = String.format(CALL_FORECAST_WEATHER, _city, _apiKey);
 
         CallWeatherTask task = new CallWeatherTask();
         task.CurrentWeatherDownloadType = WeatherDownloadType.ForecastWeather;
         task.execute(action);
+
+        return DownloadActionResult.PERFORMING;
     }
 
     private class CallWeatherTask extends AsyncTask<String, Void, String> {
