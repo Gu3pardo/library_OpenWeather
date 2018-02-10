@@ -2,128 +2,111 @@ package guepardoapps.library.openweather.models;
 
 import android.support.annotation.NonNull;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Locale;
 
 import guepardoapps.library.openweather.enums.ForecastDayTime;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 
-public class ForecastPartModel implements Serializable {
-    public enum ForecastListType {FORECAST, DATE_DIVIDER}
+public class ForecastPartModel implements IForecastPartModel {
+    private static final String Tag = ForecastPartModel.class.getSimpleName();
 
-    //private static final String TAG = ForecastPartModel.class.getSimpleName();
-
+    private String _main;
     private String _description;
-
-    private double _tempMin;
-    private double _tempMax;
+    private double _temperatureMin;
+    private double _temperatureMax;
     private double _pressure;
     private double _humidity;
+    private Calendar _dateTime;
+    private WeatherCondition _weatherCondition;
+    private ForecastListType _forecastListType;
 
-    private String _date;
-    private String _time;
-
-    private WeatherCondition _condition;
-
-    private ForecastListType _listType;
-
-    public ForecastPartModel(
-            @NonNull String description,
-            double tempMin,
-            double tempMax,
-            double pressure,
-            double humidity,
-            @NonNull String date,
-            @NonNull String time,
-            @NonNull WeatherCondition condition) {
+    public ForecastPartModel(@NonNull String main, @NonNull String description, double temperatureMin, double temperatureMax, double pressure, double humidity, @NonNull Calendar dateTime, @NonNull WeatherCondition weatherCondition) {
+        _main = main;
         _description = description;
-
-        _tempMin = tempMin;
-        _tempMax = tempMax;
+        _temperatureMin = temperatureMin;
+        _temperatureMax = temperatureMax;
         _humidity = humidity;
         _pressure = pressure;
-
-        _date = date;
-        _time = time;
-
-        _condition = condition;
-
-        _listType = ForecastListType.FORECAST;
+        _dateTime = dateTime;
+        _weatherCondition = weatherCondition;
+        _forecastListType = ForecastListType.Forecast;
     }
 
-    public ForecastPartModel(@NonNull String date) {
-        _description = "";
-
-        _tempMin = 0;
-        _tempMax = 0;
-        _humidity = 0;
-        _pressure = 0;
-
-        _date = date;
-        _time = "";
-
-        _condition = WeatherCondition.NULL;
-
-        _listType = ForecastListType.DATE_DIVIDER;
+    public ForecastPartModel(@NonNull Calendar dateTime) {
+        this("", "", 0, 0, 0, 0, dateTime, WeatherCondition.Null);
+        _forecastListType = ForecastListType.DateDivider;
     }
 
+    @Override
+    public String GetMain() {
+        return _main;
+    }
+
+    @Override
     public String GetDescription() {
         return _description;
     }
 
-    public double GetTempMin() {
-        return _tempMin;
+    @Override
+    public double GetTemperatureMin() {
+        return _temperatureMin;
     }
 
-    public double GetTempMax() {
-        return _tempMax;
+    @Override
+    public double GetTemperatureMax() {
+        return _temperatureMax;
     }
 
+    @Override
     public String GetTemperatureString() {
-        return String.format(Locale.getDefault(), "%.2f - %.2f °C", _tempMin, _tempMax);
+        return String.format(Locale.getDefault(), "%.2f - %.2f %sC", _temperatureMin, _temperatureMax, ((char) 0x00B0));
     }
 
+    @Override
     public double GetHumidity() {
         return _humidity;
     }
 
+    @Override
     public String GetHumidityString() {
         return String.format(Locale.getDefault(), "%.2f%%", _humidity);
     }
 
+    @Override
     public double GetPressure() {
         return _pressure;
     }
 
+    @Override
     public String GetPressureString() {
         return String.format(Locale.getDefault(), "%.2f%%", _pressure);
     }
 
-    public String GetDate() {
-        return _date;
+    @Override
+    public Calendar GetDateTime() {
+        return _dateTime;
     }
 
-    public String GetTime() {
-        return _time;
-    }
-
+    @Override
     public WeatherCondition GetCondition() {
-        return _condition;
+        return _weatherCondition;
     }
 
+    @Override
     public ForecastListType GetForecastListType() {
-        return _listType;
+        return _forecastListType;
     }
 
+    @Override
     public ForecastDayTime GetDayTime() {
-        int hour = Integer.parseInt(_time.substring(0, 2).replace(":", ""));
-        return ForecastDayTime.GetByValue(hour);
+        return ForecastDayTime.GetByValue(_dateTime.get(Calendar.HOUR_OF_DAY));
     }
 
-    public Calendar GetCalendarDay() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(_date.substring(8)));
-        return calendar;
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(),
+                "{\"Class\":\"%s\",\"Main\":\"%s\",\"Description\":\"%s\",\"TemperatureMin\":%.2f,\"TemperatureMax\":%.2f,\"Humidity\":%.2f,\"Pressure\":%.2f,\"DateTime\":\"%s\",\"WeatherCondition\":\"%s\",\"ForecastListType\":\"%s\"}",
+                Tag, _main, _description, _temperatureMin, _temperatureMax, _humidity, _pressure, _dateTime, _weatherCondition, _forecastListType);
     }
 }

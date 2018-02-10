@@ -1,4 +1,4 @@
-package guepardoapps.library.openweather.common.utils;
+package guepardoapps.library.openweather.utils;
 
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -10,40 +10,29 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Locale;
 
-@SuppressWarnings({"unused", "WeakerAccess "})
-public class Logger implements Serializable {
-    private static final long serialVersionUID = -6278387904140900473L;
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class Logger {
+    private static final int MaxLogFileLines = 16536;
 
-    private static final int MAX_LOG_FILE_LINES = 16536;
+    private static final Logger Singleton = new Logger();
 
-    private static final Logger SINGLETON = new Logger();
+    public static Logger getInstance() {
+        return Singleton;
+    }
 
-    private File _loggingDir;
+    private File _documentDir;
     private File _logFile;
     private boolean _debuggingEnabled;
     private boolean _writeToFileEnabled;
 
     private Logger() {
-        _loggingDir = new File(Environment.getExternalStorageDirectory() + "/OpenWeatherLog");
+        _documentDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         _debuggingEnabled = true;
-        _writeToFileEnabled = false;
+        _writeToFileEnabled = true;
         createNewLogFile();
-    }
-
-    public static Logger getInstance() {
-        return SINGLETON;
-    }
-
-    public void SetLoggingDir(@NonNull File loggingDir) {
-        _loggingDir = loggingDir;
-    }
-
-    public File GetLoggingDir() {
-        return _loggingDir;
     }
 
     public void SetDebuggingEnable(boolean debuggingEnabled) {
@@ -189,12 +178,12 @@ public class Logger implements Serializable {
     }
 
     private void createNewLogFile() {
-        _logFile = new File(_loggingDir, getFileName());
+        _logFile = new File(_documentDir, getFileName());
         checkIfLogFileExists();
     }
 
     private String getFileName() {
-        return String.format(Locale.getDefault(), "OpenWeather-Log-%s.txt", getCurrentDateTimeString());
+        return String.format(Locale.getDefault(), "LucaHome-Log-%s.txt", getCurrentDateTimeString());
     }
 
     private String getCurrentDateTimeString() {
@@ -223,7 +212,7 @@ public class Logger implements Serializable {
             return false;
         }
 
-        if (getLineCountInLogFile() >= MAX_LOG_FILE_LINES) {
+        if (getLineCountInLogFile() >= MaxLogFileLines) {
             createNewLogFile();
         }
 

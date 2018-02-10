@@ -5,16 +5,14 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import guepardoapps.library.openweather.common.utils.Logger;
+import guepardoapps.library.openweather.utils.Logger;
 
-public class ReceiverController implements Serializable {
-    private static final long serialVersionUID = 2288241732336744506L;
-
-    private static String TAG = ReceiverController.class.getSimpleName();
+@SuppressWarnings({"WeakerAccess"})
+public class ReceiverController implements IReceiverController {
+    private static String Tag = ReceiverController.class.getSimpleName();
 
     private Context _context;
     private List<BroadcastReceiver> _registeredReceiver;
@@ -24,37 +22,42 @@ public class ReceiverController implements Serializable {
         _registeredReceiver = new ArrayList<>();
     }
 
+    @Override
     public void RegisterReceiver(@NonNull BroadcastReceiver receiver, @NonNull String[] actions) {
         IntentFilter downloadStateFilter = new IntentFilter();
         for (String action : actions) {
             downloadStateFilter.addAction(action);
         }
-        unregisterReceiver(receiver);
+
+        UnregisterReceiver(receiver);
+
         _context.registerReceiver(receiver, downloadStateFilter);
         _registeredReceiver.add(receiver);
     }
 
-    private void unregisterReceiver(@NonNull BroadcastReceiver receiver) {
+    @Override
+    public void UnregisterReceiver(@NonNull BroadcastReceiver receiver) {
         for (int index = 0; index < _registeredReceiver.size(); index++) {
             if (_registeredReceiver.get(index) == receiver) {
                 try {
                     _context.unregisterReceiver(receiver);
                     _registeredReceiver.remove(index);
                 } catch (Exception exception) {
-                    Logger.getInstance().Error(TAG, exception.toString());
+                    Logger.getInstance().Error(Tag, exception.toString());
                 }
                 break;
             }
         }
     }
 
+    @Override
     public void Dispose() {
         for (int index = 0; index < _registeredReceiver.size(); index++) {
             try {
                 _context.unregisterReceiver(_registeredReceiver.get(index));
                 _registeredReceiver.remove(index);
             } catch (Exception exception) {
-                Logger.getInstance().Error(TAG, exception.toString());
+                Logger.getInstance().Error(Tag, exception.toString());
             }
         }
     }

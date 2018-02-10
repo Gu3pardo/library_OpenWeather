@@ -2,54 +2,46 @@ package guepardoapps.library.openweather.models;
 
 import android.support.annotation.NonNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 import guepardoapps.library.openweather.converter.NotificationContentConverter;
 
-@SuppressWarnings({"unused"})
-public class ForecastModel implements Serializable {
-    private static final String TAG = ForecastModel.class.getSimpleName();
+public class ForecastModel implements IForecastModel {
+    private static final String Tag = ForecastModel.class.getSimpleName();
 
-    private String _city;
-    private String _country;
-    private List<ForecastPartModel> _list = new ArrayList<>();
+    private City _city;
+    private ArrayList<ForecastPartModel> _partModelList = new ArrayList<>();
 
-    public ForecastModel(
-            @NonNull String city,
-            @NonNull String country,
-            @NonNull List<ForecastPartModel> list) {
+    public ForecastModel(@NonNull City city, @NonNull ArrayList<ForecastPartModel> partModelList) {
         _city = city;
-        _country = country;
-        _list = list;
+        _partModelList = partModelList;
     }
 
-    public String GetCity() {
+    @Override
+    public City GetCity() {
         return _city;
     }
 
-    public String GetCountry() {
-        return _country;
+    @Override
+    public ArrayList<ForecastPartModel> GetList() {
+        return _partModelList;
     }
 
-    public List<ForecastPartModel> GetList() {
-        return _list;
-    }
-
+    @Override
     public int GetWallpaper() {
-        return NotificationContentConverter.getInstance().MostNextWeatherCondition(_list).GetWallpaper();
+        return NotificationContentConverter.GetMostNextWeatherCondition(_partModelList).GetWallpaper();
     }
 
     @Override
     public String toString() {
-        StringBuilder toString = new StringBuilder("[" + TAG + ": City: " + _city + ", Country: " + _country);
-
-        for (ForecastPartModel entry : _list) {
-            toString.append(";").append(entry.toString());
+        StringBuilder partModelListString = new StringBuilder();
+        for (ForecastPartModel entry : _partModelList) {
+            partModelListString.append(",").append(entry.toString());
         }
 
-        toString.append("]");
-        return toString.toString();
+        return String.format(Locale.getDefault(),
+                "{\"Class\":\"%s\",\"City\":\"%s\",\"PartModelList\":{\"%s\"}}",
+                Tag, _city, partModelListString);
     }
 }

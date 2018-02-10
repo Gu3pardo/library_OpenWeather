@@ -11,27 +11,26 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import guepardoapps.library.openweather.common.classes.NotificationContent;
-import guepardoapps.library.openweather.common.classes.SerializableTime;
-import guepardoapps.library.openweather.common.utils.Logger;
-import guepardoapps.library.openweather.controller.BroadcastController;
-import guepardoapps.library.openweather.controller.NetworkController;
-import guepardoapps.library.openweather.controller.NotificationController;
-import guepardoapps.library.openweather.controller.ReceiverController;
-import guepardoapps.library.openweather.converter.JsonToWeatherConverter;
-import guepardoapps.library.openweather.converter.NotificationContentConverter;
-import guepardoapps.library.openweather.downloader.OpenWeatherDownloader;
-import guepardoapps.library.openweather.enums.WeatherCondition;
-import guepardoapps.library.openweather.models.ForecastModel;
-import guepardoapps.library.openweather.models.ForecastPartModel;
-import guepardoapps.library.openweather.models.WeatherModel;
+import guepardoapps.library.openweather.controller.*;
+import guepardoapps.library.openweather.converter.*;
+import guepardoapps.library.openweather.datatransferobjects.NotificationContentDto;
+import guepardoapps.library.openweather.downloader.*;
+import guepardoapps.library.openweather.enums.*;
+import guepardoapps.library.openweather.models.*;
+import guepardoapps.library.openweather.utils.Logger;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
-public class OpenWeatherService {
+@SuppressWarnings({"WeakerAccess"})
+public class OpenWeatherService implements IOpenWeatherService {
+    private static final String Tag = OpenWeatherService.class.getSimpleName();
+
+    private static final OpenWeatherService Singleton = new OpenWeatherService();
+
+    private static final int MinTimeoutMs = 5 * 60 * 1000;
+    private static final int MaxTimeoutMs = 24 * 60 * 60 * 1000;
+    private static final int TimeoutMs = 15 * 60 * 1000;
+
     public static class CurrentWeatherDownloadFinishedContent implements Serializable {
         public WeatherModel CurrentWeather;
         public boolean Success;
@@ -56,27 +55,18 @@ public class OpenWeatherService {
         }
     }
 
-    public static final String CurrentWeatherDownloadFinishedBroadcast = "guepardoapps.lucahome.openweather.service.weather.current.download.finished";
-    public static final String CurrentWeatherDownloadFinishedBundle = "CurrentWeatherDownloadFinishedBundle";
-
-    public static final String ForecastWeatherDownloadFinishedBroadcast = "guepardoapps.lucahome.openweather.service.weather.forecast.download.finished";
-    public static final String ForecastWeatherDownloadFinishedBundle = "ForecastWeatherDownloadFinishedBundle";
-
-    private static final OpenWeatherService SINGLETON = new OpenWeatherService();
-    private boolean _isInitialized;
-
-    private static final String TAG = OpenWeatherService.class.getSimpleName();
-
-    private Date _lastUpdate;
-
     private Context _context;
 
-    private OpenWeatherDownloader _openWeatherDownloader;
+    private IOpenWeatherDownloader _openWeatherDownloader;
 
-    private BroadcastController _broadcastController;
-    private NetworkController _networkController;
-    private NotificationController _notificationController;
-    private ReceiverController _receiverController;
+    private IBroadcastController _broadcastController;
+    private INetworkController _networkController;
+    private INotificationController _notificationController;
+    private IReceiverController _receiverController;
+
+    private boolean _isInitialized;
+
+    private Calendar _lastUpdate;
 
     private WeatherModel _currentWeather;
     private ForecastModel _forecastWeather;
@@ -85,10 +75,6 @@ public class OpenWeatherService {
     private boolean _displayForecastWeatherNotification;
     private Class<?> _currentWeatherReceiverActivity;
     private Class<?> _forecastWeatherReceiverActivity;
-
-    private static final int MIN_TIMEOUT_MS = 5 * 60 * 1000;
-    private static final int MAX_TIMEOUT_MS = 24 * 60 * 60 * 1000;
-    private static final int TIMEOUT_MS = 15 * 60 * 1000;
 
     private boolean _reloadEnabled;
     private int _reloadTimeout;
@@ -111,7 +97,7 @@ public class OpenWeatherService {
         public void onReceive(Context context, Intent intent) {
             OpenWeatherDownloader.DownloadFinishedBroadcastContent content = (OpenWeatherDownloader.DownloadFinishedBroadcastContent) intent.getSerializableExtra(OpenWeatherDownloader.DownloadFinishedBundle);
             if (content == null) {
-                Logger.getInstance().Error(TAG, "_currentWeatherDownloadFinishedReceiver content is null");
+                Logger.getInstance().Error(Tag, "_currentWeatherDownloadFinishedReceiver content is null");
                 return;
             }
 
@@ -122,26 +108,26 @@ public class OpenWeatherService {
 
             String result = content.Result;
             if (result == null || result.length() == 0) {
-                Logger.getInstance().Error(TAG, "Result is null!");
+                Logger.getInstance().Error(Tag, "Result is null!");
                 sendFailedCurrentWeatherBroadcast("Result is null!");
                 return;
             }
 
-            boolean succcess = content.Success;
-            if (!succcess) {
-                Logger.getInstance().Error(TAG, result);
+            boolean success = content.Success;
+            if (!success) {
+                Logger.getInstance().Error(Tag, result);
                 sendFailedCurrentWeatherBroadcast(result);
                 return;
             }
 
-            WeatherModel currentWeather = JsonToWeatherConverter.getInstance().ConvertFromJsonToWeatherModel(result);
+            WeatherModel currentWeather = JsonToWeatherConverter.ConvertFromJsonToCurrentModel(result);
             if (currentWeather == null) {
-                Logger.getInstance().Error(TAG, "Converted currentWeather is null!");
+                Logger.getInstance().Error(Tag, "Converted currentWeather is null!");
                 sendFailedCurrentWeatherBroadcast("Converted currentWeather is null!");
                 return;
             }
 
-            _lastUpdate = new Date();
+            _lastUpdate = Calendar.getInstance();
 
             _currentWeather = currentWeather;
 
@@ -165,7 +151,7 @@ public class OpenWeatherService {
         public void onReceive(Context context, Intent intent) {
             OpenWeatherDownloader.DownloadFinishedBroadcastContent content = (OpenWeatherDownloader.DownloadFinishedBroadcastContent) intent.getSerializableExtra(OpenWeatherDownloader.DownloadFinishedBundle);
             if (content == null) {
-                Logger.getInstance().Error(TAG, "_forecastWeatherDownloadFinishedReceiver content is null");
+                Logger.getInstance().Error(Tag, "_forecastWeatherDownloadFinishedReceiver content is null");
                 return;
             }
 
@@ -176,26 +162,26 @@ public class OpenWeatherService {
 
             String result = content.Result;
             if (result == null || result.length() == 0) {
-                Logger.getInstance().Error(TAG, "Result is null!");
+                Logger.getInstance().Error(Tag, "Result is null!");
                 sendFailedForecastWeatherBroadcast("Result is null!");
                 return;
             }
 
             boolean succcess = content.Success;
             if (!succcess) {
-                Logger.getInstance().Error(TAG, result);
+                Logger.getInstance().Error(Tag, result);
                 sendFailedCurrentWeatherBroadcast(result);
                 return;
             }
 
-            ForecastModel forecastWeather = JsonToWeatherConverter.getInstance().ConvertFromJsonToForecastModel(result);
+            ForecastModel forecastWeather = JsonToWeatherConverter.ConvertFromJsonToForecastModel(result);
             if (forecastWeather == null) {
-                Logger.getInstance().Error(TAG, "Converted forecastWeather is null!");
+                Logger.getInstance().Error(Tag, "Converted forecastWeather is null!");
                 sendFailedForecastWeatherBroadcast("Converted forecastWeather is null!");
                 return;
             }
 
-            _lastUpdate = new Date();
+            _lastUpdate = Calendar.getInstance();
 
             _forecastWeather = forecastWeather;
 
@@ -214,26 +200,17 @@ public class OpenWeatherService {
     }
 
     public static OpenWeatherService getInstance() {
-        return SINGLETON;
+        return Singleton;
     }
 
-    public void Initialize(
-            @NonNull Context context,
-            @NonNull String city,
-            @NonNull String apiKey,
-            boolean displayCurrentWeatherNotification,
-            boolean displayForecastWeatherNotification,
-            Class<?> currentWeatherReceiverActivity,
-            Class<?> forecastWeatherReceiverActivity,
-            boolean changeWallpaper,
-            boolean reloadEnabled,
-            int reloadTimeout) {
+    @Override
+    public void Initialize(@NonNull Context context, @NonNull String city, @NonNull String apiKey, boolean displayCurrentWeatherNotification, boolean displayForecastWeatherNotification, Class<?> currentWeatherReceiverActivity, Class<?> forecastWeatherReceiverActivity, boolean changeWallpaper, boolean reloadEnabled, int reloadTimeout) {
         if (_isInitialized) {
-            Logger.getInstance().Warning(TAG, "Already initialized!");
+            Logger.getInstance().Warning(Tag, "Already initialized!");
             return;
         }
 
-        _lastUpdate = new Date();
+        _lastUpdate = Calendar.getInstance();
 
         _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
         _displayForecastWeatherNotification = displayForecastWeatherNotification;
@@ -260,95 +237,96 @@ public class OpenWeatherService {
         _isInitialized = true;
     }
 
-    public void Initialize(
-            @NonNull Context context,
-            @NonNull String city,
-            @NonNull String apiKey,
-            boolean displayCurrentWeatherNotification,
-            boolean displayForecastWeatherNotification,
-            boolean changeWallpaper,
-            boolean reloadEnabled,
-            int reloadTimeout) {
+    @Override
+    public void Initialize(@NonNull Context context, @NonNull String city, @NonNull String apiKey, boolean displayCurrentWeatherNotification, boolean displayForecastWeatherNotification, boolean changeWallpaper, boolean reloadEnabled, int reloadTimeout) {
         Initialize(context, city, apiKey, displayCurrentWeatherNotification, displayForecastWeatherNotification, null, null, changeWallpaper, reloadEnabled, reloadTimeout);
     }
 
-    public void Initialize(
-            @NonNull Context context,
-            @NonNull String city,
-            @NonNull String apiKey) {
-        Initialize(context, city, apiKey, false, false, false, false, TIMEOUT_MS);
+    @Override
+    public void Initialize(@NonNull Context context, @NonNull String city, @NonNull String apiKey) {
+        Initialize(context, city, apiKey, false, false, false, false, TimeoutMs);
     }
 
+    @Override
     public void Dispose() {
         _receiverController.Dispose();
         _reloadHandler.removeCallbacks(_reloadRunnable);
         _isInitialized = false;
     }
 
+    @Override
     public void SetCity(@NonNull String city) {
         _openWeatherDownloader.SetCity(city);
         LoadCurrentWeather();
         LoadForecastWeather();
     }
 
+    @Override
     public String GetCity() {
         return _openWeatherDownloader.GetCity();
     }
 
+    @Override
     public void SetApiKey(@NonNull String apiKey) {
         _openWeatherDownloader.SetApiKey(apiKey);
     }
 
+    @Override
     public String GetApiKey() {
         return _openWeatherDownloader.GetApiKey();
     }
 
-    public boolean GetDisplayCurrentWeatherNotification() {
-        return _displayCurrentWeatherNotification;
-    }
-
+    @Override
     public void SetDisplayCurrentWeatherNotification(boolean displayCurrentWeatherNotification) {
         _displayCurrentWeatherNotification = displayCurrentWeatherNotification;
         if (!_displayCurrentWeatherNotification) {
-            _notificationController.CloseNotification(NotificationController.CURRENT_NOTIFICATION_ID);
+            _notificationController.CloseNotification(NotificationController.NotificationIdCurrentWeather);
         } else {
             displayCurrentWeatherNotification();
         }
     }
 
-    public boolean GetDisplayForecastWeatherNotification() {
-        return _displayForecastWeatherNotification;
+    @Override
+    public boolean GetDisplayCurrentWeatherNotification() {
+        return _displayCurrentWeatherNotification;
     }
 
+    @Override
     public void SetDisplayForecastWeatherNotification(boolean displayForecastWeatherNotification) {
         _displayForecastWeatherNotification = displayForecastWeatherNotification;
         if (!_displayForecastWeatherNotification) {
-            _notificationController.CloseNotification(NotificationController.FORECAST_NOTIFICATION_ID);
+            _notificationController.CloseNotification(NotificationController.NotificationIdForecastWeather);
         } else {
             displayForecastWeatherNotification();
         }
     }
 
-    public Class<?> GetCurrentWeatherReceiverActivity() {
-        return _currentWeatherReceiverActivity;
+    @Override
+    public boolean GetDisplayForecastWeatherNotification() {
+        return _displayForecastWeatherNotification;
     }
 
+    @Override
     public void SetCurrentWeatherReceiverActivity(@NonNull Class<?> currentWeatherReceiverActivity) {
         _currentWeatherReceiverActivity = currentWeatherReceiverActivity;
     }
 
-    public Class<?> GetForecastWeatherReceiverActivity() {
-        return _forecastWeatherReceiverActivity;
+    @Override
+    public Class<?> GetCurrentWeatherReceiverActivity() {
+        return _currentWeatherReceiverActivity;
     }
 
+    @Override
     public void SetForecastWeatherReceiverActivity(@NonNull Class<?> forecastWeatherReceiverActivity) {
         _forecastWeatherReceiverActivity = forecastWeatherReceiverActivity;
     }
 
-    public boolean GetChangeWallpaper() {
-        return _changeWallpaper;
+    @Override
+    public Class<?> GetForecastWeatherReceiverActivity() {
+        return _forecastWeatherReceiverActivity;
     }
 
+    @Override
     public void SetChangeWallpaper(boolean changeWallpaper) {
         _changeWallpaper = changeWallpaper;
         if (_changeWallpaper) {
@@ -356,10 +334,12 @@ public class OpenWeatherService {
         }
     }
 
-    public boolean GetReloadEnabled() {
-        return _reloadEnabled;
+    @Override
+    public boolean GetChangeWallpaper() {
+        return _changeWallpaper;
     }
 
+    @Override
     public void SetReloadEnabled(boolean reloadEnabled) {
         _reloadEnabled = reloadEnabled;
         if (_reloadEnabled && _networkController.IsNetworkAvailable()) {
@@ -368,16 +348,18 @@ public class OpenWeatherService {
         }
     }
 
-    public int GetReloadTimeout() {
-        return _reloadTimeout;
+    @Override
+    public boolean GetReloadEnabled() {
+        return _reloadEnabled;
     }
 
+    @Override
     public void SetReloadTimeout(int reloadTimeout) {
-        if (reloadTimeout < MIN_TIMEOUT_MS) {
-            reloadTimeout = MIN_TIMEOUT_MS;
+        if (reloadTimeout < MinTimeoutMs) {
+            reloadTimeout = MinTimeoutMs;
         }
-        if (reloadTimeout > MAX_TIMEOUT_MS) {
-            reloadTimeout = MAX_TIMEOUT_MS;
+        if (reloadTimeout > MaxTimeoutMs) {
+            reloadTimeout = MaxTimeoutMs;
         }
 
         _reloadTimeout = reloadTimeout;
@@ -387,121 +369,115 @@ public class OpenWeatherService {
         }
     }
 
-    public WeatherModel CurrentWeather() {
-        if (_currentWeather == null) {
-            return new WeatherModel(
-                    "Null", "Null", "Null",
-                    -273.15, -1, -1,
-                    new SerializableTime(), new SerializableTime(), new SerializableTime(),
-                    WeatherCondition.NULL);
-        }
+    @Override
+    public int GetReloadTimeout() {
+        return _reloadTimeout;
+    }
 
+    @Override
+    public IWeatherModel GetCurrentWeather() {
+        if (_currentWeather == null) {
+            return new WeatherModel("Null", "Null", "Null", -273.15, -1, -1, Calendar.getInstance(), Calendar.getInstance(), Calendar.getInstance(), WeatherCondition.Null);
+        }
         return _currentWeather;
     }
 
-    public ForecastModel ForecastWeather() {
+    @Override
+    public IForecastModel GetForecastWeather() {
         return _forecastWeather;
     }
 
-    public ForecastModel FoundForecastItem(@NonNull String searchKey) {
-        List<ForecastPartModel> foundEntries = new ArrayList<>();
+    @Override
+    public IForecastModel SearchForecastModel(@NonNull String searchKey) {
+        ArrayList<ForecastPartModel> foundEntryList = new ArrayList<>();
 
         for (int index = 0; index < _forecastWeather.GetList().size(); index++) {
             ForecastPartModel entry = _forecastWeather.GetList().get(index);
 
             if (searchKey.contentEquals("Today") || searchKey.contentEquals("Heute")) {
-                Calendar today = Calendar.getInstance();
-                int dayOfMonth = today.get(Calendar.DAY_OF_MONTH);
-                if (entry.GetDate().endsWith(String.valueOf(dayOfMonth))) {
-                    foundEntries.add(entry);
+                if (entry.GetDateTime().get(Calendar.DAY_OF_MONTH) == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)) {
+                    foundEntryList.add(entry);
                 }
 
             } else if (searchKey.contentEquals("Tomorrow") || searchKey.contains("Morgen")) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH) + 1);
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-                if (entry.GetDate().endsWith(String.valueOf(dayOfMonth))) {
-                    foundEntries.add(entry);
+                if (entry.GetDateTime().get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
+                    foundEntryList.add(entry);
                 }
 
             } else {
                 if (entry.GetCondition().toString().contains(searchKey)
-                        || entry.GetDate().contains(searchKey)
-                        || entry.GetTime().contains(searchKey)
+                        || entry.GetDateTime().toString().contains(searchKey)
                         || entry.GetDescription().contains(searchKey)
                         || entry.GetTemperatureString().contains(searchKey)
                         || entry.GetHumidityString().contains(searchKey)
                         || entry.GetPressureString().contains(searchKey)) {
-                    foundEntries.add(entry);
+                    foundEntryList.add(entry);
                 }
             }
         }
 
-        return new ForecastModel(_forecastWeather.GetCity(), _forecastWeather.GetCountry(), foundEntries);
+        return new ForecastModel(_forecastWeather.GetCity(), foundEntryList);
     }
 
+    @Override
     public void LoadCurrentWeather() {
-        if (_openWeatherDownloader.DownloadCurrentWeatherJson() != OpenWeatherDownloader.DownloadActionResult.PERFORMING) {
-            Logger.getInstance().Error(TAG, "Failure in LoadCurrentWeather!");
+        if (_openWeatherDownloader.DownloadCurrentWeather() != OpenWeatherDownloader.DownloadActionResult.Performing) {
+            Logger.getInstance().Error(Tag, "Failure in LoadCurrentWeather!");
             sendFailedCurrentWeatherBroadcast("Not initialized or no city or apikey given!");
         }
     }
 
+    @Override
     public void LoadForecastWeather() {
-        if (_openWeatherDownloader.DownloadForecastWeatherJson() != OpenWeatherDownloader.DownloadActionResult.PERFORMING) {
-            Logger.getInstance().Error(TAG, "Failure in LoadCurrentWeather!");
+        if (_openWeatherDownloader.DownloadForecastWeather() != OpenWeatherDownloader.DownloadActionResult.Performing) {
+            Logger.getInstance().Error(Tag, "Failure in LoadCurrentWeather!");
             sendFailedCurrentWeatherBroadcast("Not initialized or no city or apikey given!");
         }
     }
 
-    public Date GetLastUpdate() {
+    @Override
+    public Calendar GetLastUpdate() {
         return _lastUpdate;
     }
 
     private void displayCurrentWeatherNotification() {
         if (_currentWeather == null) {
-            Logger.getInstance().Warning(TAG, "_currentWeather is null!");
+            Logger.getInstance().Warning(Tag, "_currentWeather is null!");
             return;
         }
 
-        NotificationContent notificationContent = new NotificationContent(
-                _currentWeather.GetCondition().GetDescription(),
-                String.format(Locale.getDefault(), "%.1f °C | %.2f %% | %.2f mBar", _currentWeather.GetTemperature(), _currentWeather.GetHumidity(), _currentWeather.GetPressure()),
-                _currentWeather.GetCondition().GetIcon(),
-                _currentWeather.GetCondition().GetWallpaper());
+        WeatherCondition weatherCondition = _currentWeather.GetWeatherCondition();
+        NotificationContentDto notificationContent = new NotificationContentDto(
+                weatherCondition.GetDescription(),
+                String.format(Locale.getDefault(), "%.1f %sC | %.2f %% | %.2f mBar", _currentWeather.GetTemperature(), ((char) 0x00B0), _currentWeather.GetHumidity(), _currentWeather.GetPressure()),
+                weatherCondition.GetIcon(),
+                weatherCondition.GetWallpaper());
 
-        _notificationController.CreateNotification(
-                NotificationController.CURRENT_NOTIFICATION_ID,
-                _currentWeatherReceiverActivity,
-                notificationContent);
+        _notificationController.CreateNotification(NotificationController.NotificationIdCurrentWeather, _currentWeatherReceiverActivity, notificationContent);
     }
 
     private void displayForecastWeatherNotification() {
         if (_forecastWeather == null) {
-            Logger.getInstance().Warning(TAG, "_forecastWeather is null!");
+            Logger.getInstance().Warning(Tag, "_forecastWeather is null!");
             return;
         }
-
-        NotificationContent notificationContent = NotificationContentConverter.getInstance().TellForecastWeather(_forecastWeather.GetList());
-
-        _notificationController.CreateNotification(
-                NotificationController.FORECAST_NOTIFICATION_ID,
-                _forecastWeatherReceiverActivity,
-                notificationContent);
+        _notificationController.CreateNotification(NotificationController.NotificationIdForecastWeather, _forecastWeatherReceiverActivity, NotificationContentConverter.GetForecastWeather(_forecastWeather.GetList()));
     }
 
     private void changeWallpaper() {
         if (_currentWeather == null) {
-            Logger.getInstance().Warning(TAG, "_currentWeather is null!");
+            Logger.getInstance().Warning(Tag, "_currentWeather is null!");
             return;
         }
 
-        WallpaperManager wallpaperManager = WallpaperManager.getInstance(_context.getApplicationContext());
-
         try {
-            wallpaperManager.setResource(_currentWeather.GetCondition().GetWallpaper());
+            WallpaperManager wallpaperManager = WallpaperManager.getInstance(_context.getApplicationContext());
+            wallpaperManager.setResource(_currentWeather.GetWeatherCondition().GetWallpaper());
         } catch (IOException exception) {
-            Logger.getInstance().Error(TAG, exception.getMessage());
+            Logger.getInstance().Error(Tag, exception.getMessage());
         }
     }
 

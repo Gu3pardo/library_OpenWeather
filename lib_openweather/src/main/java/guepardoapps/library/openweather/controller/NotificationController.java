@@ -11,15 +11,12 @@ import android.support.annotation.NonNull;
 
 import java.util.Locale;
 
-import guepardoapps.library.openweather.common.classes.NotificationContent;
-import guepardoapps.library.openweather.common.utils.Logger;
-import guepardoapps.library.openweather.common.utils.Tools;
+import guepardoapps.library.openweather.datatransferobjects.NotificationContentDto;
+import guepardoapps.library.openweather.utils.BitmapHelper;
+import guepardoapps.library.openweather.utils.Logger;
 
-public class NotificationController {
-    private static final String TAG = NotificationController.class.getSimpleName();
-
-    public static final int CURRENT_NOTIFICATION_ID = 311295;
-    public static final int FORECAST_NOTIFICATION_ID = 311292;
+public class NotificationController implements INotificationController {
+    private static final String Tag = NotificationController.class.getSimpleName();
 
     private Context _context;
     private NotificationManager _notificationManager;
@@ -29,11 +26,12 @@ public class NotificationController {
         _notificationManager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void CreateNotification(int id, Class<?> receiverActivity, @NonNull NotificationContent notificationContent) {
-        Logger.getInstance().Debug(TAG, String.format(Locale.getDefault(), "CreateNotification with id %d and notificationContent %s", id, notificationContent));
+    @Override
+    public void CreateNotification(int notificationId, Class<?> receiverActivity, @NonNull NotificationContentDto notificationContent) {
+        Logger.getInstance().Debug(Tag, String.format(Locale.getDefault(), "CreateNotification with id %d and notificationContent %s", notificationId, notificationContent));
 
         Bitmap bitmap = BitmapFactory.decodeResource(_context.getResources(), notificationContent.GetBigIcon());
-        bitmap = Tools.GetCircleBitmap(bitmap);
+        bitmap = BitmapHelper.GetCircleBitmap(bitmap, bitmap.getHeight(), bitmap.getWidth());
 
         Notification.Builder builder = new Notification.Builder(_context);
         builder
@@ -45,14 +43,15 @@ public class NotificationController {
 
         if (receiverActivity != null) {
             Intent intent = new Intent(_context, receiverActivity);
-            PendingIntent pendingIntent = PendingIntent.getActivity(_context, id, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(_context, notificationId, intent, 0);
             builder.setContentIntent(pendingIntent);
         }
 
         Notification notification = builder.build();
-        _notificationManager.notify(id, notification);
+        _notificationManager.notify(notificationId, notification);
     }
 
+    @Override
     public void CloseNotification(int notificationId) {
         _notificationManager.cancel(notificationId);
     }

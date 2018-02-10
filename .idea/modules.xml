@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/lib_openweather/lib_openweather.iml" filepath="$PROJECT_DIR$/lib_openweather/lib_openweather.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library_OpenWeather.iml" filepath="$PROJECT_DIR$/library_OpenWeather.iml" />
-      <module fileurl="file://C:\Users\Jonas\Documents\GitHub\library_OpenWeather\library_OpenWeather.iml" filepath="C:\Users\Jonas\Documents\GitHub\library_OpenWeather\library_OpenWeather.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OpenWeather.iml" filepath="$PROJECT_DIR$/OpenWeather.iml" />
+      <module fileurl="file://C:\Users\Jonas\Documents\GitHub\library_OpenWeather\OpenWeather.iml" filepath="C:\Users\Jonas\Documents\GitHub\library_OpenWeather\OpenWeather.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/GitHub/library_OpenWeather/lib_openweather/lib_openweather.iml" filepath="$USER_HOME$/Documents/GitHub/library_OpenWeather/lib_openweather/lib_openweather.iml" />
     </modules>
   </component>
 </project>

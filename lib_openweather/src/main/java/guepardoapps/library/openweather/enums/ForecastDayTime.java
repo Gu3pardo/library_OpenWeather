@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public enum ForecastDayTime implements Serializable {
 
-    NULL(-1),
-    MORNING(6),
-    MIDDAY(12),
-    AFTERWORK(16),
-    EVENING(17),
-    NIGHT(22);
+    Null(-1),
+    Morning(6),
+    Midday(12),
+    AfterWork(16),
+    Evening(17),
+    Night(22);
 
     private int _value;
 
@@ -27,18 +27,18 @@ public enum ForecastDayTime implements Serializable {
     }
 
     public static ForecastDayTime GetByValue(int value) {
-        if (value >= NIGHT.GetValue() || value < MORNING.GetValue()) {
-            return NIGHT;
-        } else if (value >= MORNING.GetValue() && value < MIDDAY.GetValue()) {
-            return MORNING;
-        } else if (value >= MIDDAY.GetValue() && value < AFTERWORK.GetValue()) {
-            return MIDDAY;
-        } else if (value >= AFTERWORK.GetValue() && value < EVENING.GetValue()) {
-            return AFTERWORK;
-        } else if (value >= EVENING.GetValue() && value < NIGHT.GetValue()) {
-            return EVENING;
+        if (value >= Night.GetValue() || value < Morning.GetValue()) {
+            return Night;
+        } else if (value >= Morning.GetValue() && value < Midday.GetValue()) {
+            return Morning;
+        } else if (value >= Midday.GetValue() && value < AfterWork.GetValue()) {
+            return Midday;
+        } else if (value >= AfterWork.GetValue() && value < Evening.GetValue()) {
+            return AfterWork;
+        } else if (value >= Evening.GetValue() && value < Night.GetValue()) {
+            return Evening;
         } else {
-            return NULL;
+            return Null;
         }
     }
 }

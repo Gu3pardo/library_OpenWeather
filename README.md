@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather)
-[![Version](https://img.shields.io/badge/version-v0.14.1.180118-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
+[![Version](https://img.shields.io/badge/version-v1.0.0.180210-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
 
 library for downloading and handling data from openweather
 used in https://github.com/GuepardoApps/LucaHome-AndroidApplication
@@ -29,8 +29,8 @@ After registering your Receiver, you call for the data.
 public class MainActivity extends Activity {
 
 	...
-	private OpenWeatherService _openWeatherService;
-	private ReceiverController _receiverController;
+	private IOpenWeatherService _openWeatherService;
+	private IReceiverController _receiverController;
 
 	private BroadcastReceiver _currentWeatherReceiver = new BroadcastReceiver() {
 		@Override
@@ -80,8 +80,8 @@ public class MainActivity extends Activity {
 		super.onResume();
 
 		// register the receiver to get the data from the service
-		_receiverController.RegisterReceiver(_currentWeatherReceiver, new String[]{OpenWeatherService.CurrentWeatherDownloadFinishedBroadcast});
-		_receiverController.RegisterReceiver(_forecastWeatherReceiver, new String[]{OpenWeatherService.ForecastWeatherDownloadFinishedBroadcast});
+		_receiverController.RegisterReceiver(_currentWeatherReceiver, new String[]{IOpenWeatherService.CurrentWeatherDownloadFinishedBroadcast});
+		_receiverController.RegisterReceiver(_forecastWeatherReceiver, new String[]{IOpenWeatherService.ForecastWeatherDownloadFinishedBroadcast});
 
 		// To load the current weather in your city
 		_openWeatherService.LoadCurrentWeather();
@@ -94,8 +94,8 @@ public class MainActivity extends Activity {
 
 	public void SomeMethod() {
 		// you can also get the data from the service if it already downloaded it
-		WeatherModel currentWeather = _openWeatherService.CurrentWeather()
-		ForecastModel forecastWeather = _openWeatherService.ForecastWeather()
+		IWeatherModel currentWeather = _openWeatherService.CurrentWeather()
+		IForecastModel forecastWeather = _openWeatherService.ForecastWeather()
 
 		// you can change the apikey on the fly
 		_openWeatherService.SetApiKey(ANOTHER_API_KEY)
@@ -126,11 +126,11 @@ public class MainActivity extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			OpenWeatherService.ForecastWeatherDownloadFinishedContent content = (OpenWeatherService.ForecastWeatherDownloadFinishedContent) intent.getSerializableExtra(OpenWeatherService.ForecastWeatherDownloadFinishedBundle);
-			ForecastModel forecastWeather = content.ForecastModel;
+			IForecastModel forecastWeather = content.ForecastModel;
 
 			if (forecastWeather != null) {
 				...
-				List<ForecastWeatherModel> list = forecastWeather.GetList();
+				ArrayList<IForecastWeatherModel> list = forecastWeather.GetList();
 				listView.setAdapter(new ForecastListAdapter(this, list));
 				...
 			}
