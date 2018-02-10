@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 	private BroadcastReceiver _currentWeatherReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-      OpenWeatherService.CurrentWeatherDownloadFinishedContent content = (OpenWeatherService.CurrentWeatherDownloadFinishedContent) intent.getSerializableExtra(OpenWeatherService.CurrentWeatherDownloadFinishedBundle);
+			OpenWeatherService.CurrentWeatherDownloadFinishedContent content = (OpenWeatherService.CurrentWeatherDownloadFinishedContent) intent.getSerializableExtra(OpenWeatherService.CurrentWeatherDownloadFinishedBundle);
 			WeatherModel currentWeather = content.CurrentWeather;
 			// Do whatever you want with the data
 		  ...
