@@ -16,6 +16,7 @@ import guepardoapps.library.openweather.models.ForecastPartModel;
 /**
  * NotificationContentConverter to use to create NotificationContentDto
  */
+@SuppressWarnings({"unused"})
 public class NotificationContentConverter implements Serializable {
 
     /**

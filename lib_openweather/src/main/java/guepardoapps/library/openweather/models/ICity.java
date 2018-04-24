@@ -2,6 +2,7 @@ package guepardoapps.library.openweather.models;
 
 import java.io.Serializable;
 
+@SuppressWarnings({"unused"})
 public interface ICity extends Serializable {
     int GetId();
 

@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import guepardoapps.library.openweather.enums.WeatherCondition;
 
+@SuppressWarnings({"unused"})
 public interface IWeatherModel extends Serializable {
     String GetCity();
 

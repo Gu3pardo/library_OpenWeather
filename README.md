@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather)
-[![Version](https://img.shields.io/badge/version-v1.0.0.180210-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
+[![Version](https://img.shields.io/badge/version-v1.0.1.180424-blue.svg)](https://github.com/GuepardoApps/library_OpenWeather)
 
 library for downloading and handling data from openweather
 used in https://github.com/GuepardoApps/LucaHome-AndroidApplication
@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
 		...
 
 		// Get the instance of the singleton service
-		_openWeatherService = new OpenWeatherService.getInstance();
+		_openWeatherService = new OpenWeatherService();
 
 		// initialize the service with the current context and a city. Please replace YOUR_API_KEY with your personal key!
 		_openWeatherService.Initialize(this, "Nuremberg, DE", YOUR_API_KEY);

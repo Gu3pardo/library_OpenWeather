@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 import guepardoapps.library.openweather.controller.BroadcastController;
 import guepardoapps.library.openweather.utils.Logger;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -33,14 +34,12 @@ public class OpenWeatherDownloader implements IOpenWeatherDownloader {
     private static final String CallForecastWeather = "http://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=%s";
 
     private BroadcastController _broadcastController;
-    private OkHttpClient _okHttpClient;
 
     private String _city;
     private String _apiKey;
 
     public OpenWeatherDownloader(@NonNull Context context, @NonNull String city, @NonNull String apiKey) {
         _broadcastController = new BroadcastController(context);
-        _okHttpClient = new OkHttpClient();
         _city = city;
         _apiKey = apiKey;
     }
@@ -69,13 +68,25 @@ public class OpenWeatherDownloader implements IOpenWeatherDownloader {
     public DownloadActionResult DownloadCurrentWeather() {
         if (_city == null || _city.length() == 0) {
             Logger.getInstance().Warning(Tag, "You have to set the city before calling the weather!");
-            _broadcastController.SendSerializableBroadcast(DownloadFinishedBroadcast, DownloadFinishedBundle, new DownloadFinishedBroadcastContent(false, WeatherDownloadType.CurrentWeather, "Please set the city before calling the weather!"));
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(
+                            false,
+                            WeatherDownloadType.CurrentWeather,
+                            "Please set the city before calling the weather!"));
             return DownloadActionResult.InvalidCity;
         }
 
         if (_apiKey == null || _apiKey.length() == 0) {
             Logger.getInstance().Error(Tag, "Please enter a valid  key");
-            _broadcastController.SendSerializableBroadcast(DownloadFinishedBroadcast, DownloadFinishedBundle, new DownloadFinishedBroadcastContent(false, WeatherDownloadType.CurrentWeather, "Please enter a valid key"));
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(
+                            false,
+                            WeatherDownloadType.CurrentWeather,
+                            "Please enter a valid key"));
             return DownloadActionResult.InvalidApiKey;
         }
 
@@ -90,13 +101,25 @@ public class OpenWeatherDownloader implements IOpenWeatherDownloader {
     public DownloadActionResult DownloadForecastWeather() {
         if (_city == null || _city.length() == 0) {
             Logger.getInstance().Warning(Tag, "Please set the city before calling the weather!");
-            _broadcastController.SendSerializableBroadcast(DownloadFinishedBroadcast, DownloadFinishedBundle, new DownloadFinishedBroadcastContent(false, WeatherDownloadType.ForecastWeather, "Please set the city before calling the weather!"));
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(
+                            false,
+                            WeatherDownloadType.ForecastWeather,
+                            "Please set the city before calling the weather!"));
             return DownloadActionResult.InvalidCity;
         }
 
-        if (_apiKey == null || _apiKey.length() == 0 || _apiKey.equals("") || _apiKey.equals("ENTER_YOUR_KEY_HERE")) {
+        if (_apiKey == null || _apiKey.length() == 0 || _apiKey.equals("ENTER_YOUR_KEY_HERE")) {
             Logger.getInstance().Error(Tag, "Please enter a valid  key");
-            _broadcastController.SendSerializableBroadcast(DownloadFinishedBroadcast, DownloadFinishedBundle, new DownloadFinishedBroadcastContent(false, WeatherDownloadType.ForecastWeather, "Please enter a valid key"));
+            _broadcastController.SendSerializableBroadcast(
+                    DownloadFinishedBroadcast,
+                    DownloadFinishedBundle,
+                    new DownloadFinishedBroadcastContent(
+                            false,
+                            WeatherDownloadType.ForecastWeather,
+                            "Please enter a valid key"));
             return DownloadActionResult.InvalidApiKey;
         }
 
@@ -116,8 +139,9 @@ public class OpenWeatherDownloader implements IOpenWeatherDownloader {
                 String result = "";
                 boolean success = false;
                 try {
+                    OkHttpClient okHttpClient = new OkHttpClient();
                     Request request = new Request.Builder().url(requestUrl).build();
-                    Response response = _okHttpClient.newCall(request).execute();
+                    Response response = okHttpClient.newCall(request).execute();
                     ResponseBody responseBody = response.body();
 
                     if (responseBody != null) {
@@ -130,7 +154,13 @@ public class OpenWeatherDownloader implements IOpenWeatherDownloader {
                 } catch (Exception exception) {
                     Logger.getInstance().Error(Tag, exception.toString());
                 } finally {
-                    _broadcastController.SendSerializableBroadcast(DownloadFinishedBroadcast, DownloadFinishedBundle, new DownloadFinishedBroadcastContent(success, CurrentWeatherDownloadType, result));
+                    _broadcastController.SendSerializableBroadcast(
+                            DownloadFinishedBroadcast,
+                            DownloadFinishedBundle,
+                            new DownloadFinishedBroadcastContent(
+                                    success,
+                                    CurrentWeatherDownloadType,
+                                    result));
                 }
             }
             return "";

@@ -6,6 +6,7 @@ import java.util.Calendar;
 import guepardoapps.library.openweather.enums.ForecastDayTime;
 import guepardoapps.library.openweather.enums.WeatherCondition;
 
+@SuppressWarnings({"unused"})
 public interface IForecastPartModel extends Serializable {
     enum ForecastListType {Forecast, DateDivider}
 

@@ -21,11 +21,9 @@ import guepardoapps.library.openweather.enums.*;
 import guepardoapps.library.openweather.models.*;
 import guepardoapps.library.openweather.utils.Logger;
 
-@SuppressWarnings({"WeakerAccess"})
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class OpenWeatherService implements IOpenWeatherService {
     private static final String Tag = OpenWeatherService.class.getSimpleName();
-
-    private static final OpenWeatherService Singleton = new OpenWeatherService();
 
     private static final int MinTimeoutMs = 5 * 60 * 1000;
     private static final int MaxTimeoutMs = 24 * 60 * 60 * 1000;
@@ -195,13 +193,6 @@ public class OpenWeatherService implements IOpenWeatherService {
             }
         }
     };
-
-    private OpenWeatherService() {
-    }
-
-    public static OpenWeatherService getInstance() {
-        return Singleton;
-    }
 
     @Override
     public void Initialize(@NonNull Context context, @NonNull String city, @NonNull String apiKey, boolean displayCurrentWeatherNotification, boolean displayForecastWeatherNotification, Class<?> currentWeatherReceiverActivity, Class<?> forecastWeatherReceiverActivity, boolean changeWallpaper, boolean reloadEnabled, int reloadTimeout) {

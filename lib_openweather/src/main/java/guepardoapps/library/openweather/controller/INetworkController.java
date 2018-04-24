@@ -2,6 +2,7 @@ package guepardoapps.library.openweather.controller;
 
 import android.support.annotation.NonNull;
 
+@SuppressWarnings({"unused"})
 public interface INetworkController {
     String WIFIReceiverInHomeNetworkBroadcast = "guepardoapps.library.openweather.controller.wifi.home_network.yes";
     String WIFIReceiverNoHomeNetworkBroadcast = "guepardoapps.library.openweather.controller.wifi.home_network.no";

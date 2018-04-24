@@ -8,6 +8,7 @@ import java.util.Calendar;
 import guepardoapps.library.openweather.models.IForecastModel;
 import guepardoapps.library.openweather.models.IWeatherModel;
 
+@SuppressWarnings({"unused"})
 public interface IOpenWeatherService {
     String CurrentWeatherDownloadFinishedBroadcast = "guepardoapps.lucahome.openweather.service.weather.current.download.finished";
     String CurrentWeatherDownloadFinishedBundle = "CurrentWeatherDownloadFinishedBundle";

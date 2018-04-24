@@ -11,7 +11,7 @@ public class ForecastModel implements IForecastModel {
     private static final String Tag = ForecastModel.class.getSimpleName();
 
     private City _city;
-    private ArrayList<ForecastPartModel> _partModelList = new ArrayList<>();
+    private ArrayList<ForecastPartModel> _partModelList;
 
     public ForecastModel(@NonNull City city, @NonNull ArrayList<ForecastPartModel> partModelList) {
         _city = city;

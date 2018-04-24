@@ -2,8 +2,7 @@ package guepardoapps.library.openweather.datatransferobjects;
 
 import android.support.annotation.NonNull;
 
-import java.util.UUID;
-
+@SuppressWarnings({"unused"})
 public interface INotificationContentDto {
     void SetTitle(@NonNull String title);
 

@@ -18,6 +18,7 @@ import guepardoapps.library.openweather.R;
 import guepardoapps.library.openweather.models.ForecastPartModel;
 import guepardoapps.library.openweather.utils.Logger;
 
+@SuppressWarnings({"unused"})
 public class ForecastListAdapter extends BaseAdapter {
     private static final String Tag = ForecastListAdapter.class.getSimpleName();
 
