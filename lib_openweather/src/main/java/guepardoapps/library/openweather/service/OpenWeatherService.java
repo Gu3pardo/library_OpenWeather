@@ -25,6 +25,8 @@ import guepardoapps.library.openweather.utils.Logger;
 public class OpenWeatherService implements IOpenWeatherService {
     private static final String Tag = OpenWeatherService.class.getSimpleName();
 
+    private static final OpenWeatherService _instance = new OpenWeatherService();
+
     private static final int MinTimeoutMs = 5 * 60 * 1000;
     private static final int MaxTimeoutMs = 24 * 60 * 60 * 1000;
     private static final int TimeoutMs = 15 * 60 * 1000;
@@ -193,6 +195,14 @@ public class OpenWeatherService implements IOpenWeatherService {
             }
         }
     };
+
+    private OpenWeatherService() {
+
+    }
+
+    public static OpenWeatherService getInstance() {
+        return _instance;
+    }
 
     @Override
     public void Initialize(@NonNull Context context, @NonNull String city, @NonNull String apiKey, boolean displayCurrentWeatherNotification, boolean displayForecastWeatherNotification, Class<?> currentWeatherReceiverActivity, Class<?> forecastWeatherReceiverActivity, boolean changeWallpaper, boolean reloadEnabled, int reloadTimeout) {
