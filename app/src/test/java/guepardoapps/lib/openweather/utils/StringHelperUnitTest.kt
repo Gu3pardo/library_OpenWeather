@@ -36,12 +36,39 @@ class StringHelperUnitTest {
     @Test
     fun stringsAreEqual_shouldReturnTrue_IfEqual() {
         // Arrange
-        val stringArrayToTest = Array<String>
+        val stringArrayToTest = arrayOf("Hello", "Hello", "Hello", "Hello")
 
         // Act
-        val actualPositions = StringHelper.getCharPositions(stringToTest, charToFind)
+        val areEqual = StringHelper.stringsAreEqual(stringArrayToTest)
 
         // Assert
-        assertArrayEquals(expectedPositions, actualPositions)
+        assertTrue(areEqual)
+    }
+
+    @Test
+    fun stringsAreEqual_shouldReturnFalse_IfNotEqual() {
+        // Arrange
+        val stringArrayToTest = arrayOf("Hello", "Hallo", "Hello", "Hello")
+
+        // Act
+        val areEqual = StringHelper.stringsAreEqual(stringArrayToTest)
+
+        // Assert
+        assertFalse(areEqual)
+    }
+
+    @Test
+    fun excludeAndSelectString_shouldReturnExpectedString() {
+        // Arrange
+        val stringArrayToTest = arrayOf("Hello World", "Hallo Welt", "Hola bonita")
+        val stringToExclude = "World"
+        val stringToFind = "bonita"
+        val expectedString = "Hola bonita"
+
+        // Act
+        val actualString = StringHelper.excludeAndSelectString(stringArrayToTest, stringToExclude, stringToFind)
+
+        // Assert
+        assertEquals(expectedString, actualString)
     }
 }
