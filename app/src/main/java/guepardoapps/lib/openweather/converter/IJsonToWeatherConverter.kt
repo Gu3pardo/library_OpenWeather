@@ -6,7 +6,7 @@ import guepardoapps.lib.openweather.models.IWeatherForecast
 import java.io.Serializable
 
 interface IJsonToWeatherConverter : Serializable {
-    fun ConvertToWeatherCurrent(@NonNull jsonString: String): IWeatherCurrent
+    fun convertToWeatherCurrent(@NonNull jsonString: String): IWeatherCurrent
 
-    fun ConvertToWeatherForecast(@NonNull jsonString: String): IWeatherForecast
+    fun convertToWeatherForecast(@NonNull jsonString: String): IWeatherForecast
 }
