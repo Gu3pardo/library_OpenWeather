@@ -49,9 +49,9 @@ class Logger private constructor() {
         return _writeToDatabaseEnabled
     }
 
-    fun verbose(@NonNull tag: String, @NonNull description: String) {
+    fun <T> verbose(@NonNull tag: String, @NonNull description: T) {
         if (_loggingEnabled) {
-            Log.v(tag, description)
+            Log.v(tag, description.toString())
 
             if (_writeToDatabaseEnabled && _dbHandler != null) {
                 _dbHandler?.addLog(
@@ -59,20 +59,68 @@ class Logger private constructor() {
                                 Date(Calendar.getInstance().timeInMillis),
                                 Severity.Verbose,
                                 tag,
-                                description))
+                                description.toString()))
             }
         }
     }
 
-    fun verbose(@NonNull tag: String, @NonNull description: Int) {
-        verbose(tag, description.toString())
+    fun <T> debug(@NonNull tag: String, @NonNull description: T) {
+        if (_loggingEnabled) {
+            Log.d(tag, description.toString())
+
+            if (_writeToDatabaseEnabled && _dbHandler != null) {
+                _dbHandler?.addLog(
+                        DbLog(-1,
+                                Date(Calendar.getInstance().timeInMillis),
+                                Severity.Debug,
+                                tag,
+                                description.toString()))
+            }
+        }
     }
 
-    fun verbose(@NonNull tag: String, @NonNull description: Double) {
-        verbose(tag, description.toString())
+    fun <T> info(@NonNull tag: String, @NonNull description: T) {
+        if (_loggingEnabled) {
+            Log.i(tag, description.toString())
+
+            if (_writeToDatabaseEnabled && _dbHandler != null) {
+                _dbHandler?.addLog(
+                        DbLog(-1,
+                                Date(Calendar.getInstance().timeInMillis),
+                                Severity.Info,
+                                tag,
+                                description.toString()))
+            }
+        }
     }
 
-    fun verbose(@NonNull tag: String, @NonNull description: Boolean) {
-        verbose(tag, description.toString())
+    fun <T> warning(@NonNull tag: String, @NonNull description: T) {
+        if (_loggingEnabled) {
+            Log.w(tag, description.toString())
+
+            if (_writeToDatabaseEnabled && _dbHandler != null) {
+                _dbHandler?.addLog(
+                        DbLog(-1,
+                                Date(Calendar.getInstance().timeInMillis),
+                                Severity.Warning,
+                                tag,
+                                description.toString()))
+            }
+        }
+    }
+
+    fun <T> error(@NonNull tag: String, @NonNull description: T) {
+        if (_loggingEnabled) {
+            Log.e(tag, description.toString())
+
+            if (_writeToDatabaseEnabled && _dbHandler != null) {
+                _dbHandler?.addLog(
+                        DbLog(-1,
+                                Date(Calendar.getInstance().timeInMillis),
+                                Severity.Error,
+                                tag,
+                                description.toString()))
+            }
+        }
     }
 }

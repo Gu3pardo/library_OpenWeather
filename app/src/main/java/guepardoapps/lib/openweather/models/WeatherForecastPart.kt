@@ -16,6 +16,13 @@ class WeatherForecastPart(private val main: String,
                           private val listType: ForecastListType,
                           private val dayTime: ForecastDayTime) : IWeatherForecastPart {
 
+    constructor(dateTime: Calendar)
+            : this("", "",
+            0.0, 0.0,
+            0.0, 0.0,
+            dateTime, WeatherCondition.Null,
+            ForecastListType.DateDivider, ForecastDayTime.Null)
+
     override fun getMain(): String {
         return main
     }
