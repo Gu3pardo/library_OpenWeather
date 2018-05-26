@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_OpenWeather"></string>
+    <string name="library_OpenWeather_author">Jonas Schubert</string>
+    <string name="library_OpenWeather_authorWebsite">https://guepardoapps.github.io/</string>
+    <string name="library_OpenWeather_libraryName">OpenWeather</string>
+    <string name="library_OpenWeather_libraryDescription">OpenWeather
+        is a library used for calling current weather or forecast weather for a given location.
+        It also provides notifications and wallpaper to display.
+        Made with Kotlin.
+    </string>
+    <string name="library_OpenWeather_libraryVersion">0.1.0.180526</string>
+    <string name="library_OpenWeather_libraryWebsite">https://github.com/GuepardoApps/library_OpenWeather/</string>
+    <string name="library_OpenWeather_licenseId">mit</string>
+    <string name="library_OpenWeather_isOpenSource">true</string>
+    <string name="library_OpenWeather_repositoryLink">https://github.com/GuepardoApps/library_OpenWeather/</string>
+</resources>

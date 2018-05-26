@@ -5,7 +5,5 @@ import java.io.Serializable
 interface IWeatherForecast : Serializable {
     fun getCity(): ICity
 
-    fun getWallpaperId(): Int
-
     fun getList(): Array<IWeatherForecastPart>
 }

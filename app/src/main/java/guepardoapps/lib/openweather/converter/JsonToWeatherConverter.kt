@@ -13,14 +13,22 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
         try {
             val jsonObject = JSONObject(jsonString)
             if (jsonObject.getInt("cod") != 200) {
-                Logger.instance.error(tag, "Error in parsing jsonObject in convertToWeatherCurrent: $jsonObject")
+                Logger.instance.error(tag,
+                        "Error in parsing jsonObject in convertToWeatherCurrent: $jsonObject")
                 return null
             }
 
             val sys = jsonObject.getJSONObject("sys")
 
-            val city = jsonObject.getString("name").toUpperCase(Locale.getDefault())
-            val country = sys.getString("country")
+            val coordinationJsonObject = jsonObject.getJSONObject("coord")
+            val latitude = coordinationJsonObject.getDouble("lat")
+            val longitude = coordinationJsonObject.getDouble("lon")
+            val geoLocation = GeoLocation(latitude, longitude)
+
+            val cityId = jsonObject.getInt("id")
+            val cityName = jsonObject.getString("name").toUpperCase(Locale.getDefault())
+            val cityCountry = sys.getString("country")
+            val city = City(cityId, cityName, cityCountry, geoLocation)
 
             val sunriseLong = sys.getLong("sunrise") * 1000
             val sunriseCalendar = Calendar.getInstance()
@@ -39,7 +47,11 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
             val humidity = main.getDouble("humidity")
             val pressure = main.getDouble("pressure")
 
-            return WeatherCurrent(city, country, description, temperature, humidity, pressure, sunriseCalendar, sunsetCalendar, Calendar.getInstance(), weatherCondition)
+            return WeatherCurrent(city, description,
+                    temperature, humidity, pressure,
+                    sunriseCalendar, sunsetCalendar,
+                    Calendar.getInstance(),
+                    weatherCondition)
         } catch (exception: Exception) {
             Logger.instance.error(tag, exception)
             return null
@@ -50,7 +62,8 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
         try {
             val jsonObject = JSONObject(jsonString)
             if (jsonObject.getInt("cod") != 200) {
-                Logger.instance.error(tag, "Error in parsing jsonObject in convertToWeatherForecast: $jsonObject")
+                Logger.instance.error(tag,
+                        "Error in parsing jsonObject in convertToWeatherForecast: $jsonObject")
                 return null
             }
 
@@ -64,7 +77,7 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
             val cityName = cityJsonObject.getString("name")
             val cityCountry = cityJsonObject.getString("country")
             val cityPopulation = cityJsonObject.getInt("population")
-            val city = City(cityId, cityName, cityCountry, cityPopulation, geoLocation)
+            val city = City(cityId, cityName, cityCountry, geoLocation, cityPopulation)
 
             val dataListJsonArray = jsonObject.getJSONArray("list")
             val list = arrayOf<IWeatherForecastPart>()
@@ -87,20 +100,59 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
                 if (!currentDateString.contains(previousDateString)) {
                     list.plus(WeatherForecastPart(dateTime))
                 }
-                list.plus(convertToWeatherForecastPart(dataJsonObject))
+                val weatherForecastPart = convertToWeatherForecastPart(dataJsonObject)
+                if (weatherForecastPart != null) {
+                    list.plus(weatherForecastPart)
+                }
 
                 previousDateString = currentDateString
             }
 
-            return WeatherForecast(city, 0/*TODO*/, list)
+            return WeatherForecast(city, list)
         } catch (exception: Exception) {
             Logger.instance.error(tag, exception)
             return null
         }
     }
 
-    private fun convertToWeatherForecastPart(jsonObject: JSONObject): WeatherForecastPart {
-        /*TODO*/
-        return WeatherForecastPart(Calendar.getInstance())
+    private fun convertToWeatherForecastPart(jsonObject: JSONObject): WeatherForecastPart? {
+        try {
+            val jsonObjectWeather = jsonObject.getJSONArray("weather").getJSONObject(0)
+
+            val main = jsonObjectWeather.getString("main")
+            val weatherCondition = WeatherCondition.valueOf(main)
+            val description = jsonObjectWeather.getString("description")
+            val weatherDefaultIcon = jsonObjectWeather.getString("icon")
+
+            val temp = jsonObject.getJSONObject("main").getDouble("temp")
+            val tempMin = jsonObject.getJSONObject("main").getDouble("temp_min")
+            val tempMax = jsonObject.getJSONObject("main").getDouble("temp_max")
+            val tempKf = jsonObject.getJSONObject("main").getDouble("temp_kf")
+            val pressure = jsonObject.getJSONObject("main").getDouble("pressure")
+            val pressureSeaLevel = jsonObject.getJSONObject("main").getDouble("sea_level")
+            val pressureGroundLevel = jsonObject.getJSONObject("main").getDouble("grnd_level")
+            val humidity = jsonObject.getJSONObject("main").getDouble("humidity")
+
+            val cloudsAll = jsonObject.getJSONObject("clouds").getInt("all")
+
+            val windSpeed = jsonObject.getJSONObject("wind").getDouble("speed")
+            val windDegree = jsonObject.getJSONObject("wind").getDouble("deg")
+
+            val dateTimeLong = jsonObject.getLong("dt")
+            val dateTime = Calendar.getInstance()
+            dateTime.timeInMillis = dateTimeLong
+
+            return WeatherForecastPart(main, description,
+                    temp, tempMin, tempMax, tempKf,
+                    humidity,
+                    pressure, pressureSeaLevel, pressureGroundLevel,
+                    cloudsAll, windSpeed, windDegree,
+                    dateTime,
+                    weatherDefaultIcon, weatherCondition)
+
+        } catch (exception: Exception) {
+            Logger.instance.error(tag, exception)
+            return null
+        }
     }
 }

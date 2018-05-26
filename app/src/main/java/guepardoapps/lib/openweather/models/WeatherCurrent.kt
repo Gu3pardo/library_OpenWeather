@@ -3,8 +3,7 @@ package guepardoapps.lib.openweather.models
 import guepardoapps.lib.openweather.enums.WeatherCondition
 import java.util.*
 
-class WeatherCurrent(private val city: String,
-                     private val country: String,
+class WeatherCurrent(private val city: ICity,
                      private val description: String,
                      private val temperature: Double,
                      private val humidity: Double,
@@ -14,12 +13,10 @@ class WeatherCurrent(private val city: String,
                      private val lastUpdate: Calendar,
                      private val weatherCondition: WeatherCondition) : IWeatherCurrent {
 
-    override fun getCity(): String {
-        return city
-    }
+    private val tag: String = WeatherCurrent::class.java.canonicalName
 
-    override fun getCountry(): String {
-        return country
+    override fun getCity(): ICity {
+        return city
     }
 
     override fun getDescription(): String {
@@ -52,5 +49,12 @@ class WeatherCurrent(private val city: String,
 
     override fun getWeatherCondition(): WeatherCondition {
         return weatherCondition
+    }
+
+    override fun toString(): String {
+        return "{Class: $tag, City: $city, Description: $description, " +
+                "Temperature: $temperature, Humidity: $humidity, Pressure: $pressure, " +
+                "SunriseTime: $sunriseTime, SunsetTime: $sunsetTime, LastUpdate: $lastUpdate, " +
+                "WeatherCondition: $weatherCondition}"
     }
 }

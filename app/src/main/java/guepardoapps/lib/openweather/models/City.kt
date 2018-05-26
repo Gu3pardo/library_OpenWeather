@@ -3,8 +3,10 @@ package guepardoapps.lib.openweather.models
 class City(private val id: Int,
            private val name: String,
            private val country: String,
-           private val population: Int,
-           private val geoLocation: IGeoLocation) : ICity {
+           private val geoLocation: IGeoLocation,
+           private val population: Int = 0) : ICity {
+
+    private val tag: String = City::class.java.canonicalName
 
     override fun getId(): Int {
         return id
@@ -18,11 +20,15 @@ class City(private val id: Int,
         return country
     }
 
+    override fun getGeoLocation(): IGeoLocation {
+        return geoLocation
+    }
+
     override fun getPopulation(): Int {
         return population
     }
 
-    override fun getGeoLocation(): IGeoLocation {
-        return geoLocation
+    override fun toString(): String {
+        return "{Class: $tag, Id: $id, Name: $name, Country: $country, GeoLocation: $geoLocation, Population: $population}"
     }
 }

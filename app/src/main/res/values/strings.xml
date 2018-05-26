@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OpenWeather</string>
+    <string name="example">Example</string>
+    <string name="contentDescription">This is an image</string>
 </resources>

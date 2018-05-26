@@ -11,19 +11,33 @@ interface IWeatherForecastPart : Serializable {
 
     fun getDescription(): String
 
+    fun getTemperature(): Double
+
     fun getTemperatureMin(): Double
 
     fun getTemperatureMax(): Double
+
+    fun getTemperatureKf(): Double
 
     fun getHumidity(): Double
 
     fun getPressure(): Double
 
+    fun getPressureSeaLevel(): Double
+
+    fun getPressureGroundLevel(): Double
+
+    fun getCloudsAll(): Int
+
+    fun getWindSpeed(): Double
+
+    fun getWindDegree(): Double
+
     fun getDateTime(): Calendar
+
+    fun getWeatherDefaultIcon(): String
 
     fun getWeatherCondition(): WeatherCondition
 
     fun getListType(): ForecastListType
-
-    fun getDayTime(): ForecastDayTime
 }

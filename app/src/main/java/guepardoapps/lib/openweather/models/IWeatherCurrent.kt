@@ -5,9 +5,7 @@ import java.io.Serializable
 import java.util.*
 
 interface IWeatherCurrent : Serializable {
-    fun getCity(): String
-
-    fun getCountry(): String
+    fun getCity(): ICity
 
     fun getDescription(): String
 

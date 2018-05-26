@@ -52,75 +52,49 @@ class Logger private constructor() {
     fun <T> verbose(@NonNull tag: String, @NonNull description: T) {
         if (_loggingEnabled) {
             Log.v(tag, description.toString())
-
-            if (_writeToDatabaseEnabled && _dbHandler != null) {
-                _dbHandler?.addLog(
-                        DbLog(-1,
-                                Date(Calendar.getInstance().timeInMillis),
-                                Severity.Verbose,
-                                tag,
-                                description.toString()))
-            }
+            tryToWriteToDatabase(tag, description, Severity.Verbose)
         }
     }
 
     fun <T> debug(@NonNull tag: String, @NonNull description: T) {
         if (_loggingEnabled) {
             Log.d(tag, description.toString())
-
-            if (_writeToDatabaseEnabled && _dbHandler != null) {
-                _dbHandler?.addLog(
-                        DbLog(-1,
-                                Date(Calendar.getInstance().timeInMillis),
-                                Severity.Debug,
-                                tag,
-                                description.toString()))
-            }
+            tryToWriteToDatabase(tag, description, Severity.Debug)
         }
     }
 
     fun <T> info(@NonNull tag: String, @NonNull description: T) {
         if (_loggingEnabled) {
             Log.i(tag, description.toString())
-
-            if (_writeToDatabaseEnabled && _dbHandler != null) {
-                _dbHandler?.addLog(
-                        DbLog(-1,
-                                Date(Calendar.getInstance().timeInMillis),
-                                Severity.Info,
-                                tag,
-                                description.toString()))
-            }
+            tryToWriteToDatabase(tag, description, Severity.Info)
         }
     }
 
     fun <T> warning(@NonNull tag: String, @NonNull description: T) {
         if (_loggingEnabled) {
             Log.w(tag, description.toString())
-
-            if (_writeToDatabaseEnabled && _dbHandler != null) {
-                _dbHandler?.addLog(
-                        DbLog(-1,
-                                Date(Calendar.getInstance().timeInMillis),
-                                Severity.Warning,
-                                tag,
-                                description.toString()))
-            }
+            tryToWriteToDatabase(tag, description, Severity.Warning)
         }
     }
 
     fun <T> error(@NonNull tag: String, @NonNull description: T) {
         if (_loggingEnabled) {
             Log.e(tag, description.toString())
+            tryToWriteToDatabase(tag, description, Severity.Error)
+        }
+    }
 
-            if (_writeToDatabaseEnabled && _dbHandler != null) {
-                _dbHandler?.addLog(
-                        DbLog(-1,
-                                Date(Calendar.getInstance().timeInMillis),
-                                Severity.Error,
-                                tag,
-                                description.toString()))
-            }
+    private fun <T> tryToWriteToDatabase(
+            @NonNull tag:
+            String, @NonNull description: T,
+            severity: Severity) {
+        if (_writeToDatabaseEnabled && _dbHandler != null) {
+            _dbHandler?.addLog(
+                    DbLog(-1,
+                            Date(Calendar.getInstance().timeInMillis),
+                            severity,
+                            tag,
+                            description.toString()))
         }
     }
 }
