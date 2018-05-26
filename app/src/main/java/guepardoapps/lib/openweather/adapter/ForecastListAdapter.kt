@@ -17,7 +17,7 @@ class ForecastListAdapter(
         @NonNull private val context: Context,
         @NonNull private val forecastList: Array<IWeatherForecastPart>) : BaseAdapter() {
 
-    private val tag: String = ForecastListAdapter::class.java.canonicalName
+    // private val tag: String = ForecastListAdapter::class.java.canonicalName
 
     private class Holder {
         var dividerCardTitleText: TextView? = null
@@ -69,7 +69,26 @@ class ForecastListAdapter(
         when (forecastPart.getListType()) {
             ForecastListType.Forecast -> {
                 rowView = inflater!!.inflate(R.layout.listview_card_forecast, null)
-                // TODO
+
+                holder.weatherConditionView = rowView.findViewById(R.id.weatherConditionView)
+                holder.weatherConditionImageView = rowView.findViewById(R.id.weatherConditionImageView)
+                holder.weatherHeaderTextView = rowView.findViewById(R.id.weatherHeaderTextView)
+
+                holder.weatherTemperatureView = rowView.findViewById(R.id.weatherConditionView)
+                holder.weatherTemperatureImageView = rowView.findViewById(R.id.weatherConditionImageView)
+                holder.weatherTemperatureTextView = rowView.findViewById(R.id.weatherTemperatureTextView)
+
+                holder.weatherPressureView = rowView.findViewById(R.id.weatherPressureView)
+                holder.weatherPressureImageView = rowView.findViewById(R.id.weatherPressureImageView)
+                holder.weatherPressureTextView = rowView.findViewById(R.id.weatherPressureTextView)
+
+                holder.weatherHumidityView = rowView.findViewById(R.id.weatherHumidityView)
+                holder.weatherHumidityImageView = rowView.findViewById(R.id.weatherHumidityImageView)
+                holder.weatherHumidityTextView = rowView.findViewById(R.id.weatherHumidityTextView)
+
+                holder.weatherWindView = rowView.findViewById(R.id.weatherWindView)
+                holder.weatherWindImageView = rowView.findViewById(R.id.weatherWindImageView)
+                holder.weatherWindTextView = rowView.findViewById(R.id.weatherWindTextView)
             }
             ForecastListType.DateDivider -> {
                 rowView = inflater!!.inflate(R.layout.listview_card_divider, null)
