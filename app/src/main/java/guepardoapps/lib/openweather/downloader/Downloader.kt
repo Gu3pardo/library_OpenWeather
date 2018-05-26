@@ -3,6 +3,7 @@ package guepardoapps.lib.openweather.downloader
 import android.content.Context
 import android.os.AsyncTask
 import guepardoapps.lib.openweather.controller.BroadcastController
+import guepardoapps.lib.openweather.controller.IBroadcastController
 import guepardoapps.lib.openweather.enums.DownloadResult
 import guepardoapps.lib.openweather.enums.DownloadType
 import guepardoapps.lib.openweather.utils.Logger
@@ -18,7 +19,7 @@ class Downloader(context: Context,
     private val currentWeatherUrl: String = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=%s"
     private val forecastWeatherUrl: String = "http://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=%s"
 
-    private var broadcastController: BroadcastController? = null
+    private var broadcastController: IBroadcastController? = null
     private var onDownloadListener: OnDownloadListener? = null
 
     init {
@@ -40,6 +41,10 @@ class Downloader(context: Context,
             return DownloadResult.InvalidApiKey
         }
 
+        val task = DownloadWeatherTask()
+        task.downloadType = DownloadType.Current
+        task.execute(String.format(currentWeatherUrl, city, apiKey))
+
         return DownloadResult.Performing
     }
 
@@ -53,6 +58,10 @@ class Downloader(context: Context,
             Logger.instance.warning(tag, "forecastWeather: ApiKey needs to be set before call!")
             return DownloadResult.InvalidApiKey
         }
+
+        val task = DownloadWeatherTask()
+        task.downloadType = DownloadType.Forecast
+        task.execute(String.format(forecastWeatherUrl, city, apiKey))
 
         return DownloadResult.Performing
     }
