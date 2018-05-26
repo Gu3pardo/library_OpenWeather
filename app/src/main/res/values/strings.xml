@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">OpenWeather</string>
-    <string name="example">Example</string>
-    <string name="contentDescription">This is an image</string>
+    <string name="app_name">OpenWeatherExample</string>
+    <string name="noData">There is no data!</string>
 </resources>

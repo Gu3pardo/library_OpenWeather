@@ -1,6 +1,5 @@
 package guepardoapps.lib.openweather.models
 
-import guepardoapps.lib.openweather.enums.ForecastDayTime
 import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
 import java.io.Serializable

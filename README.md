@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather)
-[![Version](https://img.shields.io/badge/version-v0.0.1.180513-orange.svg)](https://github.com/GuepardoApps/library_OpenWeather)
+[![Version](https://img.shields.io/badge/version-v1.0.0.180527-green.svg)](https://github.com/GuepardoApps/library_OpenWeather)
 
 library for downloading and handling data from openweather
 used for example in https://github.com/GuepardoApps/LucaHome-AndroidApplication

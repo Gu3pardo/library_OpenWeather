@@ -15,9 +15,6 @@ import guepardoapps.lib.openweather.models.INotificationContent
 class NotificationController(@NonNull private val context: Context) : INotificationController {
     //private val tag: String = NotificationController::class.java.canonicalName
 
-    val currentWeatherId: Int = 260520181
-    val forecastWeatherId: Int = 260520182
-
     private val channelId: String = "guepardoapps.lib.openweather"
     private val channelName: String = "OpenWeather"
     private val channelDescription: String = "Notifications for open weather library"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_current_weather"
+        android:icon="@drawable/icon_temperature_black"
+        android:title="Current Weather" />
+    <item
+        android:id="@+id/nav_forecast_weather"
+        android:icon="@drawable/icon_wind_black"
+        android:title="Forecast Weather" />
+</menu>
