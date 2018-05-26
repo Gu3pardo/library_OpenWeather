@@ -11,8 +11,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 class Downloader(context: Context,
-                 override var city: String,
-                 override var apiKey: String) : IDownloader {
+                 override var city: String?,
+                 override var apiKey: String?) : IDownloader {
 
     private val tag: String = Downloader::class.java.canonicalName
 
@@ -26,17 +26,19 @@ class Downloader(context: Context,
         broadcastController = BroadcastController(context)
     }
 
+    constructor(context: Context) : this(context, null, null)
+
     override fun setOnDownloadListener(onDownloadListener: OnDownloadListener) {
         this.onDownloadListener = onDownloadListener
     }
 
     override fun currentWeather(): DownloadResult {
-        if (city.isEmpty()) {
+        if (city.isNullOrEmpty()) {
             Logger.instance.warning(tag, "currentWeather: City needs to be set before call!")
             return DownloadResult.InvalidCity
         }
 
-        if (apiKey.isEmpty()) {
+        if (apiKey.isNullOrEmpty()) {
             Logger.instance.warning(tag, "currentWeather: ApiKey needs to be set before call!")
             return DownloadResult.InvalidApiKey
         }
@@ -49,12 +51,12 @@ class Downloader(context: Context,
     }
 
     override fun forecastWeather(): DownloadResult {
-        if (city.isEmpty()) {
+        if (city.isNullOrEmpty()) {
             Logger.instance.warning(tag, "forecastWeather: City needs to be set before call!")
             return DownloadResult.InvalidCity
         }
 
-        if (apiKey.isEmpty()) {
+        if (apiKey.isNullOrEmpty()) {
             Logger.instance.warning(tag, "forecastWeather: ApiKey needs to be set before call!")
             return DownloadResult.InvalidApiKey
         }
