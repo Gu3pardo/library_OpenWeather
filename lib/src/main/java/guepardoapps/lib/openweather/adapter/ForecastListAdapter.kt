@@ -1,5 +1,6 @@
 package guepardoapps.lib.openweather.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.annotation.NonNull
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import guepardoapps.lib.openweather.R
 import guepardoapps.lib.openweather.enums.ForecastListType
+import guepardoapps.lib.openweather.extensions.decimalFormat
+import guepardoapps.lib.openweather.extensions.format
 import guepardoapps.lib.openweather.models.IWeatherForecastPart
 import java.util.*
 
@@ -20,34 +23,30 @@ class ForecastListAdapter(
     // private val tag: String = ForecastListAdapter::class.java.canonicalName
 
     private class Holder {
-        var dividerCardTitleText: TextView? = null
+        lateinit var dividerCardTitleText: TextView
 
-        var weatherConditionView: View? = null
-        var weatherConditionImageView: ImageView? = null
-        var weatherHeaderTextView: TextView? = null
+        lateinit var weatherConditionView: View
+        lateinit var weatherConditionImageView: ImageView
+        lateinit var weatherHeaderTextView: TextView
 
-        var weatherTemperatureView: View? = null
-        var weatherTemperatureImageView: ImageView? = null
-        var weatherTemperatureTextView: TextView? = null
+        lateinit var weatherTemperatureView: View
+        lateinit var weatherTemperatureImageView: ImageView
+        lateinit var weatherTemperatureTextView: TextView
 
-        var weatherPressureView: View? = null
-        var weatherPressureImageView: ImageView? = null
-        var weatherPressureTextView: TextView? = null
+        lateinit var weatherPressureView: View
+        lateinit var weatherPressureImageView: ImageView
+        lateinit var weatherPressureTextView: TextView
 
-        var weatherHumidityView: View? = null
-        var weatherHumidityImageView: ImageView? = null
-        var weatherHumidityTextView: TextView? = null
+        lateinit var weatherHumidityView: View
+        lateinit var weatherHumidityImageView: ImageView
+        lateinit var weatherHumidityTextView: TextView
 
-        var weatherWindView: View? = null
-        var weatherWindImageView: ImageView? = null
-        var weatherWindTextView: TextView? = null
+        lateinit var weatherWindView: View
+        lateinit var weatherWindImageView: ImageView
+        lateinit var weatherWindTextView: TextView
     }
 
-    private var inflater: LayoutInflater? = null
-
-    init {
-        inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    }
+    private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     override fun getCount(): Int {
         return forecastList.size
@@ -61,55 +60,64 @@ class ForecastListAdapter(
         return forecastList[position]
     }
 
+    @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parentView: ViewGroup?): View {
         val holder = Holder()
         val forecastPart = forecastList[position]
-        var rowView = View(context)
+        lateinit var rowView: View
 
         when (forecastPart.getListType()) {
             ForecastListType.Forecast -> {
-                rowView = inflater!!.inflate(R.layout.listview_card_forecast, null)
+                rowView = inflater.inflate(R.layout.listview_card_forecast, parentView, false)
 
                 holder.weatherConditionView = rowView.findViewById(R.id.weatherConditionView)
                 holder.weatherConditionImageView = rowView.findViewById(R.id.weatherConditionImageView)
+                holder.weatherConditionImageView.setImageResource(forecastPart.getWeatherCondition().iconId)
                 holder.weatherHeaderTextView = rowView.findViewById(R.id.weatherHeaderTextView)
-                holder.weatherHeaderTextView?.text = forecastPart.getDescription()
+
+                val dateTime = forecastPart.getDateTime()
+                holder.weatherHeaderTextView.text =
+                        "${dateTime.get(Calendar.HOUR_OF_DAY).format(2)}:" +
+                        "${dateTime.get(Calendar.MINUTE).format(2)}, " +
+                        "${forecastPart.getTemperature().decimalFormat(2)} " +
+                        "${0x00B0.toChar()}C, " +
+                        forecastPart.getDescription()
 
                 holder.weatherTemperatureView = rowView.findViewById(R.id.weatherConditionView)
                 holder.weatherTemperatureImageView = rowView.findViewById(R.id.weatherConditionImageView)
                 holder.weatherTemperatureTextView = rowView.findViewById(R.id.weatherTemperatureTextView)
-                holder.weatherTemperatureTextView?.text = String.format(Locale.getDefault(),
-                        "%.2f %sC - %.2f %sC",
-                        forecastPart.getTemperatureMin(), 0x00B0.toChar(),
-                        forecastPart.getTemperatureMax(), 0x00B0.toChar())
+                holder.weatherTemperatureTextView.text =
+                        "${forecastPart.getTemperatureMin().decimalFormat(2)} " +
+                        "${0x00B0.toChar()}C - " +
+                        "${forecastPart.getTemperatureMax().decimalFormat(2)} " +
+                        "${0x00B0.toChar()}C"
 
                 holder.weatherPressureView = rowView.findViewById(R.id.weatherPressureView)
                 holder.weatherPressureImageView = rowView.findViewById(R.id.weatherPressureImageView)
                 holder.weatherPressureTextView = rowView.findViewById(R.id.weatherPressureTextView)
-                holder.weatherPressureTextView?.text = String.format(Locale.getDefault(),
-                        "%.2f %%", forecastPart.getPressure())
+                holder.weatherPressureTextView.text = "${forecastPart.getPressure().decimalFormat(2)} mBar"
 
                 holder.weatherHumidityView = rowView.findViewById(R.id.weatherHumidityView)
                 holder.weatherHumidityImageView = rowView.findViewById(R.id.weatherHumidityImageView)
                 holder.weatherHumidityTextView = rowView.findViewById(R.id.weatherHumidityTextView)
-                holder.weatherHumidityTextView?.text = String.format(Locale.getDefault(),
-                        "%.2f %%", forecastPart.getHumidity())
+                holder.weatherHumidityTextView.text = "${forecastPart.getHumidity().decimalFormat(2)} %"
 
                 holder.weatherWindView = rowView.findViewById(R.id.weatherWindView)
                 holder.weatherWindImageView = rowView.findViewById(R.id.weatherWindImageView)
                 holder.weatherWindTextView = rowView.findViewById(R.id.weatherWindTextView)
-                holder.weatherWindTextView?.text = String.format(Locale.getDefault(),
-                        "%.2f m/s, %.2f deg",
-                        forecastPart.getWindSpeed(), forecastPart.getWindDegree())
+                holder.weatherWindTextView.text =
+                        "${forecastPart.getWindSpeed().decimalFormat(2)} m/s, " +
+                        "${forecastPart.getWindDegree().decimalFormat(2)} deg"
             }
             ForecastListType.DateDivider -> {
-                rowView = inflater!!.inflate(R.layout.listview_card_divider, null)
+                rowView = inflater.inflate(R.layout.listview_card_divider, parentView, false)
                 holder.dividerCardTitleText = rowView.findViewById(R.id.dividerCardTitleText)
-                holder.dividerCardTitleText?.text = String.format(Locale.getDefault(),
-                        "%2d.%2d.%4d",
-                        forecastPart.getDateTime().get(Calendar.DAY_OF_MONTH),
-                        forecastPart.getDateTime().get(Calendar.MONTH),
-                        forecastPart.getDateTime().get(Calendar.YEAR))
+
+                val dateTime = forecastPart.getDateTime()
+                holder.dividerCardTitleText.text =
+                        "${dateTime.get(Calendar.DAY_OF_MONTH).format(2)}." +
+                        "${(dateTime.get(Calendar.MONTH) + 1).format(2)}." +
+                        dateTime.get(Calendar.YEAR).format(4)
             }
         }
 

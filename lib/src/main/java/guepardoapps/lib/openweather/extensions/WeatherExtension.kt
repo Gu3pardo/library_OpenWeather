@@ -11,7 +11,7 @@ fun IWeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
 
     val weatherConditionCountArray: Array<WeatherCondition> = arrayOf(
             WeatherCondition.Clear,
-            WeatherCondition.Cloudy,
+            WeatherCondition.Clouds,
             WeatherCondition.Drizzle,
             WeatherCondition.Fog,
             WeatherCondition.Haze,
@@ -62,9 +62,3 @@ fun IWeatherForecastPart.getForecastDayTime(): ForecastDayTime {
         else -> ForecastDayTime.Null
     }
 }
-
-var WeatherCondition.count: Int
-    get() = count
-    set(value) {
-        count = value
-    }

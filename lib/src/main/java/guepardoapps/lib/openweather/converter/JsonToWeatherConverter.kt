@@ -39,13 +39,14 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
             sunsetCalendar.timeInMillis = sunsetLong
 
             val details = jsonObject.getJSONArray("weather").getJSONObject(0)
-            val description = details.getString("description").toUpperCase(Locale.getDefault())
-            val weatherCondition = WeatherCondition.valueOf(description)
+            val main = details.getString("main")
+            val description = details.getString("description")
+            val weatherCondition = WeatherCondition.valueOf(main)
 
-            val main = jsonObject.getJSONObject("main")
-            val temperature = main.getDouble("temp")
-            val humidity = main.getDouble("humidity")
-            val pressure = main.getDouble("pressure")
+            val mainJSONObject = jsonObject.getJSONObject("main")
+            val temperature = mainJSONObject.getDouble("temp")
+            val humidity = mainJSONObject.getDouble("humidity")
+            val pressure = mainJSONObject.getDouble("pressure")
 
             return WeatherCurrent(city, description,
                     temperature, humidity, pressure,
@@ -67,20 +68,21 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
                 return null
             }
 
-            val coordinationJsonObject = jsonObject.getJSONObject("coord")
-            val latitude = coordinationJsonObject.getDouble("lat")
-            val longitude = coordinationJsonObject.getDouble("lon")
-            val geoLocation = GeoLocation(latitude, longitude)
-
             val cityJsonObject = jsonObject.getJSONObject("city")
             val cityId = cityJsonObject.getInt("id")
             val cityName = cityJsonObject.getString("name")
             val cityCountry = cityJsonObject.getString("country")
             val cityPopulation = cityJsonObject.getInt("population")
+
+            val coordinationJsonObject = cityJsonObject.getJSONObject("coord")
+            val latitude = coordinationJsonObject.getDouble("lat")
+            val longitude = coordinationJsonObject.getDouble("lon")
+            val geoLocation = GeoLocation(latitude, longitude)
+
             val city = City(cityId, cityName, cityCountry, geoLocation, cityPopulation)
 
             val dataListJsonArray = jsonObject.getJSONArray("list")
-            val list = arrayOf<IWeatherForecastPart>()
+            var list = arrayOf<IWeatherForecastPart>()
 
             var previousDateString = ""
 
@@ -89,20 +91,16 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
 
                 val dateTimeLong = dataJsonObject.getLong("dt")
                 val dateTime = Calendar.getInstance()
-                dateTime.timeInMillis = dateTimeLong
+                dateTime.timeInMillis = dateTimeLong * 1000
 
                 val currentDateString = dataJsonObject.getString("dt_txt").split(" ")[0]
 
-                if (index == 0) {
-                    list.plus(WeatherForecastPart(dateTime))
-                }
-
-                if (!currentDateString.contains(previousDateString)) {
-                    list.plus(WeatherForecastPart(dateTime))
+                if (index == 0 || !currentDateString.contains(previousDateString)) {
+                    list = list.plus(WeatherForecastPart(dateTime))
                 }
                 val weatherForecastPart = convertToWeatherForecastPart(dataJsonObject)
                 if (weatherForecastPart != null) {
-                    list.plus(weatherForecastPart)
+                    list = list.plus(weatherForecastPart)
                 }
 
                 previousDateString = currentDateString
@@ -140,7 +138,7 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
 
             val dateTimeLong = jsonObject.getLong("dt")
             val dateTime = Calendar.getInstance()
-            dateTime.timeInMillis = dateTimeLong
+            dateTime.timeInMillis = dateTimeLong * 1000
 
             return WeatherForecastPart(main, description,
                     temp, tempMin, tempMax, tempKf,

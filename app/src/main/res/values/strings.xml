@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">OpenWeatherExample</string>
+
     <string name="noData">There is no data!</string>
+
+    <string name="searchHint">Enter search value here</string>
+
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
 </resources>

@@ -3,6 +3,7 @@ package guepardoapps.lib.openweather.models
 import guepardoapps.lib.openweather.enums.ForecastDayTime
 import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
+import guepardoapps.lib.openweather.extensions.format
 import java.util.*
 
 class WeatherForecastPart(private val main: String,
@@ -103,15 +104,31 @@ class WeatherForecastPart(private val main: String,
     }
 
     override fun toString(): String {
-        return "{Class: $tag, Main: $main, Description: $description, " +
-                "Temperature: $temperature, TemperatureMin: $temperatureMin, " +
-                "TemperatureMax: $temperatureMax, TemperatureKf: $temperatureKf, " +
-                "Humidity: $humidity, Pressure: $pressure, " +
-                "SeaLevel: $pressureSeaLevel, GroundLevel: $pressureGroundLevel, " +
+        return "{Class: $tag, " +
+                "Main: $main, " +
+                "Description: $description, " +
+                "Temperature: $temperature, " +
+                "TemperatureMin: $temperatureMin, " +
+                "TemperatureMax: $temperatureMax, " +
+                "TemperatureKf: $temperatureKf, " +
+                "Humidity: $humidity, " +
+                "Pressure: $pressure, " +
+                "SeaLevel: $pressureSeaLevel, " +
+                "GroundLevel: $pressureGroundLevel, " +
                 "CloudsAll: $cloudsAll, " +
-                "WindSpeed: $windSpeed, WindDegree: $windDegree, " +
+                "WindSpeed: $windSpeed, " +
+                "WindDegree: $windDegree, " +
                 "DateTime: $dateTime, " +
-                "WeatherDefaultIcon: $weatherDefaultIcon, WeatherCondition: $weatherCondition, " +
-                "ListType: $listType, DayTime: $dayTime}"
+                "WeatherDefaultIcon: $weatherDefaultIcon, " +
+                "WeatherCondition: $weatherCondition, " +
+                "ListType: $listType, " +
+                "DayTime: $dayTime," +
+                "Day: ${dateTime.get(Calendar.DAY_OF_MONTH)}, " +
+                "Month: ${dateTime.get(Calendar.MONTH) + 1}," +
+                "Year: ${dateTime.get(Calendar.YEAR)}, " +
+                "Hour: ${dateTime.get(Calendar.HOUR_OF_DAY)}" +
+                "Minute: ${dateTime.get(Calendar.MINUTE)}" +
+                "Date:${dateTime.get(Calendar.DAY_OF_MONTH).format(2)}.${(dateTime.get(Calendar.MONTH) + 1).format(2)}.${dateTime.get(Calendar.YEAR).format(4)}" +
+                "Time:${dateTime.get(Calendar.HOUR_OF_DAY).format(2)}:${dateTime.get(Calendar.MINUTE).format(2)}}"
     }
 }

@@ -45,6 +45,7 @@ class Downloader(context: Context,
 
         val task = DownloadWeatherTask()
         task.downloadType = DownloadType.Current
+        task.onDownloadListener = onDownloadListener
         task.execute(String.format(currentWeatherUrl, city, apiKey))
 
         return DownloadResult.Performing
@@ -63,6 +64,7 @@ class Downloader(context: Context,
 
         val task = DownloadWeatherTask()
         task.downloadType = DownloadType.Forecast
+        task.onDownloadListener = onDownloadListener
         task.execute(String.format(forecastWeatherUrl, city, apiKey))
 
         return DownloadResult.Performing
@@ -76,7 +78,7 @@ class Downloader(context: Context,
 
         override fun doInBackground(vararg requestUrls: String?): String {
             if (downloadType == DownloadType.Null) {
-                onDownloadListener?.onFinished(downloadType, "", false)
+                onDownloadListener!!.onFinished(downloadType, "", false)
                 return ""
             }
 
@@ -86,7 +88,7 @@ class Downloader(context: Context,
 
                 try {
                     val okHttpClient = OkHttpClient()
-                    val request = Request.Builder().url(requestUrl).build()
+                    val request = Request.Builder().url(requestUrl!!).build()
                     val response = okHttpClient.newCall(request).execute()
                     val responseBody = response.body()
 
@@ -100,7 +102,8 @@ class Downloader(context: Context,
                 } catch (exception: Exception) {
                     Logger.instance.error(tag, exception)
                 } finally {
-                    onDownloadListener?.onFinished(downloadType, result, success)
+                    Logger.instance.verbose(tag, "Call of finally")
+                    onDownloadListener!!.onFinished(downloadType, result, success)
                 }
             }
 

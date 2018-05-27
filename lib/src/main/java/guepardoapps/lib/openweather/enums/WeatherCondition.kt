@@ -3,10 +3,10 @@ package guepardoapps.lib.openweather.enums
 import guepardoapps.lib.openweather.R
 import java.io.Serializable
 
-enum class WeatherCondition(val id: Int, val description: String, val wallpaperId: Int, val iconId: Int) : Serializable {
+enum class WeatherCondition(val id: Int, val description: String, val wallpaperId: Int, val iconId: Int, var count: Int = 0) : Serializable {
     Null(0, "Null", R.drawable.weather_wallpaper_dummy, R.drawable.weather_dummy),
     Clear(1, "Clear", R.drawable.weather_wallpaper_clear, R.drawable.weather_clear),
-    Cloudy(2, "Cloudy", R.drawable.weather_wallpaper_cloud, R.drawable.weather_cloud),
+    Clouds(2, "Clouds", R.drawable.weather_wallpaper_cloud, R.drawable.weather_cloud),
     Drizzle(3, "Drizzle", R.drawable.weather_wallpaper_drizzle, R.drawable.weather_drizzle),
     Fog(4, "Fog", R.drawable.weather_wallpaper_fog, R.drawable.weather_fog),
     Haze(5, "Haze", R.drawable.weather_wallpaper_haze, R.drawable.weather_haze),
