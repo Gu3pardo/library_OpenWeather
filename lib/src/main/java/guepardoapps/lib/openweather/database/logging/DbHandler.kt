@@ -20,7 +20,7 @@ class DbHandler(context: Context, factory: SQLiteDatabase.CursorFactory?)
                         + ColumnId + " INTEGER PRIMARY KEY,"
                         + ColumnDateTime + " INTEGER,"
                         + ColumnSeverity + " INTEGER,"
-                        + ColumnTag + " TEXT"
+                        + ColumnTag + " TEXT,"
                         + ColumnDescription + " TEXT"
                         + ")")
         database.execSQL(createTable)
