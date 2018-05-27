@@ -83,8 +83,8 @@ class ForecastListAdapter(
                         "${0x00B0.toChar()}C, " +
                         forecastPart.getDescription()
 
-                holder.weatherTemperatureView = rowView.findViewById(R.id.weatherConditionView)
-                holder.weatherTemperatureImageView = rowView.findViewById(R.id.weatherConditionImageView)
+                holder.weatherTemperatureView = rowView.findViewById(R.id.weatherTemperatureView)
+                holder.weatherTemperatureImageView = rowView.findViewById(R.id.weatherTemperatureImageView)
                 holder.weatherTemperatureTextView = rowView.findViewById(R.id.weatherTemperatureTextView)
                 holder.weatherTemperatureTextView.text =
                         "${forecastPart.getTemperatureMin().decimalFormat(2)} " +
