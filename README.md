@@ -19,7 +19,7 @@ Used Libraries are
 
 ---
 
-![alt tag](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/screenshots/example_usage.png)
+![alt tag](https://github.com/GuepardoApps/library_OpenWeather/blob/develop/screenshots/example_usage.png)
 
 ---
 
