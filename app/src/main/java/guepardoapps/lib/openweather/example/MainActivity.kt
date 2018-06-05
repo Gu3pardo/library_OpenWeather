@@ -47,10 +47,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var currentWeather: IWeatherCurrent
     private lateinit var forecastWeather: IWeatherForecast
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
@@ -110,54 +106,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         openWeatherService.setOnWeatherUpdateListener(object : OnWeatherUpdateListener {
             override fun onCurrentWeather(currentWeather: IWeatherCurrent?, success: Boolean) {
-                runOnUiThread {
-                    if (success) {
-                        handleOnCurrentWeather(currentWeather!!)
-                    } else {
-                        Logger.instance.warning(tag, "onCurrentWeather download was  not successfully")
-
-                        progressBar.visibility = View.GONE
-                        noDataFallback.visibility = View.VISIBLE
-                        Toasty.warning(context, "onCurrentWeather download was  not successfully", Toast.LENGTH_LONG).show()
-                    }
+                if (success) {
+                    handleOnCurrentWeather(currentWeather!!)
+                } else {
+                    Logger.instance.warning(tag, "onCurrentWeather download was  not successfully")
+                    progressBar.visibility = View.GONE
+                    noDataFallback.visibility = View.VISIBLE
+                    Toasty.warning(context, "onCurrentWeather download was  not successfully", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onForecastWeather(forecastWeather: IWeatherForecast?, success: Boolean) {
-                runOnUiThread {
-                    pullRefreshLayout.setRefreshing(false)
-                    if (success) {
-                        handleOnForecastWeather(forecastWeather!!)
-                        searchField.setText("")
-                    } else {
-                        Logger.instance.warning(tag, "onForecastWeather download was  not successfully")
-
-                        progressBar.visibility = View.GONE
-                        noDataFallback.visibility = View.VISIBLE
-                        Toasty.warning(context, "onForecastWeather download was  not successfully", Toast.LENGTH_LONG).show()
-                    }
+                pullRefreshLayout.setRefreshing(false)
+                if (success) {
+                    handleOnForecastWeather(forecastWeather!!)
+                    searchField.setText("")
+                } else {
+                    Logger.instance.warning(tag, "onForecastWeather download was  not successfully")
+                    progressBar.visibility = View.GONE
+                    noDataFallback.visibility = View.VISIBLE
+                    Toasty.warning(context, "onForecastWeather download was  not successfully", Toast.LENGTH_LONG).show()
                 }
             }
         })
 
         openWeatherService.loadCurrentWeather()
         openWeatherService.loadForecastWeather()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

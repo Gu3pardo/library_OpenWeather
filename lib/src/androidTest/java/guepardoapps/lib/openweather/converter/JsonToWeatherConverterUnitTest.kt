@@ -38,7 +38,7 @@ class JsonToWeatherConverterUnitTest {
                 city, "scattered clouds",
                 21.37, 56.0, 1021.0,
                 sunriseTime, sunsetTime, Calendar.getInstance(),
-                WeatherCondition.Cloudy)
+                WeatherCondition.Clouds)
 
 
         // Act

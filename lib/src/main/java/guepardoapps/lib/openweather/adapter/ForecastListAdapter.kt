@@ -11,8 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import guepardoapps.lib.openweather.R
 import guepardoapps.lib.openweather.enums.ForecastListType
-import guepardoapps.lib.openweather.extensions.decimalFormat
-import guepardoapps.lib.openweather.extensions.format
+import guepardoapps.lib.openweather.extensions.doubleFormat
+import guepardoapps.lib.openweather.extensions.integerFormat
 import guepardoapps.lib.openweather.models.IWeatherForecastPart
 import java.util.*
 
@@ -77,9 +77,9 @@ class ForecastListAdapter(
 
                 val dateTime = forecastPart.getDateTime()
                 holder.weatherHeaderTextView.text =
-                        "${dateTime.get(Calendar.HOUR_OF_DAY).format(2)}:" +
-                        "${dateTime.get(Calendar.MINUTE).format(2)}, " +
-                        "${forecastPart.getTemperature().decimalFormat(2)} " +
+                        "${dateTime.get(Calendar.HOUR_OF_DAY).integerFormat(2)}:" +
+                        "${dateTime.get(Calendar.MINUTE).integerFormat(2)}, " +
+                        "${forecastPart.getTemperature().doubleFormat(2)} " +
                         "${0x00B0.toChar()}C, " +
                         forecastPart.getDescription()
 
@@ -87,27 +87,27 @@ class ForecastListAdapter(
                 holder.weatherTemperatureImageView = rowView.findViewById(R.id.weatherTemperatureImageView)
                 holder.weatherTemperatureTextView = rowView.findViewById(R.id.weatherTemperatureTextView)
                 holder.weatherTemperatureTextView.text =
-                        "${forecastPart.getTemperatureMin().decimalFormat(2)} " +
+                        "${forecastPart.getTemperatureMin().doubleFormat(2)} " +
                         "${0x00B0.toChar()}C - " +
-                        "${forecastPart.getTemperatureMax().decimalFormat(2)} " +
+                        "${forecastPart.getTemperatureMax().doubleFormat(2)} " +
                         "${0x00B0.toChar()}C"
 
                 holder.weatherPressureView = rowView.findViewById(R.id.weatherPressureView)
                 holder.weatherPressureImageView = rowView.findViewById(R.id.weatherPressureImageView)
                 holder.weatherPressureTextView = rowView.findViewById(R.id.weatherPressureTextView)
-                holder.weatherPressureTextView.text = "${forecastPart.getPressure().decimalFormat(2)} mBar"
+                holder.weatherPressureTextView.text = "${forecastPart.getPressure().doubleFormat(2)} mBar"
 
                 holder.weatherHumidityView = rowView.findViewById(R.id.weatherHumidityView)
                 holder.weatherHumidityImageView = rowView.findViewById(R.id.weatherHumidityImageView)
                 holder.weatherHumidityTextView = rowView.findViewById(R.id.weatherHumidityTextView)
-                holder.weatherHumidityTextView.text = "${forecastPart.getHumidity().decimalFormat(2)} %"
+                holder.weatherHumidityTextView.text = "${forecastPart.getHumidity().doubleFormat(2)} %"
 
                 holder.weatherWindView = rowView.findViewById(R.id.weatherWindView)
                 holder.weatherWindImageView = rowView.findViewById(R.id.weatherWindImageView)
                 holder.weatherWindTextView = rowView.findViewById(R.id.weatherWindTextView)
                 holder.weatherWindTextView.text =
-                        "${forecastPart.getWindSpeed().decimalFormat(2)} m/s, " +
-                        "${forecastPart.getWindDegree().decimalFormat(2)} deg"
+                        "${forecastPart.getWindSpeed().doubleFormat(2)} m/s, " +
+                        "${forecastPart.getWindDegree().doubleFormat(2)} deg"
             }
             ForecastListType.DateDivider -> {
                 rowView = inflater.inflate(R.layout.listview_card_divider, parentView, false)
@@ -115,9 +115,9 @@ class ForecastListAdapter(
 
                 val dateTime = forecastPart.getDateTime()
                 holder.dividerCardTitleText.text =
-                        "${dateTime.get(Calendar.DAY_OF_MONTH).format(2)}." +
-                        "${(dateTime.get(Calendar.MONTH) + 1).format(2)}." +
-                        dateTime.get(Calendar.YEAR).format(4)
+                        "${dateTime.get(Calendar.DAY_OF_MONTH).integerFormat(2)}." +
+                        "${(dateTime.get(Calendar.MONTH) + 1).integerFormat(2)}." +
+                        dateTime.get(Calendar.YEAR).integerFormat(4)
             }
         }
 

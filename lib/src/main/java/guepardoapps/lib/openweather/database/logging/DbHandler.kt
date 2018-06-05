@@ -27,7 +27,7 @@ class DbHandler(context: Context, factory: SQLiteDatabase.CursorFactory?)
     }
 
     override fun onUpgrade(database: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        database.execSQL("DROP TABLE IF EXISTS " + DatabaseTable)
+        database.execSQL("DROP TABLE IF EXISTS $DatabaseTable")
         onCreate(database)
     }
 

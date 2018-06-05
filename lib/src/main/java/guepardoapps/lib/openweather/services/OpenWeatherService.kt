@@ -248,8 +248,10 @@ class OpenWeatherService(
         if (currentWeather != null) {
             val currentWeatherNotificationContent = NotificationContent(
                     currentWeatherId,
-                    currentWeather!!.getDescription(),
-                    currentWeather!!.getDescription(),
+                    "Current Weather: " + currentWeather!!.getDescription(),
+                    currentWeather!!.getTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "
+                            + currentWeather!!.getPressure().doubleFormat(1) + "mBar, "
+                            + currentWeather!!.getHumidity().doubleFormat(1) + "%",
                     currentWeather!!.getWeatherCondition().iconId,
                     currentWeather!!.getWeatherCondition().wallpaperId,
                     receiverActivity!!)
@@ -259,8 +261,13 @@ class OpenWeatherService(
         if (forecastWeather != null) {
             val forecastWeatherNotificationContent = NotificationContent(
                     forecastWeatherId,
-                    forecastWeather!!.getMostWeatherCondition().description,
-                    forecastWeather!!.getMostWeatherCondition().description,
+                    "Forecast: " + forecastWeather!!.getMostWeatherCondition().description,
+                    forecastWeather!!.getMinTemperature().doubleFormat(1) + "${0x00B0.toChar()}C - "
+                            + forecastWeather!!.getMaxTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "
+                            + forecastWeather!!.getMinPressure().doubleFormat(1) + "mBar - "
+                            + forecastWeather!!.getMaxPressure().doubleFormat(1) + "mBar, "
+                            + forecastWeather!!.getMinHumidity().doubleFormat(1) + "% - "
+                            + forecastWeather!!.getMaxHumidity().doubleFormat(1) + "%",
                     forecastWeather!!.getMostWeatherCondition().iconId,
                     forecastWeather!!.getMostWeatherCondition().wallpaperId,
                     receiverActivity!!)

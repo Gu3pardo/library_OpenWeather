@@ -77,15 +77,13 @@ class Downloader(context: Context,
         var onDownloadListener: OnDownloadListener? = null
 
         override fun doInBackground(vararg requestUrls: String?): String {
+            var result = ""
+
             if (downloadType == DownloadType.Null) {
-                onDownloadListener!!.onFinished(downloadType, "", false)
-                return ""
+                return result
             }
 
             for (requestUrl in requestUrls) {
-                var result = ""
-                var success = false
-
                 try {
                     val okHttpClient = OkHttpClient()
                     val request = Request.Builder().url(requestUrl!!).build()
@@ -94,20 +92,24 @@ class Downloader(context: Context,
 
                     if (responseBody != null) {
                         result = responseBody.string()
-                        success = true
                         Logger.instance.debug(tag, result)
                     } else {
                         Logger.instance.error(tag, "ResponseBody is null!")
                     }
                 } catch (exception: Exception) {
                     Logger.instance.error(tag, exception)
-                } finally {
-                    Logger.instance.verbose(tag, "Call of finally")
-                    onDownloadListener!!.onFinished(downloadType, result, success)
                 }
             }
 
-            return ""
+            return result
+        }
+
+        override fun onPostExecute(result: String?) {
+            if (result.isNullOrEmpty()) {
+                onDownloadListener!!.onFinished(downloadType, "", false)
+                return
+            }
+            onDownloadListener!!.onFinished(downloadType, result!!, true)
         }
     }
 }

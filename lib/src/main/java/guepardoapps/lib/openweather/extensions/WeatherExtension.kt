@@ -51,6 +51,78 @@ fun IWeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
     return weatherCondition
 }
 
+fun IWeatherForecast.getMinTemperature(): Double {
+    var value = 10000.0
+
+    for (forecastPart in this.getList()) {
+        if (forecastPart.getTemperatureMin() < value) {
+            value = forecastPart.getTemperatureMin()
+        }
+    }
+
+    return value
+}
+
+fun IWeatherForecast.getMaxTemperature(): Double {
+    var value = -10000.0
+
+    for (forecastPart in this.getList()) {
+        if (forecastPart.getTemperatureMax() > value) {
+            value = forecastPart.getTemperatureMax()
+        }
+    }
+
+    return value
+}
+
+fun IWeatherForecast.getMinPressure(): Double {
+    var value = 10000.0
+
+    for (forecastPart in this.getList()) {
+        if (forecastPart.getPressure() < value) {
+            value = forecastPart.getPressure()
+        }
+    }
+
+    return value
+}
+
+fun IWeatherForecast.getMaxPressure(): Double {
+    var value = -10000.0
+
+    for (forecastPart in this.getList()) {
+        if (forecastPart.getPressure() > value) {
+            value = forecastPart.getPressure()
+        }
+    }
+
+    return value
+}
+
+fun IWeatherForecast.getMinHumidity(): Double {
+    var value = 10000.0
+
+    for (forecastPart in this.getList()) {
+        if (forecastPart.getHumidity() < value) {
+            value = forecastPart.getHumidity()
+        }
+    }
+
+    return value
+}
+
+fun IWeatherForecast.getMaxHumidity(): Double {
+    var value = -10000.0
+
+    for (forecastPart in this.getList()) {
+        if (forecastPart.getHumidity() > value) {
+            value = forecastPart.getHumidity()
+        }
+    }
+
+    return value
+}
+
 fun IWeatherForecastPart.getForecastDayTime(): ForecastDayTime {
     return when (this.getDateTime().get(Calendar.HOUR_OF_DAY)) {
         in 0..4 -> ForecastDayTime.Night

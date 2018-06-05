@@ -9,10 +9,10 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "guepardoapps.library.openweather.example"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 27
-        versionCode 10000
-        versionName "1.0.0.180527"
+        versionCode 10001
+        versionName "1.0.1.180605"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
