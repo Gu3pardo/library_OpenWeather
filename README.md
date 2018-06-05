@@ -5,11 +5,11 @@
 <a target="_blank" href="https://android-arsenal.com/api?level=21" title="API21+"><img src="https://img.shields.io/badge/API-21+-blue.svg" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases)
-[![Version](https://img.shields.io/badge/version-v1.0.1.180605-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases/openweather-2018-06-05.aar)
+[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases)
+[![Version](https://img.shields.io/badge/version-v1.0.1.180605-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-06-05.aar)
 
 library for downloading and handling data from openweather
-example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/develop/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
+example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/master/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
 
 Based on Kotlin, using Listener, Extensions and more.
 
@@ -19,7 +19,7 @@ Used Libraries are
 
 ---
 
-![alt tag](https://github.com/GuepardoApps/library_OpenWeather/blob/develop/screenshots/example_usage.png)
+![alt tag](https://github.com/GuepardoApps/library_OpenWeather/blob/master/screenshots/example_usage.png)
 
 ---
 
