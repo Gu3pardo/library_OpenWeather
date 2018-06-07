@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases)
-[![Version](https://img.shields.io/badge/version-v1.0.1.180605-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-06-05.aar)
+[![Version](https://img.shields.io/badge/version-v1.0.2.180607-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-06-07.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/master/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
@@ -16,6 +16,7 @@ Based on Kotlin, using Listener, Extensions and more.
 Used Libraries are
 - com.squareup.okhttp3:okhttp:3.9.1
 - com.github.florent37:expansionpanel:1.1.1
+- using also latest API28 libs
 
 ---
 
