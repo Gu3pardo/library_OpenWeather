@@ -68,6 +68,42 @@ class DbHandler(context: Context, factory: SQLiteDatabase.CursorFactory?)
         return count
     }
 
+    fun deleteLogById(id: Int): Int {
+        val database = this.writableDatabase
+
+        val selection = "$ColumnId LIKE ?"
+        val selectionArgs = arrayOf(id.toString())
+
+        val deletedRows = database.delete(DatabaseTable, selection, selectionArgs)
+
+        database.close()
+        return deletedRows
+    }
+
+    fun deleteLogBySeverity(severity: Severity): Int {
+        val database = this.writableDatabase
+
+        val selection = "$ColumnSeverity LIKE ?"
+        val selectionArgs = arrayOf(severity.ordinal.toString())
+
+        val deletedRows = database.delete(DatabaseTable, selection, selectionArgs)
+
+        database.close()
+        return deletedRows
+    }
+
+    fun deleteLogByTag(tag: String): Int {
+        val database = this.writableDatabase
+
+        val selection = "$ColumnTag LIKE ?"
+        val selectionArgs = arrayOf(tag)
+
+        val deletedRows = database.delete(DatabaseTable, selection, selectionArgs)
+
+        database.close()
+        return deletedRows
+    }
+
     fun findLogById(id: Int): MutableList<DbLog> {
         val database = this.readableDatabase
 
@@ -170,42 +206,6 @@ class DbHandler(context: Context, factory: SQLiteDatabase.CursorFactory?)
 
         database.close()
         return dbLogList
-    }
-
-    fun deleteLogById(id: Int): Int {
-        val database = this.readableDatabase
-
-        val selection = "$ColumnId LIKE ?"
-        val selectionArgs = arrayOf(id.toString())
-
-        val deletedRows = database.delete(DatabaseTable, selection, selectionArgs)
-
-        database.close()
-        return deletedRows
-    }
-
-    fun deleteLogBySeverity(severity: Severity): Int {
-        val database = this.readableDatabase
-
-        val selection = "$ColumnSeverity LIKE ?"
-        val selectionArgs = arrayOf(severity.ordinal.toString())
-
-        val deletedRows = database.delete(DatabaseTable, selection, selectionArgs)
-
-        database.close()
-        return deletedRows
-    }
-
-    fun deleteLogByTag(tag: String): Int {
-        val database = this.readableDatabase
-
-        val selection = "$ColumnTag LIKE ?"
-        val selectionArgs = arrayOf(tag)
-
-        val deletedRows = database.delete(DatabaseTable, selection, selectionArgs)
-
-        database.close()
-        return deletedRows
     }
 
     companion object {
