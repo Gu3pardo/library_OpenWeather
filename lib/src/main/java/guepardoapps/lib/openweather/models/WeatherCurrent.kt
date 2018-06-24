@@ -13,7 +13,7 @@ class WeatherCurrent(private val city: ICity,
                      private val lastUpdate: Calendar,
                      private val weatherCondition: WeatherCondition) : IWeatherCurrent {
 
-    private val tag: String = WeatherCurrent::class.java.canonicalName
+    private val tag: String = WeatherCurrent::class.java.simpleName
 
     override fun getCity(): ICity {
         return city

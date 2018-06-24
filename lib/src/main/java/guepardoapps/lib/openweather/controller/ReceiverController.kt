@@ -6,7 +6,7 @@ import android.content.IntentFilter
 import guepardoapps.lib.openweather.utils.Logger
 
 class ReceiverController(private val context: Context) : IReceiverController {
-    private val tag: String = ReceiverController::class.java.canonicalName
+    private val tag: String = ReceiverController::class.java.simpleName
 
     private val registeredReceiver: MutableList<BroadcastReceiver> = mutableListOf()
 

@@ -20,7 +20,7 @@ class ForecastListAdapter(
         @NonNull private val context: Context,
         @NonNull private val forecastList: Array<IWeatherForecastPart>) : BaseAdapter() {
 
-    // private val tag: String = ForecastListAdapter::class.java.canonicalName
+    // private val tag: String = ForecastListAdapter::class.java.simpleName
 
     private class Holder {
         lateinit var dividerCardTitleText: TextView
@@ -111,6 +111,7 @@ class ForecastListAdapter(
             }
             ForecastListType.DateDivider -> {
                 rowView = inflater.inflate(R.layout.listview_card_divider, parentView, false)
+
                 holder.dividerCardTitleText = rowView.findViewById(R.id.dividerCardTitleText)
 
                 val dateTime = forecastPart.getDateTime()

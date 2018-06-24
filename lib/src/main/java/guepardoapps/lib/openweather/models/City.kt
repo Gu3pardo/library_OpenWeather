@@ -6,7 +6,7 @@ class City(private val id: Int,
            private val geoLocation: IGeoLocation,
            private val population: Int = 0) : ICity {
 
-    private val tag: String = City::class.java.canonicalName
+    private val tag: String = City::class.java.simpleName
 
     override fun getId(): Int {
         return id

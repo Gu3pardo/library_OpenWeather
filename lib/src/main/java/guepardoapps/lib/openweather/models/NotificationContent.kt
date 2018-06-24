@@ -7,7 +7,7 @@ class NotificationContent(override var id: Int,
                           override var largeIcon: Int,
                           override var receiver: Class<*>) : INotificationContent {
 
-    private val tag: String = NotificationContent::class.java.canonicalName
+    private val tag: String = NotificationContent::class.java.simpleName
 
     override fun toString(): String {
         return "{Class: $tag, Id: $id, Title: $title, Text: $text, Icon: $icon, LargeIcon: $largeIcon, Receiver: $receiver}"

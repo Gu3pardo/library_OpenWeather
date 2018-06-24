@@ -10,7 +10,7 @@ import java.net.NetworkInterface
 import java.net.SocketException
 
 class NetworkController(@NonNull private val context: Context) : INetworkController {
-    private val tag: String = NetworkController::class.java.canonicalName
+    private val tag: String = NetworkController::class.java.simpleName
 
     override fun networkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

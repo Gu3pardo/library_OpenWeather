@@ -22,8 +22,8 @@ import guepardoapps.lib.openweather.adapter.ForecastListAdapter
 import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
 import guepardoapps.lib.openweather.models.IWeatherCurrent
 import guepardoapps.lib.openweather.models.IWeatherForecast
-import guepardoapps.lib.openweather.services.OnWeatherUpdateListener
-import guepardoapps.lib.openweather.services.OpenWeatherService
+import guepardoapps.lib.openweather.services.openweather.OnWeatherServiceListener
+import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import guepardoapps.lib.openweather.utils.Logger
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -89,22 +89,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.setNavigationItemSelectedListener(this)
 
         pullRefreshLayout = findViewById(R.id.pullRefreshLayout)
-        pullRefreshLayout.setOnRefreshListener({
+        pullRefreshLayout.setOnRefreshListener {
             listView.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
             searchField.visibility = View.INVISIBLE
             openWeatherService.loadForecastWeather()
-        })
+        }
 
-        openWeatherService.setApiKey("") // TODO Add ApiKey
-        openWeatherService.setCity("Nuremberg")
-        openWeatherService.setNotificationEnabled(true)
-        openWeatherService.setReloadEnabled(true)
-        openWeatherService.setReloadTimeout(30 * 60 * 1000)
-        openWeatherService.setWallpaperEnabled(true)
-        openWeatherService.setReceiverActivity(MainActivity::class.java)
+        openWeatherService.apiKey = "" // TODO Add ApiKey
+        openWeatherService.city = "Nuremberg"
+        openWeatherService.notificationEnabled = true
+        openWeatherService.reloadEnabled = true
+        openWeatherService.reloadTimeout = 30 * 60 * 1000
+        openWeatherService.wallpaperEnabled = true
+        openWeatherService.receiverActivity = MainActivity::class.java
 
-        openWeatherService.setOnWeatherUpdateListener(object : OnWeatherUpdateListener {
+        openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
             override fun onCurrentWeather(currentWeather: IWeatherCurrent?, success: Boolean) {
                 if (success) {
                     handleOnCurrentWeather(currentWeather!!)

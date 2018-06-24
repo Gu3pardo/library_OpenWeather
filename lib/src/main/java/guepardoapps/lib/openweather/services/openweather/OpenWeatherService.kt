@@ -1,40 +1,33 @@
-package guepardoapps.lib.openweather.services
+package guepardoapps.lib.openweather.services.openweather
 
 import android.content.Context
 import android.os.Handler
 import guepardoapps.lib.openweather.controller.*
 import guepardoapps.lib.openweather.converter.*
-import guepardoapps.lib.openweather.downloader.*
 import guepardoapps.lib.openweather.enums.*
 import guepardoapps.lib.openweather.extensions.*
 import guepardoapps.lib.openweather.models.*
 import guepardoapps.lib.openweather.utils.Logger
 import android.app.WallpaperManager
+import guepardoapps.lib.openweather.services.api.ApiService
+import guepardoapps.lib.openweather.services.api.OnApiServiceListener
 import java.io.IOException
 import java.util.*
 
-class OpenWeatherService(
-        private val context: Context,
-        private var notificationEnabled: Boolean = false,
-        private var receiverActivity: Class<*>? = null,
-        private var wallpaperEnabled: Boolean = false,
-        private var reloadEnabled: Boolean = false,
-        private var reloadTimeout: Long = 15 * 60 * 1000) : IOpenWeatherService {
+class OpenWeatherService(private val context: Context) : IOpenWeatherService {
+    private val tag: String = OpenWeatherService::class.java.simpleName
 
-    private val tag: String = OpenWeatherService::class.java.canonicalName
-
-    private val currentWeatherId: Int = 260520181
-    private val forecastWeatherId: Int = 260520182
+    private val currentWeatherNotificationId: Int = 260520181
+    private val forecastWeatherNotificationId: Int = 260520182
 
     private val minTimeoutMs: Long = 5 * 60 * 1000
     private val maxTimeoutMs: Long = 24 * 60 * 60 * 1000
 
     private var converter: JsonToWeatherConverter = JsonToWeatherConverter()
-    private var downloader: Downloader = Downloader(context)
+    private var apiService: ApiService = ApiService()
     private var networkController: NetworkController = NetworkController(context)
     private var notificationController: NotificationController = NotificationController(context)
     private var receiverController: ReceiverController = ReceiverController(context)
-    private lateinit var onWeatherUpdateListener: OnWeatherUpdateListener
 
     private var reloadHandler: Handler = Handler()
     private var reloadRunnable: Runnable = Runnable {
@@ -46,8 +39,63 @@ class OpenWeatherService(
     private var currentWeather: IWeatherCurrent? = null
     private var forecastWeather: IWeatherForecast? = null
 
+    override var city: String
+        get() = apiService.city
+        set(value) {
+            apiService.city = value
+        }
+    override var apiKey: String
+        get() = apiService.apiKey
+        set(value) {
+            apiService.apiKey = value
+        }
+
+    override var notificationEnabled: Boolean = true
+        set(value) {
+            field = value
+            if (field) {
+                displayNotification()
+            } else {
+                notificationController.close()
+            }
+        }
+    override var receiverActivity: Class<*>? = null
+        set(value) {
+            field = value
+            if (field != null && this.notificationEnabled) {
+                displayNotification()
+            } else {
+                notificationController.close()
+            }
+        }
+
+    override var wallpaperEnabled: Boolean = false
+        set(value) {
+            field = value
+            if (field) {
+                changeWallpaper()
+            }
+        }
+
+    override var reloadEnabled: Boolean = true
+        set(value) {
+            field = value
+            restartHandler()
+        }
+    override var reloadTimeout: Long = this.minTimeoutMs
+        set(value) {
+            field = when {
+                value < minTimeoutMs -> minTimeoutMs
+                value > maxTimeoutMs -> maxTimeoutMs
+                else -> value
+            }
+            restartHandler()
+        }
+
+    override var onWeatherServiceListener: OnWeatherServiceListener? = null
+
     init {
-        downloader.setOnDownloadListener(object : OnDownloadListener {
+        apiService.setOnApiServiceListener(object : OnApiServiceListener {
             override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
                 Logger.instance.verbose(tag, "Received onDownloadListener onFinished")
 
@@ -60,102 +108,28 @@ class OpenWeatherService(
                     }
                     DownloadType.Null -> {
                         Logger.instance.error(tag, "Received download update with downloadType Null and jsonString: $jsonString")
-                        onWeatherUpdateListener.onCurrentWeather(null, false)
-                        onWeatherUpdateListener.onForecastWeather(null, false)
+                        onWeatherServiceListener?.onCurrentWeather(null, false)
+                        onWeatherServiceListener?.onForecastWeather(null, false)
                     }
                 }
             }
         })
     }
 
-    override fun setCity(city: String) {
-        downloader.city = city
-    }
-
-    override fun getCity(): String? {
-        return downloader.city
-    }
-
-    override fun setApiKey(apiKey: String) {
-        downloader.apiKey = apiKey
-    }
-
-    override fun getApiKey(): String? {
-        return downloader.apiKey
-    }
-
-    override fun setNotificationEnabled(notificationEnabled: Boolean) {
-        this.notificationEnabled = notificationEnabled
-        if (this.notificationEnabled) {
-            displayNotification()
-        } else {
-            notificationController.close()
-        }
-    }
-
-    override fun getNotificationEnabled(): Boolean {
-        return notificationEnabled
-    }
-
-    override fun setReceiverActivity(receiverActivity: Class<*>?) {
-        this.receiverActivity = receiverActivity
-    }
-
-    override fun getReceiverActivity(): Class<*>? {
-        return receiverActivity
-    }
-
-    override fun setWallpaperEnabled(wallpaperEnabled: Boolean) {
-        this.wallpaperEnabled = wallpaperEnabled
-        if (this.wallpaperEnabled) {
-            changeWallpaper()
-        }
-    }
-
-    override fun getWallpaperEnabled(): Boolean {
-        return wallpaperEnabled
-    }
-
-    override fun setReloadEnabled(reloadEnabled: Boolean) {
-        this.reloadEnabled = reloadEnabled
-        restartHandler()
-    }
-
-    override fun getReloadEnabled(): Boolean {
-        return reloadEnabled
-    }
-
-    override fun setReloadTimeout(reloadTimeout: Long) {
-        when {
-            reloadTimeout < minTimeoutMs -> this.reloadTimeout = minTimeoutMs
-            reloadTimeout > maxTimeoutMs -> this.reloadTimeout = maxTimeoutMs
-            else -> this.reloadTimeout = reloadTimeout
-        }
-        restartHandler()
-    }
-
-    override fun getReloadTimeout(): Long {
-        return reloadTimeout
-    }
-
-    override fun setOnWeatherUpdateListener(onWeatherUpdateListener: OnWeatherUpdateListener) {
-        this.onWeatherUpdateListener = onWeatherUpdateListener
-    }
-
     override fun loadCurrentWeather() {
-        val result = downloader.currentWeather()
+        val result = apiService.currentWeather()
         if (result != DownloadResult.Performing) {
             Logger.instance.error(tag, "Failure in loadCurrentWeather: $result")
-            onWeatherUpdateListener.onCurrentWeather(null, false)
+            onWeatherServiceListener?.onCurrentWeather(null, false)
         }
         restartHandler()
     }
 
     override fun loadForecastWeather() {
-        val result = downloader.forecastWeather()
+        val result = apiService.forecastWeather()
         if (result != DownloadResult.Performing) {
             Logger.instance.error(tag, "Failure in loadForecastWeather: $result")
-            onWeatherUpdateListener.onForecastWeather(null, false)
+            onWeatherServiceListener?.onForecastWeather(null, false)
         }
         restartHandler()
     }
@@ -209,14 +183,14 @@ class OpenWeatherService(
 
     private fun handleCurrentWeatherUpdate(success: Boolean, jsonString: String) {
         if (!success) {
-            onWeatherUpdateListener.onCurrentWeather(null, false)
+            onWeatherServiceListener?.onCurrentWeather(null, false)
         } else {
             val convertedCurrentWeather = converter.convertToWeatherCurrent(jsonString)
             if (convertedCurrentWeather == null) {
-                onWeatherUpdateListener.onCurrentWeather(null, false)
+                onWeatherServiceListener?.onCurrentWeather(null, false)
             } else {
                 currentWeather = convertedCurrentWeather
-                onWeatherUpdateListener.onCurrentWeather(currentWeather, true)
+                onWeatherServiceListener?.onCurrentWeather(currentWeather, true)
                 if (wallpaperEnabled) {
                     changeWallpaper()
                 }
@@ -229,14 +203,14 @@ class OpenWeatherService(
 
     private fun handleForecastWeatherUpdate(success: Boolean, jsonString: String) {
         if (!success) {
-            onWeatherUpdateListener.onForecastWeather(null, false)
+            onWeatherServiceListener?.onForecastWeather(null, false)
         } else {
             val convertedForecastWeather = converter.convertToWeatherForecast(jsonString)
             if (convertedForecastWeather == null) {
-                onWeatherUpdateListener.onForecastWeather(null, false)
+                onWeatherServiceListener?.onForecastWeather(null, false)
             } else {
                 forecastWeather = convertedForecastWeather
-                onWeatherUpdateListener.onForecastWeather(forecastWeather, true)
+                onWeatherServiceListener?.onForecastWeather(forecastWeather, true)
                 if (notificationEnabled) {
                     displayNotification()
                 }
@@ -247,7 +221,7 @@ class OpenWeatherService(
     private fun displayNotification() {
         if (currentWeather != null) {
             val currentWeatherNotificationContent = NotificationContent(
-                    currentWeatherId,
+                    currentWeatherNotificationId,
                     "Current Weather: " + currentWeather!!.getDescription(),
                     currentWeather!!.getTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "
                             + currentWeather!!.getPressure().doubleFormat(1) + "mBar, "
@@ -260,7 +234,7 @@ class OpenWeatherService(
 
         if (forecastWeather != null) {
             val forecastWeatherNotificationContent = NotificationContent(
-                    forecastWeatherId,
+                    forecastWeatherNotificationId,
                     "Forecast: " + forecastWeather!!.getMostWeatherCondition().description,
                     forecastWeather!!.getMinTemperature().doubleFormat(1) + "${0x00B0.toChar()}C - "
                             + forecastWeather!!.getMaxTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "

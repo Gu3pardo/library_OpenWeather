@@ -26,7 +26,7 @@ class WeatherForecastPart(private val main: String,
                           val dayTime: ForecastDayTime = ForecastDayTime.Null)
     : IWeatherForecastPart {
 
-    private val tag: String = WeatherForecastPart::class.java.canonicalName
+    private val tag: String = WeatherForecastPart::class.java.simpleName
 
     constructor(dateTime: Calendar)
             : this("", "",

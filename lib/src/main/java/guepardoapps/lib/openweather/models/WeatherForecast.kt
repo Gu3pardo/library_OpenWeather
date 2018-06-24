@@ -6,7 +6,7 @@ class WeatherForecast(private val city: ICity,
                       private val list: Array<IWeatherForecastPart>,
                       val wallpaperId: Int = R.drawable.weather_wallpaper_dummy) : IWeatherForecast {
 
-    private val tag: String = WeatherForecast::class.java.canonicalName
+    private val tag: String = WeatherForecast::class.java.simpleName
 
     override fun getCity(): ICity {
         return city

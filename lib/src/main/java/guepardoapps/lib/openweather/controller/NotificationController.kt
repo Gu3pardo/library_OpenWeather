@@ -15,7 +15,7 @@ import guepardoapps.lib.openweather.extensions.circleBitmap
 import guepardoapps.lib.openweather.models.INotificationContent
 
 class NotificationController(@NonNull private val context: Context) : INotificationController {
-    //private val tag: String = NotificationController::class.java.canonicalName
+    //private val tag: String = NotificationController::class.java.simpleName
 
     private val channelId: String = "guepardoapps.lib.openweather"
     private val channelName: String = "OpenWeather"
