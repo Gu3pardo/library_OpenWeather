@@ -1,55 +1,36 @@
 package guepardoapps.lib.openweather.models
 
+import guepardoapps.lib.openweather.annotations.JsonKey
 import guepardoapps.lib.openweather.enums.WeatherCondition
 import java.util.*
 
-class WeatherCurrent(private val city: ICity,
-                     private val description: String,
-                     private val temperature: Double,
-                     private val humidity: Double,
-                     private val pressure: Double,
-                     private val sunriseTime: Calendar,
-                     private val sunsetTime: Calendar,
-                     private val lastUpdate: Calendar,
-                     private val weatherCondition: WeatherCondition) : IWeatherCurrent {
+@JsonKey("", "sys")
+class WeatherCurrent {
+    private val tag: String = WeatherCurrent::class.java.simpleName
 
-    private val tag: String = WeatherCurrent::class.java.canonicalName
+    @JsonKey("weather", "description")
+    var description: String = ""
 
-    override fun getCity(): ICity {
-        return city
-    }
+    @JsonKey("weather", "main")
+    var weatherCondition: WeatherCondition = WeatherCondition.Null
 
-    override fun getDescription(): String {
-        return description
-    }
+    @JsonKey("main", "temp")
+    var temperature: Double = 0.0
 
-    override fun getTemperature(): Double {
-        return temperature
-    }
+    @JsonKey("main", "humidity")
+    var humidity: Double = 0.0
 
-    override fun getHumidity(): Double {
-        return humidity
-    }
+    @JsonKey("main", "pressure")
+    var pressure: Double = 0.0
 
-    override fun getPressure(): Double {
-        return pressure
-    }
+    @JsonKey("sys", "sunrise")
+    var sunriseTime: Calendar = Calendar.getInstance()
 
-    override fun getSunriseTime(): Calendar {
-        return sunriseTime
-    }
-
-    override fun getSunsetTime(): Calendar {
-        return sunsetTime
-    }
-
-    override fun getLastUpdate(): Calendar {
-        return lastUpdate
-    }
-
-    override fun getWeatherCondition(): WeatherCondition {
-        return weatherCondition
-    }
+    @JsonKey("sys", "sunset")
+    var sunsetTime: Calendar = Calendar.getInstance()
+    
+    var city: City = City()
+    var lastUpdate: Calendar = Calendar.getInstance()
 
     override fun toString(): String {
         return "{Class: $tag, City: $city, Description: $description, " +

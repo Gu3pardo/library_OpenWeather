@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases)
-[![Version](https://img.shields.io/badge/version-v1.0.3.180608-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-06-08.aar)
+[![Version](https://img.shields.io/badge/version-v1.0.6.180628-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-06-28.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/master/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
@@ -44,28 +44,23 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         ...
 
-        openWeatherService = OpenWeatherService(this)
+        openWeatherService = OpenWeatherService.instance
+        openWeatherService.initialize(this)
 		
         // Set ApiKey
-        openWeatherService.setApiKey("") // TODO Add ApiKey
+        openWeatherService.apiKey = "" // TODO Add ApiKey
 		
         // Set your preferred city
-        openWeatherService.setCity("Nuremberg")
+        openWeatherService.city = "Nuremberg"
 		
         // Enable/Disable notifications
-        openWeatherService.setNotificationEnabled(true)
-		
-        // Enable/Disable reload of data
-        openWeatherService.setReloadEnabled(true
-		
-        // Set timeout of reload of data
-        openWeatherService.setReloadTimeout(30 * 60 * 1000)
+        openWeatherService.notificationEnabled = true
 		
         // Enable/Disable set of wallpaper
-        openWeatherService.setWallpaperEnabled(true)
+        openWeatherService.wallpaperEnabled = true
 		
         // Set receiver for notifications
-        openWeatherService.setReceiverActivity(MainActivity::class.java)
+        openWeatherService.receiverActivity = MainActivity::class.java
 		
         // Set OnWeatherUpdateListener
         openWeatherService.setOnWeatherUpdateListener(object : OnWeatherUpdateListener {
@@ -78,11 +73,11 @@ public class MainActivity extends Activity {
             }
         })
 
-        // Load the current weather
-        openWeatherService.loadCurrentWeather()
+        // Enable/Disable reload of data
+        openWeatherService.reloadEnabled = true
 		
-        // Load the forecast weather
-        openWeatherService.loadForecastWeather()
+        // Set timeout of reload of data
+        openWeatherService.reloadTimeout = 30 * 60 * 1000
 		
         ...
     }

@@ -1,6 +1,9 @@
 package guepardoapps.lib.openweather.converter
 
+import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
+import guepardoapps.lib.openweather.extensions.getJsonKey
+import guepardoapps.lib.openweather.extensions.getPropertyJsonKey
 import guepardoapps.lib.openweather.models.*
 import guepardoapps.lib.openweather.utils.Logger
 import org.json.JSONObject
@@ -17,42 +20,56 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
                         "Error in parsing jsonObject in convertToWeatherCurrent: $jsonObject")
                 return null
             }
+            val weatherCurrent = WeatherCurrent()
 
-            val sys = jsonObject.getJSONObject("sys")
+            val sys = jsonObject
+                    .getJSONObject(weatherCurrent.getJsonKey().key)
 
-            val coordinationJsonObject = jsonObject.getJSONObject("coord")
-            val latitude = coordinationJsonObject.getDouble("lat")
-            val longitude = coordinationJsonObject.getDouble("lon")
-            val geoLocation = GeoLocation(latitude, longitude)
+            val geoLocation = GeoLocation()
+            val coordinationJsonObject = jsonObject
+                    .getJSONObject(geoLocation.getJsonKey().key)
+            geoLocation.latitude = coordinationJsonObject
+                    .getDouble(geoLocation.getPropertyJsonKey(geoLocation::latitude.name).key)
+            geoLocation.longitude = coordinationJsonObject
+                    .getDouble(geoLocation.getPropertyJsonKey(geoLocation::longitude.name).key)
 
-            val cityId = jsonObject.getInt("id")
-            val cityName = jsonObject.getString("name").toUpperCase(Locale.getDefault())
-            val cityCountry = sys.getString("country")
-            val city = City(cityId, cityName, cityCountry, geoLocation)
+            val city = City()
+            city.id = jsonObject
+                    .getInt(city.getPropertyJsonKey(city::id.name).key)
+            city.name = jsonObject
+                    .getString(city.getPropertyJsonKey(city::name.name).key)
+            city.country = sys
+                    .getString(city.getPropertyJsonKey(city::country.name).key)
+            city.geoLocation = geoLocation
 
-            val sunriseLong = sys.getLong("sunrise") * 1000
-            val sunriseCalendar = Calendar.getInstance()
-            sunriseCalendar.timeInMillis = sunriseLong
+            weatherCurrent.city = city
 
-            val sunsetLong = sys.getLong("sunset") * 1000
-            val sunsetCalendar = Calendar.getInstance()
-            sunsetCalendar.timeInMillis = sunsetLong
+            weatherCurrent.sunriseTime.timeInMillis = sys
+                    .getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunriseTime.name).key) * 1000
 
-            val details = jsonObject.getJSONArray("weather").getJSONObject(0)
-            val main = details.getString("main")
-            val description = details.getString("description")
-            val weatherCondition = WeatherCondition.valueOf(main)
+            weatherCurrent.sunsetTime.timeInMillis = sys
+                    .getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunsetTime.name).key) * 1000
 
-            val mainJSONObject = jsonObject.getJSONObject("main")
-            val temperature = mainJSONObject.getDouble("temp")
-            val humidity = mainJSONObject.getDouble("humidity")
-            val pressure = mainJSONObject.getDouble("pressure")
+            val details = jsonObject
+                    .getJSONArray(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).parent).getJSONObject(0)
+            weatherCurrent.description = details
+                    .getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).key)
+            val main = details
+                    .getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::weatherCondition.name).key)
+            weatherCurrent.weatherCondition = WeatherCondition.valueOf(main)
 
-            return WeatherCurrent(city, description,
-                    temperature, humidity, pressure,
-                    sunriseCalendar, sunsetCalendar,
-                    Calendar.getInstance(),
-                    weatherCondition)
+            val mainJSONObject = jsonObject
+                    .getJSONObject(weatherCurrent.getPropertyJsonKey(weatherCurrent::temperature.name).parent)
+            weatherCurrent.temperature = mainJSONObject
+                    .getDouble(weatherCurrent.getPropertyJsonKey(weatherCurrent::temperature.name).key)
+            weatherCurrent.humidity = mainJSONObject
+                    .getDouble(weatherCurrent.getPropertyJsonKey(weatherCurrent::humidity.name).key)
+            weatherCurrent.pressure = mainJSONObject
+                    .getDouble(weatherCurrent.getPropertyJsonKey(weatherCurrent::pressure.name).key)
+
+            weatherCurrent.lastUpdate = Calendar.getInstance()
+
+            return weatherCurrent
         } catch (exception: Exception) {
             Logger.instance.error(tag, exception)
             return null
@@ -67,37 +84,54 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
                         "Error in parsing jsonObject in convertToWeatherForecast: $jsonObject")
                 return null
             }
+            val weatherForecast = WeatherForecast()
 
-            val cityJsonObject = jsonObject.getJSONObject("city")
-            val cityId = cityJsonObject.getInt("id")
-            val cityName = cityJsonObject.getString("name")
-            val cityCountry = cityJsonObject.getString("country")
-            val cityPopulation = cityJsonObject.getInt("population")
+            val city = City()
+            val cityJsonObject = jsonObject
+                    .getJSONObject(city.getJsonKey().key)
+            city.id = cityJsonObject
+                    .getInt(city.getPropertyJsonKey(city::id.name).key)
+            city.name = cityJsonObject
+                    .getString(city.getPropertyJsonKey(city::name.name).key)
+            city.country = cityJsonObject
+                    .getString(city.getPropertyJsonKey(city::country.name).key)
+            city.population = cityJsonObject
+                    .getInt(city.getPropertyJsonKey(city::population.name).key)
 
-            val coordinationJsonObject = cityJsonObject.getJSONObject("coord")
-            val latitude = coordinationJsonObject.getDouble("lat")
-            val longitude = coordinationJsonObject.getDouble("lon")
-            val geoLocation = GeoLocation(latitude, longitude)
+            val geoLocation = GeoLocation()
+            val coordinationJsonObject = cityJsonObject
+                    .getJSONObject(geoLocation.getJsonKey().key)
+            geoLocation.latitude = coordinationJsonObject
+                    .getDouble(geoLocation.getPropertyJsonKey(geoLocation::latitude.name).key)
+            geoLocation.longitude = coordinationJsonObject
+                    .getDouble(geoLocation.getPropertyJsonKey(geoLocation::longitude.name).key)
 
-            val city = City(cityId, cityName, cityCountry, geoLocation, cityPopulation)
+            city.geoLocation = geoLocation
 
-            val dataListJsonArray = jsonObject.getJSONArray("list")
-            var list = arrayOf<IWeatherForecastPart>()
+            weatherForecast.city = city
+
+            val weatherForecastPartC = WeatherForecastPart()
+            val dataListJsonArray = jsonObject.getJSONArray(weatherForecastPartC.getJsonKey().parent)
+            var list = arrayOf<WeatherForecastPart>()
 
             var previousDateString = ""
 
             for (index in 0 until dataListJsonArray.length() step 1) {
                 val dataJsonObject = dataListJsonArray.getJSONObject(index)
 
-                val dateTimeLong = dataJsonObject.getLong("dt")
-                val dateTime = Calendar.getInstance()
-                dateTime.timeInMillis = dateTimeLong * 1000
-
                 val currentDateString = dataJsonObject.getString("dt_txt").split(" ")[0]
 
                 if (index == 0 || !currentDateString.contains(previousDateString)) {
-                    list = list.plus(WeatherForecastPart(dateTime))
+                    val weatherForecastPartDivider = WeatherForecastPart()
+                    weatherForecastPartDivider.listType = ForecastListType.DateDivider
+
+                    val dateTimeLong = dataJsonObject
+                            .getLong(weatherForecastPartDivider.getPropertyJsonKey(weatherForecastPartDivider::dateTime.name).key)
+                    weatherForecastPartDivider.dateTime.timeInMillis = dateTimeLong * 1000
+
+                    list = list.plus(weatherForecastPartDivider)
                 }
+
                 val weatherForecastPart = convertToWeatherForecastPart(dataJsonObject)
                 if (weatherForecastPart != null) {
                     list = list.plus(weatherForecastPart)
@@ -106,7 +140,9 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
                 previousDateString = currentDateString
             }
 
-            return WeatherForecast(city, list)
+            weatherForecast.list = list
+
+            return weatherForecast
         } catch (exception: Exception) {
             Logger.instance.error(tag, exception)
             return null
@@ -115,38 +151,56 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
 
     private fun convertToWeatherForecastPart(jsonObject: JSONObject): WeatherForecastPart? {
         try {
-            val jsonObjectWeather = jsonObject.getJSONArray("weather").getJSONObject(0)
+            val weatherForecastPart = WeatherForecastPart()
 
-            val main = jsonObjectWeather.getString("main")
-            val weatherCondition = WeatherCondition.valueOf(main)
-            val description = jsonObjectWeather.getString("description")
-            val weatherDefaultIcon = jsonObjectWeather.getString("icon")
+            val jsonObjectWeather = jsonObject
+                    .getJSONArray(weatherForecastPart.getJsonKey().key).getJSONObject(0)
 
-            val temp = jsonObject.getJSONObject("main").getDouble("temp")
-            val tempMin = jsonObject.getJSONObject("main").getDouble("temp_min")
-            val tempMax = jsonObject.getJSONObject("main").getDouble("temp_max")
-            val tempKf = jsonObject.getJSONObject("main").getDouble("temp_kf")
-            val pressure = jsonObject.getJSONObject("main").getDouble("pressure")
-            val pressureSeaLevel = jsonObject.getJSONObject("main").getDouble("sea_level")
-            val pressureGroundLevel = jsonObject.getJSONObject("main").getDouble("grnd_level")
-            val humidity = jsonObject.getJSONObject("main").getDouble("humidity")
+            weatherForecastPart.main = jsonObjectWeather
+                    .getString(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::main.name).key)
+            weatherForecastPart.weatherCondition = WeatherCondition.valueOf(weatherForecastPart.main)
+            weatherForecastPart.description = jsonObjectWeather
+                    .getString(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::description.name).key)
+            weatherForecastPart.weatherDefaultIcon = jsonObjectWeather
+                    .getString(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::weatherDefaultIcon.name).key)
 
-            val cloudsAll = jsonObject.getJSONObject("clouds").getInt("all")
+            val jsonObjectMain = jsonObject
+                    .getJSONObject(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::temperature.name).parent)
 
-            val windSpeed = jsonObject.getJSONObject("wind").getDouble("speed")
-            val windDegree = jsonObject.getJSONObject("wind").getDouble("deg")
+            weatherForecastPart.temperature = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::temperature.name).key)
+            weatherForecastPart.temperatureMin = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::temperatureMin.name).key)
+            weatherForecastPart.temperatureMax = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::temperatureMax.name).key)
+            weatherForecastPart.temperatureKf = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::temperatureKf.name).key)
+            weatherForecastPart.pressure = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::pressure.name).key)
+            weatherForecastPart.pressureSeaLevel = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::pressureSeaLevel.name).key)
+            weatherForecastPart.pressureGroundLevel = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::pressureGroundLevel.name).key)
+            weatherForecastPart.humidity = jsonObjectMain
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::humidity.name).key)
 
-            val dateTimeLong = jsonObject.getLong("dt")
-            val dateTime = Calendar.getInstance()
-            dateTime.timeInMillis = dateTimeLong * 1000
+            weatherForecastPart.cloudsAll = jsonObject
+                    .getJSONObject(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::cloudsAll.name).parent)
+                    .getInt(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::cloudsAll.name).key)
 
-            return WeatherForecastPart(main, description,
-                    temp, tempMin, tempMax, tempKf,
-                    humidity,
-                    pressure, pressureSeaLevel, pressureGroundLevel,
-                    cloudsAll, windSpeed, windDegree,
-                    dateTime,
-                    weatherDefaultIcon, weatherCondition)
+            weatherForecastPart.windSpeed = jsonObject
+                    .getJSONObject(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::windSpeed.name).parent)
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::windSpeed.name).key)
+            weatherForecastPart.windDegree = jsonObject
+                    .getJSONObject(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::windDegree.name).parent)
+                    .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::windDegree.name).key)
+
+            weatherForecastPart.dateTime.timeInMillis = jsonObject
+                    .getLong(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::dateTime.name).key) * 1000
+
+            weatherForecastPart.listType = ForecastListType.Forecast
+
+            return weatherForecastPart
 
         } catch (exception: Exception) {
             Logger.instance.error(tag, exception)

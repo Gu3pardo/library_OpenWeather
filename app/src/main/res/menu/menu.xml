@@ -3,9 +3,9 @@
     <item
         android:id="@+id/nav_current_weather"
         android:icon="@drawable/icon_temperature_black"
-        android:title="Current Weather" />
+        android:title="Reload current Weather" />
     <item
         android:id="@+id/nav_forecast_weather"
         android:icon="@drawable/icon_wind_black"
-        android:title="Forecast Weather" />
+        android:title="Reload forecast Weather" />
 </menu>

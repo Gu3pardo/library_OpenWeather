@@ -1,12 +1,13 @@
 package guepardoapps.lib.openweather.extensions
 
 import guepardoapps.lib.openweather.enums.ForecastDayTime
+import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
-import guepardoapps.lib.openweather.models.IWeatherForecast
-import guepardoapps.lib.openweather.models.IWeatherForecastPart
+import guepardoapps.lib.openweather.models.WeatherForecast
+import guepardoapps.lib.openweather.models.WeatherForecastPart
 import java.util.*
 
-fun IWeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
+fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
     var weatherCondition = WeatherCondition.Null
 
     val weatherConditionCountArray: Array<WeatherCondition> = arrayOf(
@@ -30,10 +31,14 @@ fun IWeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
     val futureCalendar: Calendar = Calendar.getInstance()
     futureCalendar.add(Calendar.DAY_OF_YEAR, days)
 
-    for (forecastPart in this.getList()) {
+    for (forecastPart in this.list) {
+        if (forecastPart.listType != ForecastListType.Forecast) {
+            continue
+        }
+
         for (weatherConditionEntry in weatherConditionCountArray) {
-            if (forecastPart.getWeatherCondition() == weatherConditionEntry
-                    && (days == -1 || forecastPart.getDateTime().timeInMillis < futureCalendar.timeInMillis)) {
+            if (forecastPart.weatherCondition == weatherConditionEntry
+                    && (days == -1 || forecastPart.dateTime.timeInMillis < futureCalendar.timeInMillis)) {
                 weatherConditionEntry.count++
                 break
             }
@@ -51,80 +56,104 @@ fun IWeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
     return weatherCondition
 }
 
-fun IWeatherForecast.getMinTemperature(): Double {
+fun WeatherForecast.getMinTemperature(): Double {
     var value = 10000.0
 
-    for (forecastPart in this.getList()) {
-        if (forecastPart.getTemperatureMin() < value) {
-            value = forecastPart.getTemperatureMin()
+    for (forecastPart in this.list) {
+        if (forecastPart.listType != ForecastListType.Forecast) {
+            continue
+        }
+
+        if (forecastPart.temperatureMin < value) {
+            value = forecastPart.temperatureMin
         }
     }
 
     return value
 }
 
-fun IWeatherForecast.getMaxTemperature(): Double {
+fun WeatherForecast.getMaxTemperature(): Double {
     var value = -10000.0
 
-    for (forecastPart in this.getList()) {
-        if (forecastPart.getTemperatureMax() > value) {
-            value = forecastPart.getTemperatureMax()
+    for (forecastPart in this.list) {
+        if (forecastPart.listType != ForecastListType.Forecast) {
+            continue
+        }
+
+        if (forecastPart.temperatureMax > value) {
+            value = forecastPart.temperatureMax
         }
     }
 
     return value
 }
 
-fun IWeatherForecast.getMinPressure(): Double {
+fun WeatherForecast.getMinPressure(): Double {
     var value = 10000.0
 
-    for (forecastPart in this.getList()) {
-        if (forecastPart.getPressure() < value) {
-            value = forecastPart.getPressure()
+    for (forecastPart in this.list) {
+        if (forecastPart.listType != ForecastListType.Forecast) {
+            continue
+        }
+
+        if (forecastPart.pressure < value) {
+            value = forecastPart.pressure
         }
     }
 
     return value
 }
 
-fun IWeatherForecast.getMaxPressure(): Double {
+fun WeatherForecast.getMaxPressure(): Double {
     var value = -10000.0
 
-    for (forecastPart in this.getList()) {
-        if (forecastPart.getPressure() > value) {
-            value = forecastPart.getPressure()
+    for (forecastPart in this.list) {
+        if (forecastPart.listType != ForecastListType.Forecast) {
+            continue
+        }
+
+        if (forecastPart.pressure > value) {
+            value = forecastPart.pressure
         }
     }
 
     return value
 }
 
-fun IWeatherForecast.getMinHumidity(): Double {
+fun WeatherForecast.getMinHumidity(): Double {
     var value = 10000.0
 
-    for (forecastPart in this.getList()) {
-        if (forecastPart.getHumidity() < value) {
-            value = forecastPart.getHumidity()
+    for (forecastPart in this.list) {
+        if (forecastPart.listType != ForecastListType.Forecast) {
+            continue
+        }
+
+        if (forecastPart.humidity < value) {
+            value = forecastPart.humidity
         }
     }
 
     return value
 }
 
-fun IWeatherForecast.getMaxHumidity(): Double {
+fun WeatherForecast.getMaxHumidity(): Double {
     var value = -10000.0
 
-    for (forecastPart in this.getList()) {
-        if (forecastPart.getHumidity() > value) {
-            value = forecastPart.getHumidity()
+    for (forecastPart in this.list) {
+        if (forecastPart.listType != ForecastListType.Forecast) {
+            continue
+        }
+
+        if (forecastPart.humidity > value) {
+            value = forecastPart.humidity
         }
     }
 
     return value
 }
 
-fun IWeatherForecastPart.getForecastDayTime(): ForecastDayTime {
-    return when (this.getDateTime().get(Calendar.HOUR_OF_DAY)) {
+fun WeatherForecastPart.getForecastDayTime(): ForecastDayTime {
+    return when (this.dateTime.get(Calendar.HOUR_OF_DAY)) {
         in 0..4 -> ForecastDayTime.Night
         in 5..10 -> ForecastDayTime.Morning
         in 11..14 -> ForecastDayTime.Midday
