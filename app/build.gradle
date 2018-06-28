@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -11,8 +9,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10004
-        versionName "1.0.4.180624"
+        versionCode 10006
+        versionName "1.0.6.180628"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -30,34 +28,41 @@ android {
 }
 
 repositories {
-    jcenter()
-    maven { url "https://jitpack.io" }
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
     google()
+    jcenter()
 }
 
 dependencies {
     implementation project(':lib')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
-    implementation 'com.android.support:cardview-v7:28.0.0-alpha3'
+
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    implementation "android.arch.work:work-runtime-ktx:1.0.0-alpha03"
+
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.android.support:design:28.0.0-alpha3'
-    implementation 'com.android.support:percent:28.0.0-alpha3'
-    implementation 'com.android.support:recyclerview-v7:28.0.0-alpha3'
-    implementation 'com.android.support:support-annotations:28.0.0-alpha3'
-    implementation 'com.android.support:support-compat:28.0.0-alpha3'
-    implementation 'com.android.support:support-v4:28.0.0-alpha3'
-    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation "com.android.support:appcompat-v7:$android_support_version"
+    implementation "com.android.support:cardview-v7:$android_support_version"
+    implementation "com.android.support:design:$android_support_version"
+    implementation "com.android.support:percent:$android_support_version"
+    implementation "com.android.support:recyclerview-v7:$android_support_version"
+    implementation "com.android.support:support-annotations:$android_support_version"
+    implementation "com.android.support:support-compat:$android_support_version"
+    implementation "com.android.support:support-v4:$android_support_version"
+
     implementation 'com.baoyz.pullrefreshlayout:library:1.2.0'
     implementation 'com.flaviofaria:kenburnsview:1.0.7'
     implementation 'com.github.florent37:expansionpanel:1.1.1'
     implementation 'com.github.GrenderG:Toasty:1.2.5'
     implementation 'com.github.matecode:Snacky:1.0.2'
     implementation 'com.github.rey5137:material:1.2.4'
-    implementation 'com.jakewharton:butterknife:8.4.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

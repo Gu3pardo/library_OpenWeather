@@ -20,39 +20,31 @@ class ApiService(override var city: String, override var apiKey: String) : IApiS
     }
 
     override fun currentWeather(): DownloadResult {
-        if (city.isEmpty()) {
-            Logger.instance.warning(tag, "currentWeather: City needs to be set before call!")
-            return DownloadResult.InvalidCity
-        }
-
-        if (apiKey.isEmpty()) {
-            Logger.instance.warning(tag, "currentWeather: ApiKey needs to be set before call!")
-            return DownloadResult.InvalidApiKey
-        }
-
-        val task = ApiRestCallTask()
-        task.downloadType = DownloadType.Current
-        task.onApiServiceListener = onApiServiceListener
-        task.execute(String.format(currentWeatherUrl, city, apiKey))
-
-        return DownloadResult.Performing
+        return this.doApiRestCall(DownloadType.Current, this.currentWeatherUrl)
     }
 
     override fun forecastWeather(): DownloadResult {
-        if (city.isEmpty()) {
-            Logger.instance.warning(tag, "forecastWeather: City needs to be set before call!")
+        return this.doApiRestCall(DownloadType.Forecast, this.forecastWeatherUrl)
+    }
+
+    private fun doApiRestCall(
+            downloadType: DownloadType,
+            url: String)
+            : DownloadResult {
+        if (this.city.isEmpty()) {
+            Logger.instance.warning(tag, "doApiRestCall: City needs to be set before call!")
             return DownloadResult.InvalidCity
         }
 
-        if (apiKey.isEmpty()) {
-            Logger.instance.warning(tag, "forecastWeather: ApiKey needs to be set before call!")
+        if (this.apiKey.isEmpty()) {
+            Logger.instance.warning(tag, "doApiRestCall: ApiKey needs to be set before call!")
             return DownloadResult.InvalidApiKey
         }
 
         val task = ApiRestCallTask()
-        task.downloadType = DownloadType.Forecast
-        task.onApiServiceListener = onApiServiceListener
-        task.execute(String.format(forecastWeatherUrl, city, apiKey))
+        task.downloadType = downloadType
+        task.onApiServiceListener = this.onApiServiceListener
+        task.execute(String.format(url, this.city, this.apiKey))
 
         return DownloadResult.Performing
     }

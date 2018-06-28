@@ -1,32 +1,24 @@
 package guepardoapps.lib.openweather.models
 
-class City(private val id: Int,
-           private val name: String,
-           private val country: String,
-           private val geoLocation: IGeoLocation,
-           private val population: Int = 0) : ICity {
+import guepardoapps.lib.openweather.annotations.JsonKey
 
+@JsonKey("", "city")
+class City {
     private val tag: String = City::class.java.simpleName
 
-    override fun getId(): Int {
-        return id
-    }
+    @JsonKey("city", "id")
+    var id: Int = 0
 
-    override fun getName(): String {
-        return name
-    }
+    @JsonKey("city", "name")
+    var name: String = ""
 
-    override fun getCountry(): String {
-        return country
-    }
+    @JsonKey("city", "country")
+    var country: String = ""
 
-    override fun getGeoLocation(): IGeoLocation {
-        return geoLocation
-    }
+    @JsonKey("city", "population")
+    var population: Int = 0
 
-    override fun getPopulation(): Int {
-        return population
-    }
+    var geoLocation: GeoLocation = GeoLocation()
 
     override fun toString(): String {
         return "{Class: $tag, Id: $id, Name: $name, Country: $country, GeoLocation: $geoLocation, Population: $population}"

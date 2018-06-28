@@ -12,10 +12,9 @@ import android.graphics.Color
 import android.os.Build
 import android.support.annotation.NonNull
 import guepardoapps.lib.openweather.extensions.circleBitmap
-import guepardoapps.lib.openweather.models.INotificationContent
+import guepardoapps.lib.openweather.models.NotificationContent
 
 class NotificationController(@NonNull private val context: Context) : INotificationController {
-    //private val tag: String = NotificationController::class.java.simpleName
 
     private val channelId: String = "guepardoapps.lib.openweather"
     private val channelName: String = "OpenWeather"
@@ -32,8 +31,8 @@ class NotificationController(@NonNull private val context: Context) : INotificat
     }
 
     @Suppress("DEPRECATION")
-    override fun create(notificationContent: INotificationContent) {
-        var bitmap = BitmapFactory.decodeResource(context.resources, notificationContent.largeIcon)
+    override fun create(notificationContent: NotificationContent) {
+        var bitmap = BitmapFactory.decodeResource(context.resources, notificationContent.largeIconId)
         bitmap = bitmap.circleBitmap(bitmap.height, bitmap.width, Color.BLACK)
 
         val intent = Intent(context, notificationContent.receiver)
@@ -44,7 +43,7 @@ class NotificationController(@NonNull private val context: Context) : INotificat
             notification = Notification.Builder(context, channelId)
                     .setContentTitle(notificationContent.title)
                     .setContentText(notificationContent.text)
-                    .setSmallIcon(notificationContent.icon)
+                    .setSmallIcon(notificationContent.iconId)
                     .setLargeIcon(bitmap)
                     .setChannelId(channelId)
                     .setContentIntent(pendingIntent)
@@ -53,7 +52,7 @@ class NotificationController(@NonNull private val context: Context) : INotificat
             notification = Notification.Builder(context)
                     .setContentTitle(notificationContent.title)
                     .setContentText(notificationContent.text)
-                    .setSmallIcon(notificationContent.icon)
+                    .setSmallIcon(notificationContent.iconId)
                     .setLargeIcon(bitmap)
                     .setContentIntent(pendingIntent)
                     .build()

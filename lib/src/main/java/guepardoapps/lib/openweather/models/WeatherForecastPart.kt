@@ -1,107 +1,62 @@
 package guepardoapps.lib.openweather.models
 
-import guepardoapps.lib.openweather.enums.ForecastDayTime
+import guepardoapps.lib.openweather.annotations.JsonKey
 import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
 import guepardoapps.lib.openweather.extensions.integerFormat
 import java.util.*
 
-class WeatherForecastPart(private val main: String,
-                          private val description: String,
-                          private val temperature: Double,
-                          private val temperatureMin: Double,
-                          private val temperatureMax: Double,
-                          private val temperatureKf: Double,
-                          private val humidity: Double,
-                          private val pressure: Double,
-                          private val pressureSeaLevel: Double,
-                          private val pressureGroundLevel: Double,
-                          private val cloudsAll: Int,
-                          private val windSpeed: Double,
-                          private val windDegree: Double,
-                          private val dateTime: Calendar,
-                          private val weatherDefaultIcon: String,
-                          private val weatherCondition: WeatherCondition,
-                          private val listType: ForecastListType = ForecastListType.Forecast,
-                          val dayTime: ForecastDayTime = ForecastDayTime.Null)
-    : IWeatherForecastPart {
-
+@JsonKey("list", "weather")
+class WeatherForecastPart {
     private val tag: String = WeatherForecastPart::class.java.simpleName
 
-    constructor(dateTime: Calendar)
-            : this("", "",
-            0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.0,
-            0, 0.0, 0.0,
-            dateTime, "", WeatherCondition.Null, ForecastListType.DateDivider)
+    @JsonKey("weather", "main")
+    var main: String = ""
+    var weatherCondition: WeatherCondition = WeatherCondition.Null
 
-    override fun getMain(): String {
-        return main
-    }
+    @JsonKey("weather", "description")
+    var description: String = ""
 
-    override fun getDescription(): String {
-        return description
-    }
+    @JsonKey("weather", "icon")
+    var weatherDefaultIcon: String = ""
 
-    override fun getTemperature(): Double {
-        return temperature
-    }
+    @JsonKey("main", "temp")
+    var temperature: Double = 0.0
 
-    override fun getTemperatureMin(): Double {
-        return temperatureMin
-    }
+    @JsonKey("main", "temp_min")
+    var temperatureMin: Double = 0.0
 
-    override fun getTemperatureMax(): Double {
-        return temperatureMax
-    }
+    @JsonKey("main", "temp_max")
+    var temperatureMax: Double = 0.0
 
-    override fun getTemperatureKf(): Double {
-        return temperatureKf
-    }
+    @JsonKey("main", "temp_kf")
+    var temperatureKf: Double = 0.0
 
-    override fun getHumidity(): Double {
-        return humidity
-    }
+    @JsonKey("main", "pressure")
+    var pressure: Double = 0.0
 
-    override fun getPressure(): Double {
-        return pressure
-    }
+    @JsonKey("main", "sea_level")
+    var pressureSeaLevel: Double = 0.0
 
-    override fun getPressureSeaLevel(): Double {
-        return pressureSeaLevel
-    }
+    @JsonKey("main", "grnd_level")
+    var pressureGroundLevel: Double = 0.0
 
-    override fun getPressureGroundLevel(): Double {
-        return pressureGroundLevel
-    }
+    @JsonKey("main", "humidity")
+    var humidity: Double = 0.0
 
-    override fun getCloudsAll(): Int {
-        return cloudsAll
-    }
+    @JsonKey("clouds", "all")
+    var cloudsAll: Int = 0
 
-    override fun getWindSpeed(): Double {
-        return windSpeed
-    }
+    @JsonKey("wind", "speed")
+    var windSpeed: Double = 0.0
 
-    override fun getWindDegree(): Double {
-        return windDegree
-    }
+    @JsonKey("wind", "deg")
+    var windDegree: Double = 0.0
 
-    override fun getDateTime(): Calendar {
-        return dateTime
-    }
+    @JsonKey("", "dt")
+    var dateTime: Calendar = Calendar.getInstance()
 
-    override fun getWeatherDefaultIcon(): String {
-        return weatherDefaultIcon
-    }
-
-    override fun getWeatherCondition(): WeatherCondition {
-        return weatherCondition
-    }
-
-    override fun getListType(): ForecastListType {
-        return listType
-    }
+    var listType: ForecastListType = ForecastListType.Null
 
     override fun toString(): String {
         return "{Class: $tag, " +
@@ -122,7 +77,6 @@ class WeatherForecastPart(private val main: String,
                 "WeatherDefaultIcon: $weatherDefaultIcon, " +
                 "WeatherCondition: $weatherCondition, " +
                 "ListType: $listType, " +
-                "DayTime: $dayTime," +
                 "Day: ${dateTime.get(Calendar.DAY_OF_MONTH)}, " +
                 "Month: ${dateTime.get(Calendar.MONTH) + 1}," +
                 "Year: ${dateTime.get(Calendar.YEAR)}, " +

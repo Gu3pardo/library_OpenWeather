@@ -20,8 +20,8 @@ import de.mateware.snacky.Snacky
 import es.dmoral.toasty.Toasty
 import guepardoapps.lib.openweather.adapter.ForecastListAdapter
 import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
-import guepardoapps.lib.openweather.models.IWeatherCurrent
-import guepardoapps.lib.openweather.models.IWeatherForecast
+import guepardoapps.lib.openweather.models.WeatherCurrent
+import guepardoapps.lib.openweather.models.WeatherForecast
 import guepardoapps.lib.openweather.services.openweather.OnWeatherServiceListener
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import guepardoapps.lib.openweather.utils.Logger
@@ -44,15 +44,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var navigationView: NavigationView
     private lateinit var pullRefreshLayout: PullRefreshLayout
 
-    private lateinit var currentWeather: IWeatherCurrent
-    private lateinit var forecastWeather: IWeatherForecast
+    private lateinit var currentWeather: WeatherCurrent
+    private lateinit var forecastWeather: WeatherForecast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
 
         context = this
-        openWeatherService = OpenWeatherService(this)
+        openWeatherService = OpenWeatherService.instance
+        openWeatherService.initialize(context)
 
         mainImageView = findViewById(R.id.kenBurnsView)
         listView = findViewById(R.id.listView)
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
                 val foundForecastModel = openWeatherService.searchForecast(forecastWeather, charSequence.toString())
-                val forecastList = foundForecastModel.getList()
+                val forecastList = foundForecastModel.list
                 val adapter = ForecastListAdapter(context, forecastList)
                 listView.adapter = adapter
                 mainImageView.setImageResource(foundForecastModel.getMostWeatherCondition().wallpaperId)
@@ -99,13 +100,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         openWeatherService.apiKey = "" // TODO Add ApiKey
         openWeatherService.city = "Nuremberg"
         openWeatherService.notificationEnabled = true
-        openWeatherService.reloadEnabled = true
-        openWeatherService.reloadTimeout = 30 * 60 * 1000
         openWeatherService.wallpaperEnabled = true
         openWeatherService.receiverActivity = MainActivity::class.java
 
         openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
-            override fun onCurrentWeather(currentWeather: IWeatherCurrent?, success: Boolean) {
+            override fun onCurrentWeather(currentWeather: WeatherCurrent?, success: Boolean) {
                 if (success) {
                     handleOnCurrentWeather(currentWeather!!)
                 } else {
@@ -116,7 +115,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
 
-            override fun onForecastWeather(forecastWeather: IWeatherForecast?, success: Boolean) {
+            override fun onForecastWeather(forecastWeather: WeatherForecast?, success: Boolean) {
                 pullRefreshLayout.setRefreshing(false)
                 if (success) {
                     handleOnForecastWeather(forecastWeather!!)
@@ -130,8 +129,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        openWeatherService.loadCurrentWeather()
-        openWeatherService.loadForecastWeather()
+        openWeatherService.reloadEnabled = true
+        openWeatherService.reloadTimeout = 30 * 60 * 1000
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -142,7 +141,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 openWeatherService.loadCurrentWeather()
                 Snacky.builder()
                         .setActivty(this)
-                        .setText("Clicked on CurrentWeather")
+                        .setText("Reload current weather")
                         .setDuration(Snacky.LENGTH_LONG)
                         .info()
                         .show()
@@ -151,7 +150,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 openWeatherService.loadForecastWeather()
                 Snacky.builder()
                         .setActivty(this)
-                        .setText("Clicked on ForecastWeather")
+                        .setText("Reload forecast weather")
                         .setDuration(Snacky.LENGTH_LONG)
                         .info()
                         .show()
@@ -159,7 +158,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             else -> {
                 Snacky.builder()
                         .setActivty(this)
-                        .setText("Clicked on Something else")
+                        .setText("What did you click here???")
                         .setDuration(Snacky.LENGTH_INDEFINITE)
                         .setActionText(android.R.string.ok)
                         .error()
@@ -170,15 +169,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun handleOnCurrentWeather(currentWeather: IWeatherCurrent) {
+    private fun handleOnCurrentWeather(currentWeather: WeatherCurrent) {
         this.currentWeather = currentWeather
         Logger.instance.verbose(tag, "Implement functionality and UI to handle current weather in MainActivity")
     }
 
-    private fun handleOnForecastWeather(forecastWeather: IWeatherForecast) {
+    private fun handleOnForecastWeather(forecastWeather: WeatherForecast) {
         this.forecastWeather = forecastWeather
 
-        val forecastList = forecastWeather.getList()
+        val forecastList = forecastWeather.list
         if (forecastList.isNotEmpty()) {
             noDataFallback.visibility = View.GONE
             searchField.visibility = View.VISIBLE

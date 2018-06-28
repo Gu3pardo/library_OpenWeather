@@ -1,6 +1,7 @@
 package guepardoapps.lib.openweather.services.openweather
 
-import guepardoapps.lib.openweather.models.IWeatherForecast
+import android.content.Context
+import guepardoapps.lib.openweather.models.WeatherForecast
 
 interface IOpenWeatherService {
     var city: String
@@ -16,8 +17,9 @@ interface IOpenWeatherService {
 
     var onWeatherServiceListener: OnWeatherServiceListener?
 
+    fun initialize(context: Context)
     fun loadCurrentWeather()
     fun loadForecastWeather()
-    fun searchForecast(forecast: IWeatherForecast, searchValue: String): IWeatherForecast
+    fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast
     fun dispose()
 }

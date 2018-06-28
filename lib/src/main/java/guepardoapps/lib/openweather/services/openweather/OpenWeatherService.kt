@@ -1,7 +1,7 @@
 package guepardoapps.lib.openweather.services.openweather
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Handler
 import guepardoapps.lib.openweather.controller.*
 import guepardoapps.lib.openweather.converter.*
 import guepardoapps.lib.openweather.enums.*
@@ -9,35 +9,37 @@ import guepardoapps.lib.openweather.extensions.*
 import guepardoapps.lib.openweather.models.*
 import guepardoapps.lib.openweather.utils.Logger
 import android.app.WallpaperManager
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import guepardoapps.lib.openweather.services.api.ApiService
 import guepardoapps.lib.openweather.services.api.OnApiServiceListener
+import guepardoapps.lib.openweather.worker.OpenWeatherWorker
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
 
-class OpenWeatherService(private val context: Context) : IOpenWeatherService {
+class OpenWeatherService private constructor() : IOpenWeatherService {
     private val tag: String = OpenWeatherService::class.java.simpleName
 
     private val currentWeatherNotificationId: Int = 260520181
     private val forecastWeatherNotificationId: Int = 260520182
 
-    private val minTimeoutMs: Long = 5 * 60 * 1000
+    private val minTimeoutMs: Long = 15 * 60 * 1000
     private val maxTimeoutMs: Long = 24 * 60 * 60 * 1000
 
     private var converter: JsonToWeatherConverter = JsonToWeatherConverter()
     private var apiService: ApiService = ApiService()
-    private var networkController: NetworkController = NetworkController(context)
-    private var notificationController: NotificationController = NotificationController(context)
-    private var receiverController: ReceiverController = ReceiverController(context)
 
-    private var reloadHandler: Handler = Handler()
-    private var reloadRunnable: Runnable = Runnable {
-        loadCurrentWeather()
-        loadForecastWeather()
-        restartHandler()
-    }
+    private lateinit var context: Context
+    private lateinit var networkController: NetworkController
+    private lateinit var notificationController: NotificationController
 
-    private var currentWeather: IWeatherCurrent? = null
-    private var forecastWeather: IWeatherForecast? = null
+    private lateinit var reloadWork: PeriodicWorkRequest
+    private var reloadWorkId: UUID = UUID.randomUUID()
+
+    private var currentWeather: WeatherCurrent? = null
+    private var forecastWeather: WeatherForecast? = null
 
     override var city: String
         get() = apiService.city
@@ -95,6 +97,25 @@ class OpenWeatherService(private val context: Context) : IOpenWeatherService {
     override var onWeatherServiceListener: OnWeatherServiceListener? = null
 
     init {
+    }
+
+    private object Holder {
+        @SuppressLint("StaticFieldLeak")
+        val instance: OpenWeatherService = OpenWeatherService()
+    }
+
+    companion object {
+        val instance: OpenWeatherService by lazy { Holder.instance }
+    }
+
+    override fun initialize(context: Context) {
+        this.context = context
+
+        this.networkController = NetworkController(this.context)
+        this.notificationController = NotificationController(this.context)
+
+        Logger.instance.initialize(context)
+
         apiService.setOnApiServiceListener(object : OnApiServiceListener {
             override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
                 Logger.instance.verbose(tag, "Received onDownloadListener onFinished")
@@ -122,7 +143,6 @@ class OpenWeatherService(private val context: Context) : IOpenWeatherService {
             Logger.instance.error(tag, "Failure in loadCurrentWeather: $result")
             onWeatherServiceListener?.onCurrentWeather(null, false)
         }
-        restartHandler()
     }
 
     override fun loadForecastWeather() {
@@ -131,17 +151,16 @@ class OpenWeatherService(private val context: Context) : IOpenWeatherService {
             Logger.instance.error(tag, "Failure in loadForecastWeather: $result")
             onWeatherServiceListener?.onForecastWeather(null, false)
         }
-        restartHandler()
     }
 
-    override fun searchForecast(forecast: IWeatherForecast, searchValue: String): IWeatherForecast {
-        var foundEntries: Array<IWeatherForecastPart> = arrayOf()
+    override fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast {
+        var foundEntries: Array<WeatherForecastPart> = arrayOf()
 
-        for (forecastPart in forecast.getList()) {
+        for (forecastPart in forecast.list) {
             when (searchValue) {
                 "Today", "Heute", "Hoy", "Inru" -> {
                     val todayCalendar = Calendar.getInstance()
-                    val dateTime = forecastPart.getDateTime()
+                    val dateTime = forecastPart.dateTime
                     if (dateTime.get(Calendar.DAY_OF_MONTH) == todayCalendar.get(Calendar.DAY_OF_MONTH)
                             && dateTime.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH)
                             && dateTime.get(Calendar.YEAR) == todayCalendar.get(Calendar.YEAR)) {
@@ -151,7 +170,7 @@ class OpenWeatherService(private val context: Context) : IOpenWeatherService {
                 "Tomorrow", "Morgen", "Manana", "Nalai" -> {
                     val tomorrowCalendar = Calendar.getInstance()
                     tomorrowCalendar.add(Calendar.DAY_OF_MONTH, 1)
-                    val dateTime = forecastPart.getDateTime()
+                    val dateTime = forecastPart.dateTime
                     if (dateTime.get(Calendar.DAY_OF_MONTH) == tomorrowCalendar.get(Calendar.DAY_OF_MONTH)
                             && dateTime.get(Calendar.MONTH) == tomorrowCalendar.get(Calendar.MONTH)
                             && dateTime.get(Calendar.YEAR) == tomorrowCalendar.get(Calendar.YEAR)) {
@@ -166,18 +185,22 @@ class OpenWeatherService(private val context: Context) : IOpenWeatherService {
             }
         }
 
-        return WeatherForecast(forecast.getCity(), foundEntries)
+        val weatherForecast = WeatherForecast()
+        weatherForecast.city = forecast.city
+        weatherForecast.list = foundEntries
+        return weatherForecast
     }
 
     override fun dispose() {
-        receiverController.dispose()
-        reloadHandler.removeCallbacks(reloadRunnable)
+        WorkManager.getInstance().cancelWorkById(this.reloadWorkId)
     }
 
     private fun restartHandler() {
-        reloadHandler.removeCallbacks(reloadRunnable)
+        WorkManager.getInstance().cancelWorkById(this.reloadWorkId)
         if (reloadEnabled && networkController.networkAvailable()) {
-            reloadHandler.postDelayed(reloadRunnable, reloadTimeout)
+            this.reloadWork = PeriodicWorkRequestBuilder<OpenWeatherWorker>(this.reloadTimeout, TimeUnit.MILLISECONDS).build()
+            this.reloadWorkId = this.reloadWork.id
+            WorkManager.getInstance().enqueue(this.reloadWork)
         }
     }
 
@@ -222,12 +245,12 @@ class OpenWeatherService(private val context: Context) : IOpenWeatherService {
         if (currentWeather != null) {
             val currentWeatherNotificationContent = NotificationContent(
                     currentWeatherNotificationId,
-                    "Current Weather: " + currentWeather!!.getDescription(),
-                    currentWeather!!.getTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "
-                            + currentWeather!!.getPressure().doubleFormat(1) + "mBar, "
-                            + currentWeather!!.getHumidity().doubleFormat(1) + "%",
-                    currentWeather!!.getWeatherCondition().iconId,
-                    currentWeather!!.getWeatherCondition().wallpaperId,
+                    "Current Weather: " + currentWeather!!.description,
+                    currentWeather!!.temperature.doubleFormat(1) + "${0x00B0.toChar()}C, "
+                            + currentWeather!!.pressure.doubleFormat(1) + "mBar, "
+                            + currentWeather!!.humidity.doubleFormat(1) + "%",
+                    currentWeather!!.weatherCondition.iconId,
+                    currentWeather!!.weatherCondition.wallpaperId,
                     receiverActivity!!)
             notificationController.create(currentWeatherNotificationContent)
         }
@@ -253,7 +276,7 @@ class OpenWeatherService(private val context: Context) : IOpenWeatherService {
         if (currentWeather != null) {
             try {
                 val wallpaperManager = WallpaperManager.getInstance(context.applicationContext)
-                wallpaperManager.setResource(currentWeather!!.getWeatherCondition().wallpaperId)
+                wallpaperManager.setResource(currentWeather!!.weatherCondition.wallpaperId)
             } catch (exception: IOException) {
                 Logger.instance.error(tag, exception)
             }

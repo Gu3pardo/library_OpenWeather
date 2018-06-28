@@ -9,6 +9,7 @@ import android.telephony.TelephonyManager
 import java.net.NetworkInterface
 import java.net.SocketException
 
+@Suppress("DEPRECATION")
 class NetworkController(@NonNull private val context: Context) : INetworkController {
     private val tag: String = NetworkController::class.java.simpleName
 

@@ -1,22 +1,15 @@
 package guepardoapps.lib.openweather.models
 
-import guepardoapps.lib.openweather.R
+import guepardoapps.lib.openweather.annotations.JsonKey
 
-class WeatherForecast(private val city: ICity,
-                      private val list: Array<IWeatherForecastPart>,
-                      val wallpaperId: Int = R.drawable.weather_wallpaper_dummy) : IWeatherForecast {
-
+@JsonKey("", "")
+class WeatherForecast {
     private val tag: String = WeatherForecast::class.java.simpleName
 
-    override fun getCity(): ICity {
-        return city
-    }
-
-    override fun getList(): Array<IWeatherForecastPart> {
-        return list
-    }
+    var city: City = City()
+    var list: Array<WeatherForecastPart> = arrayOf()
 
     override fun toString(): String {
-        return "{Class: $tag, City: $city, List: $list, WallpaperId: $wallpaperId}"
+        return "{Class: $tag, City: $city, List: $list}"
     }
 }
