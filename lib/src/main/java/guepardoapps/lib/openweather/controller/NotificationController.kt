@@ -38,6 +38,8 @@ class NotificationController(@NonNull private val context: Context) : INotificat
         val intent = Intent(context, notificationContent.receiver)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
+        val wearableExtender = Notification.WearableExtender().setHintHideIcon(true).setBackground(bitmap)
+
         val notification: Notification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = Notification.Builder(context, channelId)
@@ -47,6 +49,8 @@ class NotificationController(@NonNull private val context: Context) : INotificat
                     .setLargeIcon(bitmap)
                     .setChannelId(channelId)
                     .setContentIntent(pendingIntent)
+                    .extend(wearableExtender)
+                    .setAutoCancel(notificationContent.cancelable)
                     .build()
         } else {
             notification = Notification.Builder(context)
@@ -55,17 +59,19 @@ class NotificationController(@NonNull private val context: Context) : INotificat
                     .setSmallIcon(notificationContent.iconId)
                     .setLargeIcon(bitmap)
                     .setContentIntent(pendingIntent)
+                    .extend(wearableExtender)
+                    .setAutoCancel(notificationContent.cancelable)
                     .build()
         }
 
         notificationManager?.notify(notificationContent.id, notification)
     }
 
-    override fun close() {
+    override fun close(id: Int?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager?.deleteNotificationChannel(channelId)
         } else {
-
+            notificationManager?.cancel(id!!)
         }
     }
 

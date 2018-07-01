@@ -6,4 +6,5 @@ data class NotificationContent(
         val text: String,
         val iconId: Int,
         val largeIconId: Int,
-        val receiver: Class<*>)
+        val receiver: Class<*>,
+        val cancelable: Boolean)
