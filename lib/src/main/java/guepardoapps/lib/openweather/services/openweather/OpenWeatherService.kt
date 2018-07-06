@@ -58,7 +58,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             if (field) {
                 displayNotification()
             } else {
-                notificationController.close()
+                notificationController.close(currentWeatherNotificationId)
+                notificationController.close(forecastWeatherNotificationId)
             }
         }
     override var receiverActivity: Class<*>? = null
@@ -67,7 +68,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             if (field != null && this.notificationEnabled) {
                 displayNotification()
             } else {
-                notificationController.close()
+                notificationController.close(currentWeatherNotificationId)
+                notificationController.close(forecastWeatherNotificationId)
             }
         }
 
@@ -192,15 +194,15 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun dispose() {
-        WorkManager.getInstance().cancelWorkById(this.reloadWorkId)
+        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
     }
 
     private fun restartHandler() {
-        WorkManager.getInstance().cancelWorkById(this.reloadWorkId)
-        if (reloadEnabled && networkController.networkAvailable()) {
+        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
+        if (reloadEnabled && networkController.isInternetConnected().second) {
             this.reloadWork = PeriodicWorkRequestBuilder<OpenWeatherWorker>(this.reloadTimeout, TimeUnit.MILLISECONDS).build()
             this.reloadWorkId = this.reloadWork.id
-            WorkManager.getInstance().enqueue(this.reloadWork)
+            WorkManager.getInstance()?.enqueue(this.reloadWork)
         }
     }
 
@@ -251,7 +253,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                             + currentWeather!!.humidity.doubleFormat(1) + "%",
                     currentWeather!!.weatherCondition.iconId,
                     currentWeather!!.weatherCondition.wallpaperId,
-                    receiverActivity!!)
+                    receiverActivity!!,
+                    true)
             notificationController.create(currentWeatherNotificationContent)
         }
 
@@ -267,7 +270,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                             + forecastWeather!!.getMaxHumidity().doubleFormat(1) + "%",
                     forecastWeather!!.getMostWeatherCondition().iconId,
                     forecastWeather!!.getMostWeatherCondition().wallpaperId,
-                    receiverActivity!!)
+                    receiverActivity!!,
+                    true)
             notificationController.create(forecastWeatherNotificationContent)
         }
     }
