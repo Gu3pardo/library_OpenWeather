@@ -67,12 +67,8 @@ class NotificationController(@NonNull private val context: Context) : INotificat
         notificationManager?.notify(notificationContent.id, notification)
     }
 
-    override fun close(id: Int?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager?.deleteNotificationChannel(channelId)
-        } else {
-            notificationManager?.cancel(id!!)
-        }
+    override fun close(id: Int) {
+        notificationManager?.cancel(id)
     }
 
     @TargetApi(Build.VERSION_CODES.O)

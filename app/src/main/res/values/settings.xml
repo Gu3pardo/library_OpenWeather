@@ -1,0 +1,4 @@
+<resources>
+    <string name="openweather_api_key">TODO Add key here</string>
+    <string name="openweather_city">Nuremberg</string>
+</resources>

@@ -5,5 +5,5 @@ import guepardoapps.lib.openweather.models.NotificationContent
 
 interface INotificationController {
     fun create(@NonNull notificationContent: NotificationContent)
-    fun close(id: Int?)
+    fun close(id: Int)
 }

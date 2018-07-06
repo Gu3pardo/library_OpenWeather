@@ -194,15 +194,15 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun dispose() {
-        WorkManager.getInstance().cancelWorkById(this.reloadWorkId)
+        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
     }
 
     private fun restartHandler() {
-        WorkManager.getInstance().cancelWorkById(this.reloadWorkId)
-        if (reloadEnabled && networkController.networkAvailable()) {
+        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
+        if (reloadEnabled && networkController.isInternetConnected().second) {
             this.reloadWork = PeriodicWorkRequestBuilder<OpenWeatherWorker>(this.reloadTimeout, TimeUnit.MILLISECONDS).build()
             this.reloadWorkId = this.reloadWork.id
-            WorkManager.getInstance().enqueue(this.reloadWork)
+            WorkManager.getInstance()?.enqueue(this.reloadWork)
         }
     }
 

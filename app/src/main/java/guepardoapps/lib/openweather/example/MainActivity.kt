@@ -97,8 +97,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             openWeatherService.loadForecastWeather()
         }
 
-        openWeatherService.apiKey = "" // TODO Add ApiKey
-        openWeatherService.city = "Nuremberg"
+        openWeatherService.apiKey = getString(R.string.openweather_api_key)
+        openWeatherService.city = getString(R.string.openweather_city)
         openWeatherService.notificationEnabled = true
         openWeatherService.wallpaperEnabled = true
         openWeatherService.receiverActivity = MainActivity::class.java

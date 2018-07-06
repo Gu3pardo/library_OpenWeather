@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases)
-[![Version](https://img.shields.io/badge/version-v1.0.6.180628-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases/openweather-2018-06-28.aar)
+[![Version](https://img.shields.io/badge/version-v1.0.6.180706-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases/openweather-2018-07-06.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/develop/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
@@ -14,9 +14,21 @@ example application can be found here: https://github.com/GuepardoApps/library_O
 Based on Kotlin, using Listener, Extensions and more.
 
 Used Libraries are
-- com.squareup.okhttp3:okhttp:3.9.1
+
+- com.baoyz.pullrefreshlayout:library:1.2.0
+- com.flaviofaria:kenburnsview:1.0.7
 - com.github.florent37:expansionpanel:1.1.1
+- com.github.GrenderG:Toasty:1.2.5
+- com.github.matecode:Snacky:1.0.2
+- com.github.rey5137:material:1.2.4
+- com.squareup.okhttp3:okhttp:3.9.1
+
+- android.arch.work:work-runtime-ktx:1.0.0-alpha04
+
+- com.android.support.constraint:constraint-layout:1.1.2
 - using also latest API28 libs
+
+- and some more
 
 ---
 
@@ -47,11 +59,11 @@ public class MainActivity extends Activity {
         openWeatherService = OpenWeatherService.instance
         openWeatherService.initialize(this)
 		
-        // Set ApiKey
-        openWeatherService.apiKey = "" // TODO Add ApiKey
+        // Set ApiKey => Will be read from xml file
+        openWeatherService.apiKey = getString(R.string.openweather_api_key)
 		
         // Set your preferred city
-        openWeatherService.city = "Nuremberg"
+        openWeatherService.city = getString(R.string.openweather_city)
 		
         // Enable/Disable notifications
         openWeatherService.notificationEnabled = true
@@ -63,12 +75,12 @@ public class MainActivity extends Activity {
         openWeatherService.receiverActivity = MainActivity::class.java
 		
         // Set OnWeatherUpdateListener
-        openWeatherService.setOnWeatherUpdateListener(object : OnWeatherUpdateListener {
-            override fun onCurrentWeather(currentWeather: IWeatherCurrent?, success: Boolean) {
+        openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
+            override fun onCurrentWeather(currentWeather: WeatherCurrent?, success: Boolean) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun onForecastWeather(forecastWeather: IWeatherForecast?, success: Boolean) {
+            override fun onForecastWeather(forecastWeather: WeatherForecast?, success: Boolean) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         })
@@ -89,12 +101,12 @@ To display received data use the customadapter in the library
 ```java
 public class MainActivity extends Activity {
     ...
-    openWeatherService.setOnWeatherUpdateListener(object : OnWeatherUpdateListener {
+        openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
 	    ...
-        override fun onForecastWeather(forecastWeather: IWeatherForecast?, success: Boolean) {
+        override fun onForecastWeather(forecastWeather: WeatherForecast?, success: Boolean) {
             if (success) {
                 this.forecastWeather = forecastWeather!!
-                val forecastList = forecastWeather.getList()
+                val forecastList = forecastWeather.list
                 if (forecastList.isNotEmpty()) {
                     val adapter = ForecastListAdapter(this, forecastList)
                     listView.adapter = adapter
