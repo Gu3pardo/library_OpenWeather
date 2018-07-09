@@ -9,8 +9,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10006
-        versionName "1.0.6.180706"
+        versionCode 10007
+        versionName "1.0.7.180709"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -37,6 +37,8 @@ repositories {
 dependencies {
     implementation project(':lib')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "io.reactivex.rxjava2:rxkotlin:$reactivex_version"
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"

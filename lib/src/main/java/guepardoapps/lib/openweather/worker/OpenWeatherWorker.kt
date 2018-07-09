@@ -5,8 +5,8 @@ import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 
 class OpenWeatherWorker : Worker() {
     override fun doWork(): Result {
-        OpenWeatherService.instance.loadCurrentWeather()
-        OpenWeatherService.instance.loadForecastWeather()
+        OpenWeatherService.instance.loadWeatherCurrent()
+        OpenWeatherService.instance.loadWeatherForecast()
         return Result.SUCCESS
     }
 }

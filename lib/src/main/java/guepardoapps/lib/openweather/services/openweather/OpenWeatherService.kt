@@ -15,6 +15,7 @@ import androidx.work.WorkManager
 import guepardoapps.lib.openweather.services.api.ApiService
 import guepardoapps.lib.openweather.services.api.OnApiServiceListener
 import guepardoapps.lib.openweather.worker.OpenWeatherWorker
+import io.reactivex.Observable
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -28,6 +29,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private val minTimeoutMs: Long = 15 * 60 * 1000
     private val maxTimeoutMs: Long = 24 * 60 * 60 * 1000
 
+    private var mayLoad: Boolean = false
+
     private var converter: JsonToWeatherConverter = JsonToWeatherConverter()
     private var apiService: ApiService = ApiService()
 
@@ -38,8 +41,27 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private lateinit var reloadWork: PeriodicWorkRequest
     private var reloadWorkId: UUID = UUID.randomUUID()
 
-    private var currentWeather: WeatherCurrent? = null
-    private var forecastWeather: WeatherForecast? = null
+    var weatherCurrent: WeatherCurrent? = null
+        private set(value) {
+            field = value
+        }
+    private var weatherCurrentOptional: RxOptional<WeatherCurrent> = RxOptional(weatherCurrent)
+    val weatherCurrentObservable: Observable<RxOptional<WeatherCurrent>> = Observable.create { emitter ->
+        emitter.onNext(weatherCurrentOptional)
+        emitter.onError(Exception("Error in weather current observable"))
+        emitter.onComplete()
+    }
+
+    var weatherForecast: WeatherForecast? = null
+        private set(value) {
+            field = value
+        }
+    private var weatherForecastOptional: RxOptional<WeatherForecast> = RxOptional(weatherForecast)
+    val weatherForecastObservable: Observable<RxOptional<WeatherForecast>> = Observable.create { emitter ->
+        emitter.onNext(weatherForecastOptional)
+        emitter.onError(Exception("Error in weather forecast observable"))
+        emitter.onComplete()
+    }
 
     override var city: String
         get() = apiService.city
@@ -131,27 +153,56 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     }
                     DownloadType.Null -> {
                         Logger.instance.error(tag, "Received download update with downloadType Null and jsonString: $jsonString")
+
                         onWeatherServiceListener?.onCurrentWeather(null, false)
                         onWeatherServiceListener?.onForecastWeather(null, false)
+
+                        weatherCurrent = null
+                        weatherForecast = null
+
+                        weatherCurrentOptional = RxOptional(weatherCurrent)
+                        weatherForecastOptional = RxOptional(weatherForecast)
                     }
                 }
             }
         })
     }
 
-    override fun loadCurrentWeather() {
+    override fun start() {
+        mayLoad = true
+        loadWeatherCurrent()
+        loadWeatherForecast()
+    }
+
+    override fun dispose() {
+        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
+    }
+
+    override fun loadWeatherCurrent() {
+        if (!mayLoad) {
+            return
+        }
+
         val result = apiService.currentWeather()
         if (result != DownloadResult.Performing) {
             Logger.instance.error(tag, "Failure in loadCurrentWeather: $result")
             onWeatherServiceListener?.onCurrentWeather(null, false)
+            weatherCurrent = null
+            weatherCurrentOptional = RxOptional(weatherCurrent)
         }
     }
 
-    override fun loadForecastWeather() {
+    override fun loadWeatherForecast() {
+        if (!mayLoad) {
+            return
+        }
+
         val result = apiService.forecastWeather()
         if (result != DownloadResult.Performing) {
             Logger.instance.error(tag, "Failure in loadForecastWeather: $result")
             onWeatherServiceListener?.onForecastWeather(null, false)
+            weatherForecast = null
+            weatherForecastOptional = RxOptional(weatherForecast)
         }
     }
 
@@ -193,8 +244,12 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         return weatherForecast
     }
 
-    override fun dispose() {
-        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
+    override fun weatherCurrentObservable(): Observable<RxOptional<WeatherCurrent>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun weatherForecastObservable(): Observable<RxOptional<WeatherForecast>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun restartHandler() {
@@ -208,14 +263,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
 
     private fun handleCurrentWeatherUpdate(success: Boolean, jsonString: String) {
         if (!success) {
-            onWeatherServiceListener?.onCurrentWeather(null, false)
+            weatherCurrent = null
         } else {
             val convertedCurrentWeather = converter.convertToWeatherCurrent(jsonString)
             if (convertedCurrentWeather == null) {
-                onWeatherServiceListener?.onCurrentWeather(null, false)
+                weatherCurrent = null
             } else {
-                currentWeather = convertedCurrentWeather
-                onWeatherServiceListener?.onCurrentWeather(currentWeather, true)
+                weatherCurrent = convertedCurrentWeather
                 if (wallpaperEnabled) {
                     changeWallpaper()
                 }
@@ -224,52 +278,57 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 }
             }
         }
+
+        onWeatherServiceListener?.onCurrentWeather(weatherCurrent, success && weatherCurrent != null)
+        weatherCurrentOptional = RxOptional(weatherCurrent)
     }
 
     private fun handleForecastWeatherUpdate(success: Boolean, jsonString: String) {
         if (!success) {
-            onWeatherServiceListener?.onForecastWeather(null, false)
+            weatherForecast = null
         } else {
             val convertedForecastWeather = converter.convertToWeatherForecast(jsonString)
             if (convertedForecastWeather == null) {
-                onWeatherServiceListener?.onForecastWeather(null, false)
+                weatherForecast = null
             } else {
-                forecastWeather = convertedForecastWeather
-                onWeatherServiceListener?.onForecastWeather(forecastWeather, true)
+                weatherForecast = convertedForecastWeather
                 if (notificationEnabled) {
                     displayNotification()
                 }
             }
         }
+
+        onWeatherServiceListener?.onForecastWeather(weatherForecast, success && weatherForecast != null)
+        weatherForecastOptional = RxOptional(weatherForecast)
     }
 
     private fun displayNotification() {
-        if (currentWeather != null) {
+        if (weatherCurrent != null) {
             val currentWeatherNotificationContent = NotificationContent(
                     currentWeatherNotificationId,
-                    "Current Weather: " + currentWeather!!.description,
-                    currentWeather!!.temperature.doubleFormat(1) + "${0x00B0.toChar()}C, "
-                            + currentWeather!!.pressure.doubleFormat(1) + "mBar, "
-                            + currentWeather!!.humidity.doubleFormat(1) + "%",
-                    currentWeather!!.weatherCondition.iconId,
-                    currentWeather!!.weatherCondition.wallpaperId,
+                    "Current Weather: " + weatherCurrent!!.description,
+                    weatherCurrent!!.temperature.doubleFormat(1) + "${0x00B0.toChar()}C, "
+                            + weatherCurrent!!.pressure.doubleFormat(1) + "mBar, "
+                            + weatherCurrent!!.humidity.doubleFormat(1) + "%",
+                    weatherCurrent!!.weatherCondition.iconId,
+                    weatherCurrent!!.weatherCondition.wallpaperId,
                     receiverActivity!!,
                     true)
             notificationController.create(currentWeatherNotificationContent)
         }
 
-        if (forecastWeather != null) {
+        if (weatherForecast != null) {
             val forecastWeatherNotificationContent = NotificationContent(
                     forecastWeatherNotificationId,
-                    "Forecast: " + forecastWeather!!.getMostWeatherCondition().description,
-                    forecastWeather!!.getMinTemperature().doubleFormat(1) + "${0x00B0.toChar()}C - "
-                            + forecastWeather!!.getMaxTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "
-                            + forecastWeather!!.getMinPressure().doubleFormat(1) + "mBar - "
-                            + forecastWeather!!.getMaxPressure().doubleFormat(1) + "mBar, "
-                            + forecastWeather!!.getMinHumidity().doubleFormat(1) + "% - "
-                            + forecastWeather!!.getMaxHumidity().doubleFormat(1) + "%",
-                    forecastWeather!!.getMostWeatherCondition().iconId,
-                    forecastWeather!!.getMostWeatherCondition().wallpaperId,
+                    "Forecast: " + weatherForecast!!.getMostWeatherCondition().description,
+                    weatherForecast!!.getMinTemperature().doubleFormat(1) + "${0x00B0.toChar()}C - "
+                            + weatherForecast!!.getMaxTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "
+                            + weatherForecast!!.getMinPressure().doubleFormat(1) + "mBar - "
+                            + weatherForecast!!.getMaxPressure().doubleFormat(1) + "mBar, "
+                            + weatherForecast!!.getMinHumidity().doubleFormat(1) + "% - "
+                            + weatherForecast!!.getMaxHumidity().doubleFormat(1) + "%",
+                    weatherForecast!!.getMostWeatherCondition().iconId,
+                    weatherForecast!!.getMostWeatherCondition().wallpaperId,
                     receiverActivity!!,
                     true)
             notificationController.create(forecastWeatherNotificationContent)
@@ -277,10 +336,10 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     private fun changeWallpaper() {
-        if (currentWeather != null) {
+        if (weatherCurrent != null) {
             try {
                 val wallpaperManager = WallpaperManager.getInstance(context.applicationContext)
-                wallpaperManager.setResource(currentWeather!!.weatherCondition.wallpaperId)
+                wallpaperManager.setResource(weatherCurrent!!.weatherCondition.wallpaperId)
             } catch (exception: IOException) {
                 Logger.instance.error(tag, exception)
             }
