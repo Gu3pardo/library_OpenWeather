@@ -15,13 +15,16 @@ import androidx.work.WorkManager
 import guepardoapps.lib.openweather.services.api.ApiService
 import guepardoapps.lib.openweather.services.api.OnApiServiceListener
 import guepardoapps.lib.openweather.worker.OpenWeatherWorker
-import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class OpenWeatherService private constructor() : IOpenWeatherService {
     private val tag: String = OpenWeatherService::class.java.simpleName
+
+    private var weatherCurrentCall = 0
+    private var weatherForecastCall = 0
 
     private val currentWeatherNotificationId: Int = 260520181
     private val forecastWeatherNotificationId: Int = 260520182
@@ -38,30 +41,19 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private lateinit var networkController: NetworkController
     private lateinit var notificationController: NotificationController
 
-    private lateinit var reloadWork: PeriodicWorkRequest
-    private var reloadWorkId: UUID = UUID.randomUUID()
+    private var reloadWork: PeriodicWorkRequest? = null
 
     var weatherCurrent: WeatherCurrent? = null
         private set(value) {
             field = value
         }
-    private var weatherCurrentOptional: RxOptional<WeatherCurrent> = RxOptional(weatherCurrent)
-    val weatherCurrentObservable: Observable<RxOptional<WeatherCurrent>> = Observable.create { emitter ->
-        emitter.onNext(weatherCurrentOptional)
-        emitter.onError(Exception("Error in weather current observable"))
-        emitter.onComplete()
-    }
+    override val weatherCurrentPublishSubject = PublishSubject.create<RxOptional<WeatherCurrent>>()!!
 
     var weatherForecast: WeatherForecast? = null
         private set(value) {
             field = value
         }
-    private var weatherForecastOptional: RxOptional<WeatherForecast> = RxOptional(weatherForecast)
-    val weatherForecastObservable: Observable<RxOptional<WeatherForecast>> = Observable.create { emitter ->
-        emitter.onNext(weatherForecastOptional)
-        emitter.onError(Exception("Error in weather forecast observable"))
-        emitter.onComplete()
-    }
+    override val weatherForecastPublishSubject = PublishSubject.create<RxOptional<WeatherForecast>>()!!
 
     override var city: String
         get() = apiService.city
@@ -87,7 +79,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     override var receiverActivity: Class<*>? = null
         set(value) {
             field = value
-            if (field != null && this.notificationEnabled) {
+            if (field != null && notificationEnabled) {
                 displayNotification()
             } else {
                 notificationController.close(currentWeatherNotificationId)
@@ -108,7 +100,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             field = value
             restartHandler()
         }
-    override var reloadTimeout: Long = this.minTimeoutMs
+    override var reloadTimeout: Long = minTimeoutMs
         set(value) {
             field = when {
                 value < minTimeoutMs -> minTimeoutMs
@@ -160,8 +152,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                         weatherCurrent = null
                         weatherForecast = null
 
-                        weatherCurrentOptional = RxOptional(weatherCurrent)
-                        weatherForecastOptional = RxOptional(weatherForecast)
+                        weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
+                        weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
                     }
                 }
             }
@@ -175,10 +167,15 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun dispose() {
-        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
+        if (reloadWork != null) {
+            WorkManager.getInstance()?.cancelWorkById(reloadWork!!.id)
+        }
     }
 
     override fun loadWeatherCurrent() {
+        weatherCurrentCall++
+        Logger.instance.info(tag, "weatherCurrentCall: $weatherCurrentCall")
+
         if (!mayLoad) {
             return
         }
@@ -188,11 +185,14 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             Logger.instance.error(tag, "Failure in loadCurrentWeather: $result")
             onWeatherServiceListener?.onCurrentWeather(null, false)
             weatherCurrent = null
-            weatherCurrentOptional = RxOptional(weatherCurrent)
+            weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
         }
     }
 
     override fun loadWeatherForecast() {
+        weatherForecastCall++
+        Logger.instance.info(tag, "weatherForecastCall: $weatherForecastCall")
+
         if (!mayLoad) {
             return
         }
@@ -202,7 +202,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             Logger.instance.error(tag, "Failure in loadForecastWeather: $result")
             onWeatherServiceListener?.onForecastWeather(null, false)
             weatherForecast = null
-            weatherForecastOptional = RxOptional(weatherForecast)
+            weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
         }
     }
 
@@ -244,20 +244,20 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         return weatherForecast
     }
 
-    override fun weatherCurrentObservable(): Observable<RxOptional<WeatherCurrent>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun weatherForecastObservable(): Observable<RxOptional<WeatherForecast>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     private fun restartHandler() {
-        WorkManager.getInstance()?.cancelWorkById(this.reloadWorkId)
+        if (!mayLoad) {
+            return
+        }
+
+        if (reloadWork != null) {
+            WorkManager.getInstance()?.cancelWorkById(reloadWork!!.id)
+        }
+
         if (reloadEnabled && networkController.isInternetConnected().second) {
-            this.reloadWork = PeriodicWorkRequestBuilder<OpenWeatherWorker>(this.reloadTimeout, TimeUnit.MILLISECONDS).build()
-            this.reloadWorkId = this.reloadWork.id
-            WorkManager.getInstance()?.enqueue(this.reloadWork)
+            reloadWork = PeriodicWorkRequestBuilder<OpenWeatherWorker>(reloadTimeout, TimeUnit.MILLISECONDS).build()
+            WorkManager.getInstance()?.enqueue(reloadWork)
+
+            Logger.instance.info(tag, "restartHandler with reloadTimeout: $reloadTimeout and id ${reloadWork!!.id}")
         }
     }
 
@@ -280,7 +280,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         }
 
         onWeatherServiceListener?.onCurrentWeather(weatherCurrent, success && weatherCurrent != null)
-        weatherCurrentOptional = RxOptional(weatherCurrent)
+        weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
     }
 
     private fun handleForecastWeatherUpdate(success: Boolean, jsonString: String) {
@@ -299,7 +299,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         }
 
         onWeatherServiceListener?.onForecastWeather(weatherForecast, success && weatherForecast != null)
-        weatherForecastOptional = RxOptional(weatherForecast)
+        weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
     }
 
     private fun displayNotification() {

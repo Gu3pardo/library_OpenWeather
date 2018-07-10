@@ -4,7 +4,7 @@ import android.content.Context
 import guepardoapps.lib.openweather.models.RxOptional
 import guepardoapps.lib.openweather.models.WeatherCurrent
 import guepardoapps.lib.openweather.models.WeatherForecast
-import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
 interface IOpenWeatherService {
     var city: String
@@ -18,6 +18,8 @@ interface IOpenWeatherService {
     var reloadEnabled: Boolean
     var reloadTimeout: Long
 
+    val weatherCurrentPublishSubject: PublishSubject<RxOptional<WeatherCurrent>>
+    val weatherForecastPublishSubject: PublishSubject<RxOptional<WeatherForecast>>
     var onWeatherServiceListener: OnWeatherServiceListener?
 
     fun initialize(context: Context)
@@ -28,7 +30,4 @@ interface IOpenWeatherService {
     fun loadWeatherForecast()
 
     fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast
-
-    fun weatherCurrentObservable():Observable<RxOptional<WeatherCurrent>>
-    fun weatherForecastObservable():Observable<RxOptional<WeatherForecast>>
 }

@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val tag: String = MainActivity::class.java.canonicalName
 
     private lateinit var context: Context
-    private lateinit var openWeatherService: OpenWeatherService
 
     private lateinit var mainImageView: KenBurnsView
     private lateinit var listView: ListView
@@ -52,8 +51,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity)
 
         context = this
-        openWeatherService = OpenWeatherService.instance
-        openWeatherService.initialize(context)
+        OpenWeatherService.instance.initialize(context)
 
         mainImageView = findViewById(R.id.kenBurnsView)
         listView = findViewById(R.id.listView)
@@ -65,7 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
-                val foundForecastModel = openWeatherService.searchForecast(forecastWeather, charSequence.toString())
+                val foundForecastModel = OpenWeatherService.instance.searchForecast(forecastWeather, charSequence.toString())
                 val forecastList = foundForecastModel.list
                 val adapter = ForecastListAdapter(context, forecastList)
                 listView.adapter = adapter
@@ -94,16 +92,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             listView.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
             searchField.visibility = View.INVISIBLE
-            openWeatherService.loadForecastWeather()
+            OpenWeatherService.instance.loadWeatherForecast()
         }
 
-        openWeatherService.apiKey = getString(R.string.openweather_api_key)
-        openWeatherService.city = getString(R.string.openweather_city)
-        openWeatherService.notificationEnabled = true
-        openWeatherService.wallpaperEnabled = true
-        openWeatherService.receiverActivity = MainActivity::class.java
+        OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)
+        OpenWeatherService.instance.city = getString(R.string.openweather_city)
+        OpenWeatherService.instance.notificationEnabled = true
+        OpenWeatherService.instance.wallpaperEnabled = true
+        OpenWeatherService.instance.receiverActivity = MainActivity::class.java
 
-        openWeatherService.weatherCurrentObservable
+        OpenWeatherService.instance.weatherCurrentPublishSubject
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->
@@ -127,7 +125,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         }
                 )
 
-        openWeatherService.weatherForecastObservable
+        OpenWeatherService.instance.weatherForecastPublishSubject
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->
@@ -185,10 +183,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
         */
 
-        openWeatherService.reloadEnabled = true
-        openWeatherService.reloadTimeout = 30 * 60 * 1000
+        OpenWeatherService.instance.reloadEnabled = true
+        OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000
 
-        openWeatherService.start()
+        OpenWeatherService.instance.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        OpenWeatherService.instance.dispose()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -196,7 +199,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (id) {
             R.id.nav_current_weather -> {
-                openWeatherService.loadCurrentWeather()
+                OpenWeatherService.instance.loadWeatherCurrent()
                 Snacky.builder()
                         .setActivty(this)
                         .setText("Reload current weather")
@@ -205,7 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         .show()
             }
             R.id.nav_forecast_weather -> {
-                openWeatherService.loadForecastWeather()
+                OpenWeatherService.instance.loadWeatherForecast()
                 Snacky.builder()
                         .setActivty(this)
                         .setText("Reload forecast weather")
