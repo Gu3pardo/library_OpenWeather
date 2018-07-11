@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases)
-[![Version](https://img.shields.io/badge/version-v1.0.6.180706-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-07-06.aar)
+[![Version](https://img.shields.io/badge/version-v1.1.0.180711-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-07-11.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/master/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
@@ -22,6 +22,8 @@ Used Libraries are
 - com.github.matecode:Snacky:1.0.2
 - com.github.rey5137:material:1.2.4
 - com.squareup.okhttp3:okhttp:3.9.1
+
+- io.reactivex.rxjava2:rxkotlin:2.2.0
 
 - android.arch.work:work-runtime-ktx:1.0.0-alpha04
 
@@ -41,41 +43,60 @@ Used Libraries are
 First you have to register an account at [OpenWeatherMap.org](http://www.openweathermap.org/) and receive an API key.
 This key is an important parameter of the OpenWeatherService!
 
-The easiest way to integrate the library is to use the OpenWeatherService and to register the OnWeatherUpdateListener
+The easiest way to integrate the library is to use the OpenWeatherService and to subscribe on weatherCurrentPublishSubject and weatherForecastPublishSubject using ReactiveX2
+(DEPRECATED: register the OnWeatherUpdateListener)
 After registering your Receiver, you call for the data.
 
 ```java
-public class MainActivity extends Activity {
+class MainActivity : AppCompatActivity() {
 
-    ...
-    private lateinit var openWeatherService: OpenWeatherService
-    ...
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         ...
 
-        openWeatherService = OpenWeatherService.instance
-        openWeatherService.initialize(this)
+        OpenWeatherService.instance.initialize(this)
 		
         // Set ApiKey => Will be read from xml file
-        openWeatherService.apiKey = getString(R.string.openweather_api_key)
+        OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)
 		
         // Set your preferred city
-        openWeatherService.city = getString(R.string.openweather_city)
+        OpenWeatherService.instance.city = getString(R.string.openweather_city)
 		
         // Enable/Disable notifications
-        openWeatherService.notificationEnabled = true
+        OpenWeatherService.instance.notificationEnabled = true
 		
         // Enable/Disable set of wallpaper
-        openWeatherService.wallpaperEnabled = true
+        OpenWeatherService.instance.wallpaperEnabled = true
 		
         // Set receiver for notifications
-        openWeatherService.receiverActivity = MainActivity::class.java
+        OpenWeatherService.instance.receiverActivity = MainActivity::class.java
 		
-        // Set OnWeatherUpdateListener
-        openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
+		// Subscribe on weatherCurrentPublishSubject (Using ReactiveX2)
+		OpenWeatherService.instance.weatherCurrentPublishSubject
+			.subscribeOn(Schedulers.io())
+			.subscribe(
+				{
+					response -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+				},
+				{
+					responseError -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+				}
+			)
+		
+		// Subscribe on weatherForecastPublishSubject (Using ReactiveX2)
+		OpenWeatherService.instance.weatherForecastPublishSubject
+			.subscribeOn(Schedulers.io())
+			.subscribe(
+				{
+					response -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+				},
+				{
+					responseError -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+				}
+			)
+		
+        // Set onWeatherServiceListener (DEPRECATED)
+        OpenWeatherService.instance.onWeatherServiceListener = (object : OnWeatherServiceListener {
             override fun onCurrentWeather(currentWeather: WeatherCurrent?, success: Boolean) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
@@ -86,40 +107,57 @@ public class MainActivity extends Activity {
         })
 
         // Enable/Disable reload of data
-        openWeatherService.reloadEnabled = true
+        OpenWeatherService.instance.reloadEnabled = true
 		
         // Set timeout of reload of data
-        openWeatherService.reloadTimeout = 30 * 60 * 1000
+        OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000
+		
+		// Finally start everything (IMPORTANT)
+		OpenWeatherService.instance.start()
 		
         ...
     }
+	
+	override fun onDestroy() {
+		super.onDestroy()
+		
+		//  Dispose the service
+		OpenWeatherService.instance.dispose()
+	}
 }
 ```
 
 To display received data use the customadapter in the library
 
 ```java
-public class MainActivity extends Activity {
+class MainActivity : AppCompatActivity() {
+
     ...
-        openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
-	    ...
-        override fun onForecastWeather(forecastWeather: WeatherForecast?, success: Boolean) {
-            if (success) {
-                this.forecastWeather = forecastWeather!!
-                val forecastList = forecastWeather.list
-                if (forecastList.isNotEmpty()) {
-                    val adapter = ForecastListAdapter(this, forecastList)
-                    listView.adapter = adapter
-                    mainImageView.setImageResource(forecastWeather.getMostWeatherCondition().wallpaperId)
-                } else {
-                    Logger.instance.warning(tag, "forecastList is empty")
-                }
-            } else {
-                Logger.instance.warning(tag, "onForecastWeather download was  not successfully")
-                Toasty.warning(context, "onForecastWeather download was  not successfully", Toast.LENGTH_LONG).show()
-            }
-        }
-    })
+		// Subscribe on weatherForecastPublishSubject (Using ReactiveX2)
+		OpenWeatherService.instance.weatherForecastPublishSubject
+			.subscribeOn(Schedulers.io())
+			.subscribe(
+				{
+					response -> 
+						if (response.value != null) {
+							val data = response.value as WeatherForecast
+							val list = data.list
+							if (list.isNotEmpty()) {
+								val adapter = ForecastListAdapter(this, list)
+								listView.adapter = adapter
+								mainImageView.setImageResource(forecastWeather.getMostWeatherCondition().wallpaperId)
+							} else {
+								Logger.instance.warning(tag, "list is empty")
+							}
+						} else {
+                            Logger.instance.warning(tag, "weather forecast subscribe was  not successfully")
+						}
+				},
+				{
+					responseError -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+				}
+			)
     ...
+	
 }
 ```

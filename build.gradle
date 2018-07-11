@@ -9,6 +9,7 @@ buildscript {
     ext.junit_version = '4.12'
     ext.kotlin_version = '1.2.51'
     ext.okhttp3_version = '3.9.1'
+    ext.reactivex_version = '2.2.0'
     ext.test_runner_version = '1.0.2'
 
     repositories {

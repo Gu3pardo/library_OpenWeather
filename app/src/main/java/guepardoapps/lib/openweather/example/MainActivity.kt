@@ -22,16 +22,15 @@ import guepardoapps.lib.openweather.adapter.ForecastListAdapter
 import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
 import guepardoapps.lib.openweather.models.WeatherCurrent
 import guepardoapps.lib.openweather.models.WeatherForecast
-import guepardoapps.lib.openweather.services.openweather.OnWeatherServiceListener
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import guepardoapps.lib.openweather.utils.Logger
+import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val tag: String = MainActivity::class.java.canonicalName
 
     private lateinit var context: Context
-    private lateinit var openWeatherService: OpenWeatherService
 
     private lateinit var mainImageView: KenBurnsView
     private lateinit var listView: ListView
@@ -52,8 +51,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity)
 
         context = this
-        openWeatherService = OpenWeatherService.instance
-        openWeatherService.initialize(context)
+        OpenWeatherService.instance.initialize(context)
 
         mainImageView = findViewById(R.id.kenBurnsView)
         listView = findViewById(R.id.listView)
@@ -65,7 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
-                val foundForecastModel = openWeatherService.searchForecast(forecastWeather, charSequence.toString())
+                val foundForecastModel = OpenWeatherService.instance.searchForecast(forecastWeather, charSequence.toString())
                 val forecastList = foundForecastModel.list
                 val adapter = ForecastListAdapter(context, forecastList)
                 listView.adapter = adapter
@@ -94,17 +92,70 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             listView.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
             searchField.visibility = View.INVISIBLE
-            openWeatherService.loadForecastWeather()
+            OpenWeatherService.instance.loadWeatherForecast()
         }
 
-        openWeatherService.apiKey = getString(R.string.openweather_api_key)
-        openWeatherService.city = getString(R.string.openweather_city)
-        openWeatherService.notificationEnabled = true
-        openWeatherService.wallpaperEnabled = true
-        openWeatherService.receiverActivity = MainActivity::class.java
+        OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)
+        OpenWeatherService.instance.city = getString(R.string.openweather_city)
+        OpenWeatherService.instance.notificationEnabled = true
+        OpenWeatherService.instance.wallpaperEnabled = true
+        OpenWeatherService.instance.receiverActivity = MainActivity::class.java
 
+        OpenWeatherService.instance.weatherCurrentPublishSubject
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        { response ->
+                            Logger.instance.verbose(tag, "Received weather current in subscribe!")
+
+                            if (response.value != null) {
+                                handleOnCurrentWeather(response.value as WeatherCurrent)
+                            } else {
+                                Logger.instance.warning(tag, "weather current subscribe download was  not successfully")
+                                progressBar.visibility = View.GONE
+                                noDataFallback.visibility = View.VISIBLE
+                                runOnUiThread {
+                                    Toasty.warning(context, "weather current subscribe  was  not successfully", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        },
+                        { responseError ->
+                            Logger.instance.error(tag, responseError)
+                            progressBar.visibility = View.GONE
+                            noDataFallback.visibility = View.VISIBLE
+                        }
+                )
+
+        OpenWeatherService.instance.weatherForecastPublishSubject
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        { response ->
+                            Logger.instance.verbose(tag, "Received weather forecast in subscribe!")
+
+                            pullRefreshLayout.setRefreshing(false)
+                            if (response.value != null) {
+                                handleOnForecastWeather(response.value as WeatherForecast)
+                                searchField.setText("")
+                            } else {
+                                Logger.instance.warning(tag, "weather forecast subscribe was  not successfully")
+                                progressBar.visibility = View.GONE
+                                noDataFallback.visibility = View.VISIBLE
+                                runOnUiThread {
+                                    Toasty.warning(context, "weather forecast subscribe was  not successfully", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        },
+                        { responseError ->
+                            Logger.instance.error(tag, responseError)
+                            progressBar.visibility = View.GONE
+                            noDataFallback.visibility = View.VISIBLE
+                        }
+                )
+
+        /*
         openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
             override fun onCurrentWeather(currentWeather: WeatherCurrent?, success: Boolean) {
+                Logger.instance.verbose(tag, "Received weather current in onWeatherServiceListener!")
+
                 if (success) {
                     handleOnCurrentWeather(currentWeather!!)
                 } else {
@@ -116,6 +167,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             override fun onForecastWeather(forecastWeather: WeatherForecast?, success: Boolean) {
+                Logger.instance.verbose(tag, "Received weather current in onForecastWeather!")
+
                 pullRefreshLayout.setRefreshing(false)
                 if (success) {
                     handleOnForecastWeather(forecastWeather!!)
@@ -128,9 +181,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         })
+        */
 
-        openWeatherService.reloadEnabled = true
-        openWeatherService.reloadTimeout = 30 * 60 * 1000
+        OpenWeatherService.instance.reloadEnabled = true
+        OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000
+
+        OpenWeatherService.instance.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        OpenWeatherService.instance.dispose()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -138,7 +199,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (id) {
             R.id.nav_current_weather -> {
-                openWeatherService.loadCurrentWeather()
+                OpenWeatherService.instance.loadWeatherCurrent()
                 Snacky.builder()
                         .setActivty(this)
                         .setText("Reload current weather")
@@ -147,7 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         .show()
             }
             R.id.nav_forecast_weather -> {
-                openWeatherService.loadForecastWeather()
+                OpenWeatherService.instance.loadWeatherForecast()
                 Snacky.builder()
                         .setActivty(this)
                         .setText("Reload forecast weather")
