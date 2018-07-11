@@ -9,22 +9,18 @@ import guepardoapps.lib.openweather.extensions.*
 import guepardoapps.lib.openweather.models.*
 import guepardoapps.lib.openweather.utils.Logger
 import android.app.WallpaperManager
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import guepardoapps.lib.openweather.services.api.ApiService
 import guepardoapps.lib.openweather.services.api.OnApiServiceListener
-import guepardoapps.lib.openweather.worker.OpenWeatherWorker
 import io.reactivex.subjects.PublishSubject
 import java.io.IOException
 import java.util.*
-import java.util.concurrent.TimeUnit
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Intent
+import guepardoapps.lib.openweather.receiver.PeriodicActionReceiver
 
 class OpenWeatherService private constructor() : IOpenWeatherService {
     private val tag: String = OpenWeatherService::class.java.simpleName
-
-    private var weatherCurrentCall = 0
-    private var weatherForecastCall = 0
 
     private val currentWeatherNotificationId: Int = 260520181
     private val forecastWeatherNotificationId: Int = 260520182
@@ -40,8 +36,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private lateinit var context: Context
     private lateinit var networkController: NetworkController
     private lateinit var notificationController: NotificationController
-
-    private var reloadWork: PeriodicWorkRequest? = null
 
     var weatherCurrent: WeatherCurrent? = null
         private set(value) {
@@ -98,7 +92,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     override var reloadEnabled: Boolean = true
         set(value) {
             field = value
-            restartHandler()
+            cancelReload()
+            scheduleReload()
         }
     override var reloadTimeout: Long = minTimeoutMs
         set(value) {
@@ -107,7 +102,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 value > maxTimeoutMs -> maxTimeoutMs
                 else -> value
             }
-            restartHandler()
+            cancelReload()
+            scheduleReload()
         }
 
     override var onWeatherServiceListener: OnWeatherServiceListener? = null
@@ -164,18 +160,14 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         mayLoad = true
         loadWeatherCurrent()
         loadWeatherForecast()
+        scheduleReload()
     }
 
     override fun dispose() {
-        if (reloadWork != null) {
-            WorkManager.getInstance()?.cancelWorkById(reloadWork!!.id)
-        }
+        cancelReload()
     }
 
     override fun loadWeatherCurrent() {
-        weatherCurrentCall++
-        Logger.instance.info(tag, "weatherCurrentCall: $weatherCurrentCall")
-
         if (!mayLoad) {
             return
         }
@@ -190,9 +182,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun loadWeatherForecast() {
-        weatherForecastCall++
-        Logger.instance.info(tag, "weatherForecastCall: $weatherForecastCall")
-
         if (!mayLoad) {
             return
         }
@@ -244,21 +233,24 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         return weatherForecast
     }
 
-    private fun restartHandler() {
+    private fun scheduleReload() {
         if (!mayLoad) {
             return
         }
 
-        if (reloadWork != null) {
-            WorkManager.getInstance()?.cancelWorkById(reloadWork!!.id)
-        }
-
         if (reloadEnabled && networkController.isInternetConnected().second) {
-            reloadWork = PeriodicWorkRequestBuilder<OpenWeatherWorker>(reloadTimeout, TimeUnit.MILLISECONDS).build()
-            WorkManager.getInstance()?.enqueue(reloadWork)
-
-            Logger.instance.info(tag, "restartHandler with reloadTimeout: $reloadTimeout and id ${reloadWork!!.id}")
+            val intent = Intent(context.applicationContext, PeriodicActionReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context, PeriodicActionReceiver.requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), reloadTimeout, pendingIntent)
         }
+    }
+
+    private fun cancelReload() {
+        val intent = Intent(context.applicationContext, PeriodicActionReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, PeriodicActionReceiver.requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarm.cancel(pendingIntent)
     }
 
     private fun handleCurrentWeatherUpdate(success: Boolean, jsonString: String) {
