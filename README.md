@@ -54,13 +54,13 @@ class MainActivity : AppCompatActivity() {
 
         OpenWeatherService.instance.initialize(this)
 		
-        OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)	// Set ApiKey => Will be read from xml file
-        OpenWeatherService.instance.city = getString(R.string.openweather_city)			// Set your preferred city
-        OpenWeatherService.instance.notificationEnabled = true							// Enable/Disable notifications
-        OpenWeatherService.instance.wallpaperEnabled = true								// Enable/Disable set of wallpaper
-        OpenWeatherService.instance.receiverActivity = MainActivity::class.java			// Set receiver for notifications
-        OpenWeatherService.instance.reloadEnabled = true								// Enable/Disable reload of data
-        OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000						// Set timeout of reload of data in millisecond
+        OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)    // Set ApiKey => Will be read from xml file
+        OpenWeatherService.instance.city = getString(R.string.openweather_city)         // Set your preferred city
+        OpenWeatherService.instance.notificationEnabled = true                          // Enable/Disable notifications
+        OpenWeatherService.instance.wallpaperEnabled = true                             // Enable/Disable set of wallpaper
+        OpenWeatherService.instance.receiverActivity = MainActivity::class.java         // Set receiver for notifications
+        OpenWeatherService.instance.reloadEnabled = true                                // Enable/Disable reload of data
+        OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000                      // Set timeout of reload of data in millisecond
 		
         // Subscribe on weatherCurrentPublishSubject (Using ReactiveX2)
         OpenWeatherService.instance.weatherCurrentPublishSubject
