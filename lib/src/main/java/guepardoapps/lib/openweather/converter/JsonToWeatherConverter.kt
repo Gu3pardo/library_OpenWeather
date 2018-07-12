@@ -112,7 +112,7 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
 
             val weatherForecastPartC = WeatherForecastPart()
             val dataListJsonArray = jsonObject.getJSONArray(weatherForecastPartC.getJsonKey().parent)
-            var list = arrayOf<WeatherForecastPart>()
+            var list = listOf<WeatherForecastPart>()
 
             var previousDateString = ""
 

@@ -18,7 +18,7 @@ import java.util.*
 
 class ForecastListAdapter(
         @NonNull private val context: Context,
-        @NonNull private val forecastList: Array<WeatherForecastPart>) : BaseAdapter() {
+        @NonNull private val list: List<WeatherForecastPart>) : BaseAdapter() {
 
     private class Holder {
         lateinit var dividerCardTitleText: TextView
@@ -47,7 +47,7 @@ class ForecastListAdapter(
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     override fun getCount(): Int {
-        return forecastList.size
+        return list.size
     }
 
     override fun getItemId(position: Int): Long {
@@ -55,13 +55,13 @@ class ForecastListAdapter(
     }
 
     override fun getItem(position: Int): WeatherForecastPart {
-        return forecastList[position]
+        return list[position]
     }
 
     @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parentView: ViewGroup?): View {
         val holder = Holder()
-        val forecastPart = forecastList[position]
+        val forecastPart = list[position]
         lateinit var rowView: View
 
         when (forecastPart.listType) {

@@ -151,38 +151,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         }
                 )
 
-        /*
-        openWeatherService.onWeatherServiceListener = (object : OnWeatherServiceListener {
-            override fun onCurrentWeather(currentWeather: WeatherCurrent?, success: Boolean) {
-                Logger.instance.verbose(tag, "Received weather current in onWeatherServiceListener!")
-
-                if (success) {
-                    handleOnCurrentWeather(currentWeather!!)
-                } else {
-                    Logger.instance.warning(tag, "onCurrentWeather download was  not successfully")
-                    progressBar.visibility = View.GONE
-                    noDataFallback.visibility = View.VISIBLE
-                    Toasty.warning(context, "onCurrentWeather download was  not successfully", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onForecastWeather(forecastWeather: WeatherForecast?, success: Boolean) {
-                Logger.instance.verbose(tag, "Received weather current in onForecastWeather!")
-
-                pullRefreshLayout.setRefreshing(false)
-                if (success) {
-                    handleOnForecastWeather(forecastWeather!!)
-                    searchField.setText("")
-                } else {
-                    Logger.instance.warning(tag, "onForecastWeather download was  not successfully")
-                    progressBar.visibility = View.GONE
-                    noDataFallback.visibility = View.VISIBLE
-                    Toasty.warning(context, "onForecastWeather download was  not successfully", Toast.LENGTH_LONG).show()
-                }
-            }
-        })
-        */
-
         OpenWeatherService.instance.reloadEnabled = true
         OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000
 
