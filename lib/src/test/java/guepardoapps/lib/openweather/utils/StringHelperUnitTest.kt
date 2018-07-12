@@ -20,17 +20,17 @@ class StringHelperUnitTest {
     }
 
     @Test
-    fun getStringPositions_isCorrect() {
+    fun getCharPositions_isCorrect() {
         // Arrange
         val stringToTest = "Aber Hallo sagte Achim"
         val charToFind: Char = "A".toCharArray()[0]
-        val expectedPositions: IntArray = intArrayOf(0, 17)
+        val expectedPositions: List<Int> = listOf(0, 17)
 
         // Act
         val actualPositions = StringHelper.getCharPositions(stringToTest, charToFind)
 
         // Assert
-        assertArrayEquals(expectedPositions, actualPositions)
+        assertEquals(expectedPositions, actualPositions)
     }
 
     @Test

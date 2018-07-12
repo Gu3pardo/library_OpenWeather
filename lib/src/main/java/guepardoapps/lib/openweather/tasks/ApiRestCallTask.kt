@@ -20,16 +20,15 @@ class ApiRestCallTask : AsyncTask<String, Void, String>() {
             return result
         }
 
-        for (requestUrl in requestUrls) {
+        val okHttpClient = OkHttpClient()
+        requestUrls.forEach { requestUrl ->
             try {
-                val okHttpClient = OkHttpClient()
                 val request = Request.Builder().url(requestUrl!!).build()
                 val response = okHttpClient.newCall(request).execute()
                 val responseBody = response.body()
 
                 if (responseBody != null) {
                     result = responseBody.string()
-                    Logger.instance.debug(tag, result)
                 } else {
                     Logger.instance.error(tag, "ResponseBody is null!")
                 }

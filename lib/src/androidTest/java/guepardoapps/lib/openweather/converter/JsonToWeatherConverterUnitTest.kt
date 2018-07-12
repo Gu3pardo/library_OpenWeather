@@ -110,7 +110,7 @@ class JsonToWeatherConverterUnitTest {
 
         val expectedWeatherForecast = WeatherForecast()
         expectedWeatherForecast.city = city
-        expectedWeatherForecast.list = arrayOf(weatherForecastPart)
+        expectedWeatherForecast.list = listOf(weatherForecastPart)
 
         // Act
         val actualWeatherForecast = jsonToWeatherConverter.convertToWeatherForecast(jsonStringToTest)

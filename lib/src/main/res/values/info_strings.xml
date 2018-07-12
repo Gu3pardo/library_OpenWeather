@@ -9,7 +9,7 @@
         It also provides notifications and wallpaper to display.
         Made with Kotlin.
     </string>
-    <string name="library_OpenWeather_libraryVersion">1.1.0.180711</string>
+    <string name="library_OpenWeather_libraryVersion">1.1.2.180712</string>
     <string name="library_OpenWeather_libraryWebsite">https://github.com/GuepardoApps/library_OpenWeather/</string>
     <string name="library_OpenWeather_licenseId">mit</string>
     <string name="library_OpenWeather_isOpenSource">true</string>

@@ -9,8 +9,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10101
-        versionName "1.1.1.180712"
+        versionCode 10102
+        versionName "1.1.2.180712"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

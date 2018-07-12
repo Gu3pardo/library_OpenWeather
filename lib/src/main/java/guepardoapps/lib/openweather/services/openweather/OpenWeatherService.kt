@@ -196,33 +196,23 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast {
-        var foundEntries: Array<WeatherForecastPart> = arrayOf()
-
-        for (forecastPart in forecast.list) {
+        val foundEntries = forecast.list.filter { x ->
             when (searchValue) {
                 "Today", "Heute", "Hoy", "Inru" -> {
                     val todayCalendar = Calendar.getInstance()
-                    val dateTime = forecastPart.dateTime
-                    if (dateTime.get(Calendar.DAY_OF_MONTH) == todayCalendar.get(Calendar.DAY_OF_MONTH)
-                            && dateTime.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH)
-                            && dateTime.get(Calendar.YEAR) == todayCalendar.get(Calendar.YEAR)) {
-                        foundEntries = foundEntries.plus(forecastPart)
-                    }
+                    x.dateTime.get(Calendar.DAY_OF_MONTH) == todayCalendar.get(Calendar.DAY_OF_MONTH)
+                            && x.dateTime.get(Calendar.MONTH) == todayCalendar.get(Calendar.MONTH)
+                            && x.dateTime.get(Calendar.YEAR) == todayCalendar.get(Calendar.YEAR)
                 }
                 "Tomorrow", "Morgen", "Manana", "Nalai" -> {
                     val tomorrowCalendar = Calendar.getInstance()
                     tomorrowCalendar.add(Calendar.DAY_OF_MONTH, 1)
-                    val dateTime = forecastPart.dateTime
-                    if (dateTime.get(Calendar.DAY_OF_MONTH) == tomorrowCalendar.get(Calendar.DAY_OF_MONTH)
-                            && dateTime.get(Calendar.MONTH) == tomorrowCalendar.get(Calendar.MONTH)
-                            && dateTime.get(Calendar.YEAR) == tomorrowCalendar.get(Calendar.YEAR)) {
-                        foundEntries = foundEntries.plus(forecastPart)
-                    }
+                    x.dateTime.get(Calendar.DAY_OF_MONTH) == tomorrowCalendar.get(Calendar.DAY_OF_MONTH)
+                            && x.dateTime.get(Calendar.MONTH) == tomorrowCalendar.get(Calendar.MONTH)
+                            && x.dateTime.get(Calendar.YEAR) == tomorrowCalendar.get(Calendar.YEAR)
                 }
                 else -> {
-                    if (forecastPart.toString().contains(searchValue)) {
-                        foundEntries = foundEntries.plus(forecastPart)
-                    }
+                    x.toString().contains(searchValue)
                 }
             }
         }

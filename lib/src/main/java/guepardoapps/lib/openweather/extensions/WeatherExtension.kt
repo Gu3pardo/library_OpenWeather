@@ -8,9 +8,7 @@ import guepardoapps.lib.openweather.models.WeatherForecastPart
 import java.util.*
 
 fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
-    var weatherCondition = WeatherCondition.Null
-
-    val weatherConditionCountArray: Array<WeatherCondition> = arrayOf(
+    val weatherConditionCountList = arrayOf(
             WeatherCondition.Clear,
             WeatherCondition.Clouds,
             WeatherCondition.Drizzle,
@@ -23,133 +21,60 @@ fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
             WeatherCondition.Squalls,
             WeatherCondition.Sun,
             WeatherCondition.Thunderstorm)
-
-    for (weatherConditionEntry in weatherConditionCountArray) {
-        weatherConditionEntry.count = 0
-    }
+    weatherConditionCountList.forEach { x -> x.count = 0 }
 
     val futureCalendar: Calendar = Calendar.getInstance()
     futureCalendar.add(Calendar.DAY_OF_YEAR, days)
 
-    for (forecastPart in this.list) {
-        if (forecastPart.listType != ForecastListType.Forecast) {
-            continue
-        }
-
-        for (weatherConditionEntry in weatherConditionCountArray) {
-            if (forecastPart.weatherCondition == weatherConditionEntry
-                    && (days == -1 || forecastPart.dateTime.timeInMillis < futureCalendar.timeInMillis)) {
-                weatherConditionEntry.count++
-                break
+    this.list.forEach { forecastPart ->
+        if (forecastPart.listType == ForecastListType.Forecast) {
+            weatherConditionCountList.forEach { weatherCondition ->
+                if (forecastPart.weatherCondition == weatherCondition
+                        && (days == -1 || forecastPart.dateTime.timeInMillis < futureCalendar.timeInMillis)) {
+                    weatherCondition.count++
+                }
             }
         }
     }
 
-    var mostCount = 0
-    for (weatherConditionEntry in weatherConditionCountArray) {
-        if (weatherConditionEntry.count > mostCount) {
-            mostCount = weatherConditionEntry.count
-            weatherCondition = weatherConditionEntry
-        }
-    }
-
-    return weatherCondition
+    weatherConditionCountList.sortByDescending { x -> x.count }
+    return weatherConditionCountList.first()
 }
 
 fun WeatherForecast.getMinTemperature(): Double {
-    var value = 10000.0
-
-    for (forecastPart in this.list) {
-        if (forecastPart.listType != ForecastListType.Forecast) {
-            continue
-        }
-
-        if (forecastPart.temperatureMin < value) {
-            value = forecastPart.temperatureMin
-        }
-    }
-
-    return value
+    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList.sortedBy { x -> x.temperatureMin }
+    return dataList.first().temperatureMin
 }
 
 fun WeatherForecast.getMaxTemperature(): Double {
-    var value = -10000.0
-
-    for (forecastPart in this.list) {
-        if (forecastPart.listType != ForecastListType.Forecast) {
-            continue
-        }
-
-        if (forecastPart.temperatureMax > value) {
-            value = forecastPart.temperatureMax
-        }
-    }
-
-    return value
+    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList.sortedByDescending { x -> x.temperatureMax }
+    return dataList.first().temperatureMax
 }
 
 fun WeatherForecast.getMinPressure(): Double {
-    var value = 10000.0
-
-    for (forecastPart in this.list) {
-        if (forecastPart.listType != ForecastListType.Forecast) {
-            continue
-        }
-
-        if (forecastPart.pressure < value) {
-            value = forecastPart.pressure
-        }
-    }
-
-    return value
+    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList.sortedBy { x -> x.pressure }
+    return dataList.first().pressure
 }
 
 fun WeatherForecast.getMaxPressure(): Double {
-    var value = -10000.0
-
-    for (forecastPart in this.list) {
-        if (forecastPart.listType != ForecastListType.Forecast) {
-            continue
-        }
-
-        if (forecastPart.pressure > value) {
-            value = forecastPart.pressure
-        }
-    }
-
-    return value
+    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList.sortedByDescending { x -> x.pressure }
+    return dataList.first().pressure
 }
 
 fun WeatherForecast.getMinHumidity(): Double {
-    var value = 10000.0
-
-    for (forecastPart in this.list) {
-        if (forecastPart.listType != ForecastListType.Forecast) {
-            continue
-        }
-
-        if (forecastPart.humidity < value) {
-            value = forecastPart.humidity
-        }
-    }
-
-    return value
+    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList.sortedBy { x -> x.humidity }
+    return dataList.first().humidity
 }
 
 fun WeatherForecast.getMaxHumidity(): Double {
-    var value = -10000.0
-
-    for (forecastPart in this.list) {
-        if (forecastPart.listType != ForecastListType.Forecast) {
-            continue
-        }
-
-        if (forecastPart.humidity > value) {
-            value = forecastPart.humidity
-        }
-    }
-
-    return value
+    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList.sortedByDescending { x -> x.humidity }
+    return dataList.first().humidity
 }
 
 fun WeatherForecastPart.getForecastDayTime(): ForecastDayTime {
