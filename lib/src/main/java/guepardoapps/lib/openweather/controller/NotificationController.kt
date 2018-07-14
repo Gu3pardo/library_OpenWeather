@@ -14,7 +14,7 @@ import android.support.annotation.NonNull
 import guepardoapps.lib.openweather.extensions.circleBitmap
 import guepardoapps.lib.openweather.models.NotificationContent
 
-class NotificationController(@NonNull private val context: Context) : INotificationController {
+internal class NotificationController(@NonNull private val context: Context) : INotificationController {
 
     private val channelId: String = "guepardoapps.lib.openweather"
     private val channelName: String = "OpenWeather"

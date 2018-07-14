@@ -5,7 +5,7 @@ import guepardoapps.lib.openweather.enums.DownloadType
 import guepardoapps.lib.openweather.tasks.ApiRestCallTask
 import guepardoapps.lib.openweather.utils.Logger
 
-class ApiService(override var city: String, override var apiKey: String) : IApiService {
+internal class ApiService(override var city: String, override var apiKey: String) : IApiService {
     private val tag: String = ApiService::class.java.simpleName
 
     private val currentWeatherUrl: String = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=%s"

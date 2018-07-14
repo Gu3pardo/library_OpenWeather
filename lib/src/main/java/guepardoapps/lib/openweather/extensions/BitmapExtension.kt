@@ -2,7 +2,7 @@ package guepardoapps.lib.openweather.extensions
 
 import android.graphics.*
 
-fun Bitmap.circleBitmap(height: Int,
+internal fun Bitmap.circleBitmap(height: Int,
                         width: Int,
                         color: Int): Bitmap {
     val output: Bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)

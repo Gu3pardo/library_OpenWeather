@@ -2,7 +2,7 @@ package guepardoapps.lib.openweather.utils
 
 import android.support.annotation.NonNull
 
-class StringHelper {
+internal class StringHelper {
     companion object {
         fun getStringCount(@NonNull test: String, @NonNull find: String): Int {
             var lastIndex = 0

@@ -23,12 +23,9 @@ import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
 import guepardoapps.lib.openweather.models.WeatherCurrent
 import guepardoapps.lib.openweather.models.WeatherForecast
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
-import guepardoapps.lib.openweather.utils.Logger
 import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    private val tag: String = MainActivity::class.java.canonicalName
 
     private lateinit var context: Context
 
@@ -105,12 +102,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->
-                            Logger.instance.verbose(tag, "Received weather current in subscribe!")
-
                             if (response.value != null) {
                                 handleOnCurrentWeather(response.value as WeatherCurrent)
                             } else {
-                                Logger.instance.warning(tag, "weather current subscribe download was  not successfully")
                                 progressBar.visibility = View.GONE
                                 noDataFallback.visibility = View.VISIBLE
                                 runOnUiThread {
@@ -118,8 +112,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 }
                             }
                         },
-                        { responseError ->
-                            Logger.instance.error(tag, responseError)
+                        { _ ->
                             progressBar.visibility = View.GONE
                             noDataFallback.visibility = View.VISIBLE
                         }
@@ -129,14 +122,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->
-                            Logger.instance.verbose(tag, "Received weather forecast in subscribe!")
-
                             pullRefreshLayout.setRefreshing(false)
                             if (response.value != null) {
                                 handleOnForecastWeather(response.value as WeatherForecast)
                                 searchField.setText("")
                             } else {
-                                Logger.instance.warning(tag, "weather forecast subscribe was  not successfully")
                                 progressBar.visibility = View.GONE
                                 noDataFallback.visibility = View.VISIBLE
                                 runOnUiThread {
@@ -144,8 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 }
                             }
                         },
-                        { responseError ->
-                            Logger.instance.error(tag, responseError)
+                        { _ ->
                             progressBar.visibility = View.GONE
                             noDataFallback.visibility = View.VISIBLE
                         }
@@ -200,7 +189,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun handleOnCurrentWeather(currentWeather: WeatherCurrent) {
         this.currentWeather = currentWeather
-        Logger.instance.verbose(tag, "Implement functionality and UI to handle current weather in MainActivity")
     }
 
     private fun handleOnForecastWeather(forecastWeather: WeatherForecast) {
@@ -216,8 +204,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             listView.adapter = adapter
 
             mainImageView.setImageResource(forecastWeather.getMostWeatherCondition().wallpaperId)
-        } else {
-            Logger.instance.warning(tag, "forecastList is empty")
         }
 
         progressBar.visibility = View.GONE
