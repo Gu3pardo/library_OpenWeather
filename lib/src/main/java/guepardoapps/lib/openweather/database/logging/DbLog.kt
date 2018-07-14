@@ -2,9 +2,4 @@ package guepardoapps.lib.openweather.database.logging
 
 import java.sql.Date
 
-data class DbLog(
-        val id: Int,
-        val dateTime: Date,
-        val severity: Severity,
-        val tag: String,
-        val description: String)
+internal data class DbLog(val id: Int, val dateTime: Date, val severity: Severity, val tag: String, val description: String)

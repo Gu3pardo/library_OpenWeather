@@ -6,12 +6,12 @@ import android.content.Intent
 import guepardoapps.lib.openweather.services.intent.PeriodicActionService
 import guepardoapps.lib.openweather.utils.Logger
 
-class PeriodicActionReceiver : BroadcastReceiver() {
+internal class PeriodicActionReceiver : BroadcastReceiver() {
     private val tag: String = PeriodicActionReceiver::class.java.simpleName
 
     companion object {
-        val requestCode: Int = 211990
-        val action: String = "guepardoapps.lib.openweather.receiver.load"
+        const val requestCode: Int = 211990
+        const val action: String = "guepardoapps.lib.openweather.receiver.reload"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {

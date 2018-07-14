@@ -6,7 +6,7 @@ import guepardoapps.lib.openweather.models.WeatherCurrent
 import guepardoapps.lib.openweather.models.WeatherForecast
 import io.reactivex.subjects.PublishSubject
 
-interface IOpenWeatherService {
+internal interface IOpenWeatherService {
     var city: String
     var apiKey: String
 
@@ -20,7 +20,6 @@ interface IOpenWeatherService {
 
     val weatherCurrentPublishSubject: PublishSubject<RxOptional<WeatherCurrent>>
     val weatherForecastPublishSubject: PublishSubject<RxOptional<WeatherForecast>>
-    var onWeatherServiceListener: OnWeatherServiceListener?
 
     fun initialize(context: Context)
     fun start()

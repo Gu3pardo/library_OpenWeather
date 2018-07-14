@@ -9,13 +9,19 @@ import guepardoapps.lib.openweather.utils.Logger
 import org.json.JSONObject
 import java.util.*
 
-class JsonToWeatherConverter : IJsonToWeatherConverter {
+internal class JsonToWeatherConverter : IJsonToWeatherConverter {
     private val tag: String = JsonToWeatherConverter::class.java.simpleName
+
+    private val codeKey: String = "cod"
+    private val successCode: Int = 200
+
+    private val dateKey: String = "dt_txt"
+    private val dateSplitter: String = " "
 
     override fun convertToWeatherCurrent(jsonString: String): WeatherCurrent? {
         try {
             val jsonObject = JSONObject(jsonString)
-            if (jsonObject.getInt("cod") != 200) {
+            if (jsonObject.getInt(codeKey) != successCode) {
                 Logger.instance.error(tag,
                         "Error in parsing jsonObject in convertToWeatherCurrent: $jsonObject")
                 return null
@@ -79,7 +85,7 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
     override fun convertToWeatherForecast(jsonString: String): WeatherForecast? {
         try {
             val jsonObject = JSONObject(jsonString)
-            if (jsonObject.getInt("cod") != 200) {
+            if (jsonObject.getInt(codeKey) != successCode) {
                 Logger.instance.error(tag,
                         "Error in parsing jsonObject in convertToWeatherForecast: $jsonObject")
                 return null
@@ -119,7 +125,7 @@ class JsonToWeatherConverter : IJsonToWeatherConverter {
             for (index in 0 until dataListJsonArray.length() step 1) {
                 val dataJsonObject = dataListJsonArray.getJSONObject(index)
 
-                val currentDateString = dataJsonObject.getString("dt_txt").split(" ")[0]
+                val currentDateString = dataJsonObject.getString(dateKey).split(dateSplitter)[0]
 
                 if (index == 0 || !currentDateString.contains(previousDateString)) {
                     val weatherForecastPartDivider = WeatherForecastPart()

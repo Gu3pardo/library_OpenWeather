@@ -2,7 +2,7 @@ package guepardoapps.lib.openweather.services.api
 
 import guepardoapps.lib.openweather.enums.DownloadResult
 
-interface IApiService {
+internal interface IApiService {
     var city: String
     var apiKey: String
 

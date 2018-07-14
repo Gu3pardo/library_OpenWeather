@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases)
-[![Version](https://img.shields.io/badge/version-v1.1.2.180712-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-07-12-2.aar)
+[![Version](https://img.shields.io/badge/version-v1.2.0.180714-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-07-14.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/master/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
@@ -24,8 +24,6 @@ Used Libraries are
 - com.squareup.okhttp3:okhttp:3.9.1
 
 - io.reactivex.rxjava2:rxkotlin:2.2.0
-
-- android.arch.work:work-runtime-ktx:1.0.0-alpha04
 
 - com.android.support.constraint:constraint-layout:1.1.2
 - using also latest API28 libs
@@ -67,10 +65,10 @@ class MainActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.io())
             .subscribe(
                 {
-                    response -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    response -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 },
                 {
-                    responseError -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    responseError -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             )
 
@@ -79,10 +77,10 @@ class MainActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.io())
             .subscribe(
                 {
-                    response -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    response -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 },
                 {
-                    responseError -> // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    responseError -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             )
 		
@@ -107,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
 
         OpenWeatherService.instance.dispose() // Dispose the service
-	}
+    }
 }
 ```
 

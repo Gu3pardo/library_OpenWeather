@@ -93,7 +93,9 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         set(value) {
             field = value
             cancelReload()
-            scheduleReload()
+            if (field) {
+                scheduleReload()
+            }
         }
     override var reloadTimeout: Long = minTimeoutMs
         set(value) {
@@ -103,13 +105,10 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 else -> value
             }
             cancelReload()
-            scheduleReload()
+            if (reloadEnabled) {
+                scheduleReload()
+            }
         }
-
-    override var onWeatherServiceListener: OnWeatherServiceListener? = null
-
-    init {
-    }
 
     private object Holder {
         @SuppressLint("StaticFieldLeak")
@@ -142,9 +141,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     DownloadType.Null -> {
                         Logger.instance.error(tag, "Received download update with downloadType Null and jsonString: $jsonString")
 
-                        onWeatherServiceListener?.onCurrentWeather(null, false)
-                        onWeatherServiceListener?.onForecastWeather(null, false)
-
                         weatherCurrent = null
                         weatherForecast = null
 
@@ -175,9 +171,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         val result = apiService.currentWeather()
         if (result != DownloadResult.Performing) {
             Logger.instance.error(tag, "Failure in loadCurrentWeather: $result")
-            onWeatherServiceListener?.onCurrentWeather(null, false)
             weatherCurrent = null
             weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
+        }
+
+        cancelReload()
+        if (reloadEnabled) {
+            scheduleReload()
         }
     }
 
@@ -189,9 +189,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         val result = apiService.forecastWeather()
         if (result != DownloadResult.Performing) {
             Logger.instance.error(tag, "Failure in loadForecastWeather: $result")
-            onWeatherServiceListener?.onForecastWeather(null, false)
             weatherForecast = null
             weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
+        }
+
+        cancelReload()
+        if (reloadEnabled) {
+            scheduleReload()
         }
     }
 
@@ -261,7 +265,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             }
         }
 
-        onWeatherServiceListener?.onCurrentWeather(weatherCurrent, success && weatherCurrent != null)
         weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
     }
 
@@ -280,7 +283,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             }
         }
 
-        onWeatherServiceListener?.onForecastWeather(weatherForecast, success && weatherForecast != null)
         weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
     }
 

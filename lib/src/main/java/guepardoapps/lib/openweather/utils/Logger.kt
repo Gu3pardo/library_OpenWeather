@@ -9,9 +9,9 @@ import guepardoapps.lib.openweather.database.logging.Severity
 import java.sql.Date
 import java.util.*
 
-class Logger private constructor() {
-    var loggingEnabled: Boolean = true
-    var writeToDatabaseEnabled: Boolean = true
+internal class Logger private constructor() {
+    private var loggingEnabled: Boolean = true
+    private var writeToDatabaseEnabled: Boolean = true
 
     private var _dbHandler: DbHandler? = null
 
@@ -30,7 +30,7 @@ class Logger private constructor() {
         if (_dbHandler != null) {
             return
         }
-        _dbHandler = DbHandler(context, null)
+        _dbHandler = DbHandler(context)
     }
 
     fun <T> verbose(@NonNull tag: String, @NonNull description: T) {

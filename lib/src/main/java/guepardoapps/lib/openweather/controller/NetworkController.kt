@@ -11,7 +11,7 @@ import java.net.NetworkInterface
 import java.net.SocketException
 
 @Suppress("DEPRECATION")
-class NetworkController(@NonNull private val context: Context) : INetworkController {
+internal class NetworkController(@NonNull private val context: Context) : INetworkController {
     private val tag: String = NetworkController::class.java.simpleName
 
     private val connectivityManager: ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

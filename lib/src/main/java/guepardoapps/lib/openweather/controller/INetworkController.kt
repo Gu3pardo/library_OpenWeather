@@ -2,7 +2,7 @@ package guepardoapps.lib.openweather.controller
 
 import android.net.NetworkInfo
 
-interface INetworkController {
+internal interface INetworkController {
     fun isInternetConnected(): Pair<NetworkInfo?, Boolean>
     fun getIpAddress(): String
 

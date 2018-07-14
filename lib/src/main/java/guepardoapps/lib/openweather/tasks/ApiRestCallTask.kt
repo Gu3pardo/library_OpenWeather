@@ -7,7 +7,7 @@ import guepardoapps.lib.openweather.utils.Logger
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-class ApiRestCallTask : AsyncTask<String, Void, String>() {
+internal class ApiRestCallTask : AsyncTask<String, Void, String>() {
     private val tag: String = ApiRestCallTask::class.java.simpleName
 
     lateinit var downloadType: DownloadType

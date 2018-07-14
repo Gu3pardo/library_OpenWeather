@@ -10,8 +10,8 @@ import java.sql.Date
 // https://developer.android.com/training/data-storage/sqlite
 // https://www.techotopia.com/index.php/A_Kotlin_Android_SQLite_Database_Tutorial
 
-class DbHandler(context: Context, factory: SQLiteDatabase.CursorFactory?)
-    : SQLiteOpenHelper(context, DatabaseName, factory, DatabaseVersion) {
+internal class DbHandler(context: Context)
+    : SQLiteOpenHelper(context, DatabaseName, null, DatabaseVersion) {
 
     override fun onCreate(database: SQLiteDatabase) {
         val createTable = (
@@ -44,9 +44,7 @@ class DbHandler(context: Context, factory: SQLiteDatabase.CursorFactory?)
         }
 
         val database = this.writableDatabase
-        val newRowId = database.insert(DatabaseTable, null, values)
-
-        return newRowId
+        return database.insert(DatabaseTable, null, values)
     }
 
     fun updateLog(dbLog: DbLog): Int {
@@ -61,9 +59,7 @@ class DbHandler(context: Context, factory: SQLiteDatabase.CursorFactory?)
         val selectionArgs = arrayOf(dbLog.id.toString())
 
         val database = this.writableDatabase
-        val count = database.update(DatabaseTable, values, selection, selectionArgs)
-
-        return count
+        return database.update(DatabaseTable, values, selection, selectionArgs)
     }
 
     fun deleteLogById(id: Int): Int {
