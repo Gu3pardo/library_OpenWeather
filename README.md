@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases)
-[![Version](https://img.shields.io/badge/version-v1.2.0.180714-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases/openweather-2018-07-14.aar)
+[![Version](https://img.shields.io/badge/version-v1.2.1.180809-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases/openweather-2018-08-09.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/develop/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
@@ -27,6 +27,8 @@ Used Libraries are
 
 - com.android.support.constraint:constraint-layout:1.1.2
 - using also latest API28 libs
+
+- tests based on mockito and spek
 
 - and some more
 

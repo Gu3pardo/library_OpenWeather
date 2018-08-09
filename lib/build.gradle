@@ -2,16 +2,26 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+// junit5 doesn't support android projects out of the box
+apply plugin: "de.mannodermaus.android-junit5"
+
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.1"
+    buildToolsVersion "28.0.2"
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10200
-        versionName "1.2.0.180714"
+        versionCode 10201
+        versionName "1.2.1.180809"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        testOptions {
+            unitTests.returnDefaultValues = true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -27,10 +37,19 @@ android {
 }
 
 repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
     google()
     jcenter()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url "http://dl.bintray.com/jetbrains/spek" }
+}
+
+junitPlatform {
+    filters {
+        engines {
+            include "spek"
+        }
+    }
 }
 
 dependencies {
@@ -59,5 +78,22 @@ dependencies {
 
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test:runner:$test_runner_version"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_runner_version"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$test_espresso_version"
+
+    // required if you want to use Mockito for unit tests
+    testImplementation "org.mockito:mockito-core:$mockito_version"
+    // required if you want to use Mockito for Android tests
+    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+
+    testImplementation("org.jetbrains.spek:spek-api:$spek_version") {
+        exclude group: "org.jetbrains.kotlin"
+    }
+    testImplementation("org.jetbrains.spek:spek-junit-platform-engine:$spek_version") {
+        exclude group: "org.junit.platform"
+        exclude group: "org.jetbrains.kotlin"
+    }
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    testImplementation "org.junit.platform:junit-platform-engine:$junit_platform_version"
+
+    testImplementation "org.junit.platform:junit-platform-runner:$junit_platform_runner_version"
 }

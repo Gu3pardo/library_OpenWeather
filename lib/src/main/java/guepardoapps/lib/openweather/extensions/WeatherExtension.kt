@@ -42,38 +42,38 @@ fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
 }
 
 fun WeatherForecast.getMinTemperature(): Double {
-    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList.sortedBy { x -> x.temperatureMin }
+    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList = dataList.sortedBy { x -> x.temperatureMin }
     return dataList.first().temperatureMin
 }
 
 fun WeatherForecast.getMaxTemperature(): Double {
-    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList.sortedByDescending { x -> x.temperatureMax }
+    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList = dataList.sortedByDescending { x -> x.temperatureMax }
     return dataList.first().temperatureMax
 }
 
 fun WeatherForecast.getMinPressure(): Double {
-    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList.sortedBy { x -> x.pressure }
+    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList = dataList.sortedBy { x -> x.pressure }
     return dataList.first().pressure
 }
 
 fun WeatherForecast.getMaxPressure(): Double {
-    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList.sortedByDescending { x -> x.pressure }
+    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList = dataList.sortedByDescending { x -> x.pressure }
     return dataList.first().pressure
 }
 
 fun WeatherForecast.getMinHumidity(): Double {
-    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList.sortedBy { x -> x.humidity }
+    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList = dataList.sortedBy { x -> x.humidity }
     return dataList.first().humidity
 }
 
 fun WeatherForecast.getMaxHumidity(): Double {
-    val dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList.sortedByDescending { x -> x.humidity }
+    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
+    dataList = dataList.sortedByDescending { x -> x.humidity }
     return dataList.first().humidity
 }
 
@@ -84,7 +84,6 @@ fun WeatherForecastPart.getForecastDayTime(): ForecastDayTime {
         in 11..14 -> ForecastDayTime.Midday
         in 15..17 -> ForecastDayTime.Afternoon
         in 18..20 -> ForecastDayTime.Evening
-        in 21..24 -> ForecastDayTime.Night
-        else -> ForecastDayTime.Null
+        else -> ForecastDayTime.Night
     }
 }
