@@ -1,35 +1,46 @@
 package guepardoapps.lib.openweather.extensions
 
-import org.junit.Test
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
 
 import org.junit.Assert.*
+import org.junit.platform.runner.JUnitPlatform
+import org.junit.runner.RunWith
 
-class NumberExtensionUnitTest {
-    @Test
-    fun integerFormat_isCorrect() {
-        // Arrange
-        val integerToTest = 5
-        val charCount = 2
-        val expectedString = "05"
+@RunWith(JUnitPlatform::class)
+class NumberExtensionUnitTest : Spek({
 
-        // Act
-        val actualString = integerToTest.integerFormat(charCount)
+    describe("Unit tests for NumberExtensionUnitTest") {
 
-        // Assert
-        assertEquals(expectedString, actualString)
+        beforeEachTest { }
+
+        afterEachTest { }
+
+        it("integerFormat should be correct") {
+            // Arrange
+            val integerToTest = 5
+            val charCount = 2
+            val expectedString = "05"
+
+            // Act
+            val actualString = integerToTest.integerFormat(charCount)
+
+            // Assert
+            assertEquals(expectedString, actualString)
+        }
+
+        it("doubleFormat should be correct") {
+            // Arrange
+            val doubleToTest = 5.4
+            val decimalCount = 2
+            val expectedString = "5.40"
+
+            // Act
+            val actualString = doubleToTest.doubleFormat(decimalCount)
+
+            // Assert
+            assertEquals(expectedString, actualString)
+        }
     }
-
-    @Test
-    fun doubleFormat_isCorrect() {
-        // Arrange
-        val doubleToTest = 5.4
-        val decimalCount = 2
-        val expectedString = "5.40"
-
-        // Act
-        val actualString = doubleToTest.doubleFormat(decimalCount)
-
-        // Assert
-        assertEquals(expectedString, actualString)
-    }
-}
+})
