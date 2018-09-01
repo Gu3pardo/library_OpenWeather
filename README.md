@@ -1,15 +1,15 @@
-# library_OpenWeather - development branch
+# library_OpenWeather - master branch
 
 [![Platform](https://img.shields.io/badge/platform-Android-blue.svg)](https://www.android.com)
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 <a target="_blank" href="https://android-arsenal.com/api?level=21" title="API21+"><img src="https://img.shields.io/badge/API-21+-blue.svg" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases)
-[![Version](https://img.shields.io/badge/version-v1.2.1.180809-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/develop/releases/openweather-2018-08-09.aar)
+[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases)
+[![Version](https://img.shields.io/badge/version-v1.2.1.180809-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-08-09.aar)
 
 library for downloading and handling data from openweather
-example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/develop/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
+example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/master/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
 
 Based on Kotlin, using Listener, Extensions and more.
 
@@ -34,7 +34,7 @@ Used Libraries are
 
 ---
 
-![alt tag](https://github.com/GuepardoApps/library_OpenWeather/blob/develop/screenshots/example_usage.png)
+![alt tag](https://github.com/GuepardoApps/library_OpenWeather/blob/master/screenshots/example_usage.png)
 
 ---
 
