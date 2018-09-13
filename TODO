@@ -1,1 +1,5 @@
-[] update libraries
+[x] update libraries
+[ ] add additional OpenWeather APIs
+    [x] UV Index
+    [ ] Air pollution
+    [ ] ...

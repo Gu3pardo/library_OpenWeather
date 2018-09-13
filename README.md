@@ -1,15 +1,15 @@
-# library_OpenWeather - master branch
+# OpenWeather-Android - master branch
 
 [![Platform](https://img.shields.io/badge/platform-Android-blue.svg)](https://www.android.com)
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 <a target="_blank" href="https://android-arsenal.com/api?level=21" title="API21+"><img src="https://img.shields.io/badge/API-21+-blue.svg" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases)
-[![Version](https://img.shields.io/badge/version-v1.2.1.180809-green.svg)](https://github.com/GuepardoApps/library_OpenWeather/tree/master/releases/openweather-2018-08-09.aar)
+[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/releases)
+[![Version](https://img.shields.io/badge/version-v1.3.0.180913-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/releases/openweather-android-2018-09-13.aar)
 
 library for downloading and handling data from openweather
-example application can be found here: https://github.com/GuepardoApps/library_OpenWeather/tree/master/app (Fork project and add your private OpenWeather ApiKey to MainActivity)
+example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/app (Fork project and add your private OpenWeather ApiKey to strings.xml)
 
 Based on Kotlin, using Listener, Extensions and more.
 
@@ -21,11 +21,12 @@ Used Libraries are
 - com.github.GrenderG:Toasty:1.2.5
 - com.github.matecode:Snacky:1.0.2
 - com.github.rey5137:material:1.2.4
+- com.google.code.gson:gson:2.8.5
 - com.squareup.okhttp3:okhttp:3.9.1
 
 - io.reactivex.rxjava2:rxkotlin:2.2.0
 
-- com.android.support.constraint:constraint-layout:1.1.2
+- com.android.support.constraint:constraint-layout:1.1.3
 - using also latest API28 libs
 
 - tests based on mockito and spek
@@ -34,7 +35,7 @@ Used Libraries are
 
 ---
 
-![alt tag](https://github.com/GuepardoApps/library_OpenWeather/blob/master/screenshots/example_usage.png)
+![alt tag](https://github.com/OpenWeatherLib/OpenWeather-Android/blob/master/screenshots/example_usage.png)
 
 ---
 
@@ -53,9 +54,20 @@ class MainActivity : AppCompatActivity() {
         ...
 
         OpenWeatherService.instance.initialize(this)
+
+        val geoLocation = GeoLocation()
+        geoLocation.latitude = 49.4539
+        geoLocation.longitude = 11.0773
+
+        val city = City()
+        city.id = 2861650
+        city.name = getString(R.string.openweather_city)
+        city.country = "DE"
+        city.population = 499237
+        city.geoLocation = geoLocation
 		
         OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)    // Set ApiKey => Will be read from xml file
-        OpenWeatherService.instance.city = getString(R.string.openweather_city)         // Set your preferred city
+        OpenWeatherService.instance.city = city                                         // Set your preferred city
         OpenWeatherService.instance.notificationEnabled = true                          // Enable/Disable notifications
         OpenWeatherService.instance.wallpaperEnabled = true                             // Enable/Disable set of wallpaper
         OpenWeatherService.instance.receiverActivity = MainActivity::class.java         // Set receiver for notifications
@@ -85,17 +97,18 @@ class MainActivity : AppCompatActivity() {
                     responseError -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             )
-		
-        // Set onWeatherServiceListener (DEPRECATED)
-        OpenWeatherService.instance.onWeatherServiceListener = (object : OnWeatherServiceListener {
-            override fun onCurrentWeather(currentWeather: WeatherCurrent?, success: Boolean) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
 
-            override fun onForecastWeather(forecastWeather: WeatherForecast?, success: Boolean) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
+        // Subscribe on uvIndexPublishSubject (Using ReactiveX2)
+        OpenWeatherService.instance.uvIndexPublishSubject
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                {
+                    response -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                },
+                {
+                    responseError -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            )
 
         // Finally start everything (IMPORTANT)
         OpenWeatherService.instance.start()
@@ -111,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-To display received data use the customadapter in the library
+To display received data use the custom adapter in the library
 
 ```java
 class MainActivity : AppCompatActivity() {

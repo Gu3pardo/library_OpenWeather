@@ -6,8 +6,8 @@ import guepardoapps.lib.openweather.controller.*
 import guepardoapps.lib.openweather.converter.*
 import guepardoapps.lib.openweather.enums.*
 import guepardoapps.lib.openweather.extensions.*
+import guepardoapps.lib.openweather.logging.Logger
 import guepardoapps.lib.openweather.models.*
-import guepardoapps.lib.openweather.utils.Logger
 import android.app.WallpaperManager
 import guepardoapps.lib.openweather.services.api.ApiService
 import guepardoapps.lib.openweather.services.api.OnApiServiceListener
@@ -17,6 +17,9 @@ import java.util.*
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import com.google.gson.Gson
+import guepardoapps.lib.openweather.R
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.receiver.PeriodicActionReceiver
 
 class OpenWeatherService private constructor() : IOpenWeatherService {
@@ -24,6 +27,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
 
     private val currentWeatherNotificationId: Int = 260520181
     private val forecastWeatherNotificationId: Int = 260520182
+    private val uvIndexNotificationId: Int = 260520183
 
     private val minTimeoutMs: Long = 15 * 60 * 1000
     private val maxTimeoutMs: Long = 24 * 60 * 60 * 1000
@@ -36,23 +40,45 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private lateinit var context: Context
     private lateinit var networkController: NetworkController
     private lateinit var notificationController: NotificationController
+    private lateinit var sharedPreferenceController: SharedPreferenceController
 
     var weatherCurrent: WeatherCurrent? = null
         private set(value) {
             field = value
+            if (value != null) {
+                city = value.city
+            }
         }
     override val weatherCurrentPublishSubject = PublishSubject.create<RxOptional<WeatherCurrent>>()!!
 
     var weatherForecast: WeatherForecast? = null
         private set(value) {
             field = value
+            if (value != null) {
+                city = value.city
+            }
         }
     override val weatherForecastPublishSubject = PublishSubject.create<RxOptional<WeatherForecast>>()!!
 
-    override var city: String
-        get() = apiService.city
+    var uvIndex: UvIndex? = null
+        private set(value) {
+            field = value
+        }
+    override val uvIndexPublishSubject = PublishSubject.create<RxOptional<UvIndex>>()!!
+
+    override var city: City
+        get() {
+            val cityString = this.sharedPreferenceController.load(Constants.sharedPrefKeyCity, "")
+            if (cityString.isBlank()) {
+                return City()
+            }
+            Logger.instance.debug(tag,"CityStringGet: $cityString")
+            return Gson().fromJson<City>(cityString, City::class.java)
+        }
         set(value) {
             apiService.city = value
+            Logger.instance.debug(tag,"CityStringSet: ${Gson().toJson(value)}")
+            this.sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(value).toString())
         }
     override var apiKey: String
         get() = apiService.apiKey
@@ -68,6 +94,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             } else {
                 notificationController.close(currentWeatherNotificationId)
                 notificationController.close(forecastWeatherNotificationId)
+                notificationController.close(uvIndexNotificationId)
             }
         }
     override var receiverActivity: Class<*>? = null
@@ -78,6 +105,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             } else {
                 notificationController.close(currentWeatherNotificationId)
                 notificationController.close(forecastWeatherNotificationId)
+                notificationController.close(uvIndexNotificationId)
             }
         }
 
@@ -124,6 +152,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
 
         this.networkController = NetworkController(this.context)
         this.notificationController = NotificationController(this.context)
+        this.sharedPreferenceController = SharedPreferenceController(this.context)
 
         Logger.instance.initialize(context)
 
@@ -138,14 +167,19 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     DownloadType.Forecast -> {
                         handleForecastWeatherUpdate(success, jsonString)
                     }
+                    DownloadType.UvIndex -> {
+                        handleUvIndexUpdate(success, jsonString)
+                    }
                     DownloadType.Null -> {
                         Logger.instance.error(tag, "Received download update with downloadType Null and jsonString: $jsonString")
 
                         weatherCurrent = null
                         weatherForecast = null
+                        uvIndex = null
 
                         weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
                         weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
+                        uvIndexPublishSubject.onNext(RxOptional(uvIndex))
                     }
                 }
             }
@@ -156,10 +190,12 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         mayLoad = true
         loadWeatherCurrent()
         loadWeatherForecast()
+        loadUvIndex()
         scheduleReload()
     }
 
     override fun dispose() {
+        mayLoad = false
         cancelReload()
     }
 
@@ -191,6 +227,24 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             Logger.instance.error(tag, "Failure in loadForecastWeather: $result")
             weatherForecast = null
             weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
+        }
+
+        cancelReload()
+        if (reloadEnabled) {
+            scheduleReload()
+        }
+    }
+
+    override fun loadUvIndex() {
+        if (!mayLoad) {
+            return
+        }
+
+        val result = apiService.uvIndex()
+        if (result != DownloadResult.Performing) {
+            Logger.instance.error(tag, "Failure in uvIndex: $result")
+            uvIndex = null
+            uvIndexPublishSubject.onNext(RxOptional(uvIndex))
         }
 
         cancelReload()
@@ -286,12 +340,32 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
     }
 
+    private fun handleUvIndexUpdate(success: Boolean, jsonString: String) {
+        if (!success) {
+            uvIndex = null
+        } else {
+            val convertedUvIndex = converter.convertToUvIndex(jsonString)
+            if (convertedUvIndex == null) {
+                uvIndex = null
+            } else {
+                uvIndex = convertedUvIndex
+                if (notificationEnabled) {
+                    displayNotification()
+                }
+            }
+        }
+
+        uvIndexPublishSubject.onNext(RxOptional(uvIndex))
+    }
+
     private fun displayNotification() {
         if (weatherCurrent != null) {
             val currentWeatherNotificationContent = NotificationContent(
                     currentWeatherNotificationId,
                     "Current Weather: " + weatherCurrent!!.description,
                     weatherCurrent!!.temperature.doubleFormat(1) + "${0x00B0.toChar()}C, "
+                            + "(" + weatherCurrent!!.temperatureMin.doubleFormat(1) + "${0x00B0.toChar()}C - "
+                            + "(" + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${0x00B0.toChar()}C), "
                             + weatherCurrent!!.pressure.doubleFormat(1) + "mBar, "
                             + weatherCurrent!!.humidity.doubleFormat(1) + "%",
                     weatherCurrent!!.weatherCondition.iconId,
@@ -313,6 +387,18 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                             + weatherForecast!!.getMaxHumidity().doubleFormat(1) + "%",
                     weatherForecast!!.getMostWeatherCondition().iconId,
                     weatherForecast!!.getMostWeatherCondition().wallpaperId,
+                    receiverActivity!!,
+                    true)
+            notificationController.create(forecastWeatherNotificationContent)
+        }
+
+        if (uvIndex != null) {
+            val forecastWeatherNotificationContent = NotificationContent(
+                    uvIndexNotificationId,
+                    "UvIndex",
+                    "Value is ${uvIndex!!.value}",
+                    R.drawable.uv_index,
+                    R.drawable.uv_index,
                     receiverActivity!!,
                     true)
             notificationController.create(forecastWeatherNotificationContent)

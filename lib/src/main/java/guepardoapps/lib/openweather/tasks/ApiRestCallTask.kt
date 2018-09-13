@@ -1,9 +1,9 @@
 package guepardoapps.lib.openweather.tasks
 
 import android.os.AsyncTask
-import guepardoapps.lib.openweather.services.api.OnApiServiceListener
 import guepardoapps.lib.openweather.enums.DownloadType
-import guepardoapps.lib.openweather.utils.Logger
+import guepardoapps.lib.openweather.logging.Logger
+import guepardoapps.lib.openweather.services.api.OnApiServiceListener
 import okhttp3.OkHttpClient
 import okhttp3.Request
 

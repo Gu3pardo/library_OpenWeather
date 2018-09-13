@@ -1,13 +1,11 @@
 package guepardoapps.lib.openweather.services.openweather
 
 import android.content.Context
-import guepardoapps.lib.openweather.models.RxOptional
-import guepardoapps.lib.openweather.models.WeatherCurrent
-import guepardoapps.lib.openweather.models.WeatherForecast
+import guepardoapps.lib.openweather.models.*
 import io.reactivex.subjects.PublishSubject
 
 internal interface IOpenWeatherService {
-    var city: String
+    var city: City
     var apiKey: String
 
     var notificationEnabled: Boolean
@@ -20,6 +18,7 @@ internal interface IOpenWeatherService {
 
     val weatherCurrentPublishSubject: PublishSubject<RxOptional<WeatherCurrent>>
     val weatherForecastPublishSubject: PublishSubject<RxOptional<WeatherForecast>>
+    val uvIndexPublishSubject: PublishSubject<RxOptional<UvIndex>>
 
     fun initialize(context: Context)
     fun start()
@@ -27,6 +26,7 @@ internal interface IOpenWeatherService {
 
     fun loadWeatherCurrent()
     fun loadWeatherForecast()
+    fun loadUvIndex()
 
     fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast
 }

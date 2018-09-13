@@ -17,7 +17,7 @@ import java.util.*
 @RunWith(JUnitPlatform::class)
 class WeatherExtensionUnitTest : Spek({
 
-    describe("Unit tests for WeatherExtensionUnitTest") {
+    describe("Unit tests for WeatherExtension") {
 
         beforeEachTest { }
 
@@ -149,7 +149,7 @@ class WeatherExtensionUnitTest : Spek({
             val actual = weatherForecast.getMaxPressure()
 
             // Assert
-            assert(actual == 973.5)
+            assert(actual == 981.0)
         }
 
         it("getMinHumidity should be correct") {

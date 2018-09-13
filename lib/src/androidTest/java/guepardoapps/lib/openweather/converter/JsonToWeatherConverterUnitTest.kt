@@ -14,7 +14,7 @@ import java.util.*
 @RunWith(JUnitPlatform::class)
 class JsonToWeatherConverterUnitTest : Spek({
 
-    describe("Unit tests for JsonToWeatherConverterUnitTest") {
+    describe("Unit tests for JsonToWeatherConverter") {
 
         beforeEachTest { }
 
@@ -138,6 +138,35 @@ class JsonToWeatherConverterUnitTest : Spek({
             assertEquals(expectedWeatherForecast.list[0].cloudsAll, actualWeatherForecast.list[1].cloudsAll)
             assertEquals(expectedWeatherForecast.list[0].windSpeed, actualWeatherForecast.list[1].windSpeed, 0.0)
             assertEquals(expectedWeatherForecast.list[0].windDegree, actualWeatherForecast.list[1].windDegree, 0.0)
+        }
+
+        it("convertToUvIndex should be correct") {
+            // Arrange
+            val jsonToWeatherConverter = JsonToWeatherConverter()
+            val jsonStringToTest = "{\"lat\":37.75,\"lon\":-122.37,\"date_iso\":\"2018-09-13T12:00:00Z\",\"date\":1536840000,\"value\":6.96}"
+
+            val geoLocation = GeoLocation()
+            geoLocation.longitude = -122.37
+            geoLocation.latitude = 37.75
+
+            val datetime = Calendar.getInstance()
+            datetime.timeInMillis = 1527304731000
+
+            val value = 6.96
+
+            val expectedUvIndex = UvIndex()
+            expectedUvIndex.geoLocation = geoLocation
+            expectedUvIndex.dateTime = datetime
+            expectedUvIndex.value = value
+
+            // Act
+            val actualUvIndex = jsonToWeatherConverter.convertToUvIndex(jsonStringToTest)
+
+            // Assert
+            assertEquals(expectedUvIndex.geoLocation.longitude, actualUvIndex!!.geoLocation.longitude)
+            assertEquals(expectedUvIndex.geoLocation.latitude, actualUvIndex.geoLocation.latitude)
+            assertEquals(expectedUvIndex.dateTime.timeInMillis, actualUvIndex.dateTime.timeInMillis)
+            assertEquals(expectedUvIndex.value, actualUvIndex.value)
         }
     }
 })
