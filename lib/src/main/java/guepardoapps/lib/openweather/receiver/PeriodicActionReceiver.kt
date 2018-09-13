@@ -3,8 +3,8 @@ package guepardoapps.lib.openweather.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import guepardoapps.lib.openweather.logging.Logger
 import guepardoapps.lib.openweather.services.intent.PeriodicActionService
-import guepardoapps.lib.openweather.utils.Logger
 
 internal class PeriodicActionReceiver : BroadcastReceiver() {
     private val tag: String = PeriodicActionReceiver::class.java.simpleName

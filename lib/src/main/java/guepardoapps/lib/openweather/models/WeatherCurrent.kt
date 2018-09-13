@@ -8,6 +8,9 @@ import java.util.*
 class WeatherCurrent {
     private val tag: String = WeatherCurrent::class.java.simpleName
 
+    @JsonKey("weather", "icon")
+    var icon: String = ""
+
     @JsonKey("weather", "description")
     var description: String = ""
 
@@ -17,24 +20,47 @@ class WeatherCurrent {
     @JsonKey("main", "temp")
     var temperature: Double = 0.0
 
+    @JsonKey("main", "temp_min")
+    var temperatureMin: Double = 0.0
+
+    @JsonKey("main", "temp_max")
+    var temperatureMax: Double = 0.0
+
     @JsonKey("main", "humidity")
     var humidity: Double = 0.0
 
     @JsonKey("main", "pressure")
     var pressure: Double = 0.0
 
+    @JsonKey("", "visibility")
+    var visibility: Int = 0
+
+    @JsonKey("clouds", "all")
+    var cloudsAll: Int = 0
+
+    @JsonKey("wind", "speed")
+    var windSpeed: Double = 0.0
+
+    @JsonKey("wind", "deg")
+    var windDegree: Double = 0.0
+
+    @JsonKey("", "dt")
+    var dateTime: Calendar = Calendar.getInstance()
+
     @JsonKey("sys", "sunrise")
     var sunriseTime: Calendar = Calendar.getInstance()
 
     @JsonKey("sys", "sunset")
     var sunsetTime: Calendar = Calendar.getInstance()
-    
+
     var city: City = City()
     var lastUpdate: Calendar = Calendar.getInstance()
 
     override fun toString(): String {
-        return "{Class: $tag, City: $city, Description: $description, " +
-                "Temperature: $temperature, Humidity: $humidity, Pressure: $pressure, " +
+        return "{Class: $tag, City: $city, Icon: $icon, Description: $description, " +
+                "Temperature: $temperature, TemperatureMin: $temperatureMin, TemperatureMax: $temperatureMax, " +
+                "Humidity: $humidity, Pressure: $pressure, Visibility: $visibility, " +
+                "CloudsAll: $cloudsAll, WindSpeed: $windSpeed, WindDegree: $windDegree, " +
                 "SunriseTime: $sunriseTime, SunsetTime: $sunsetTime, LastUpdate: $lastUpdate, " +
                 "WeatherCondition: $weatherCondition}"
     }

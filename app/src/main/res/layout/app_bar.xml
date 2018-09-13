@@ -22,7 +22,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <com.flaviofaria.kenburnsview.KenBurnsView
-                android:id="@+id/kenBurnsView"
+                android:id="@+id/mainImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/contentDescription"
@@ -52,7 +52,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <EditText
-            android:id="@+id/search"
+            android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/searchHint"
@@ -66,7 +66,7 @@
             android:layout_centerHorizontal="true" />
 
         <TextView
-            android:id="@+id/fallBackTextView"
+            android:id="@+id/noDataFallback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -80,7 +80,7 @@
             android:id="@+id/pullRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/search"
+            android:layout_below="@id/searchEditText"
             android:layout_marginBottom="?attr/actionBarSize">
 
             <ListView

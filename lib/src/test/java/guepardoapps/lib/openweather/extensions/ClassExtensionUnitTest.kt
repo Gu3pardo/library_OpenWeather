@@ -1,9 +1,6 @@
 package guepardoapps.lib.openweather.extensions
 
-import guepardoapps.lib.openweather.models.City
-import guepardoapps.lib.openweather.models.GeoLocation
-import guepardoapps.lib.openweather.models.WeatherCurrent
-import guepardoapps.lib.openweather.models.WeatherForecastPart
+import guepardoapps.lib.openweather.models.*
 
 import org.junit.Assert.*
 
@@ -17,7 +14,7 @@ import org.junit.runner.RunWith
 @RunWith(JUnitPlatform::class)
 class ClassExtensionUnitTest : Spek({
 
-    describe("Unit tests for ClassExtensionUnitTest") {
+    describe("Unit tests for ClassExtension") {
 
         beforeEachTest { }
 
@@ -37,7 +34,7 @@ class ClassExtensionUnitTest : Spek({
             assertEquals(expectedKey, actualJsonKey.key)
         }
 
-        it("getPropertyJsonKey for city  should be correct") {
+        it("getPropertyJsonKey for city should be correct") {
             // Arrange
             val city = City()
             val expectedParent = "city"
@@ -50,6 +47,29 @@ class ClassExtensionUnitTest : Spek({
             // Assert
             assertEquals(expectedParent, actualJsonKey.parent)
             assertEquals(expectedKey, actualJsonKey.key)
+        }
+
+        it("isDefault for city should be true") {
+            // Arrange
+            val city = City()
+
+            // Act
+            val actual = city.isDefault()
+
+            // Assert
+            assertEquals(true, actual)
+        }
+
+        it("isDefault for city should be false") {
+            // Arrange
+            val city = City()
+            city.id = 420
+
+            // Act
+            val actual = city.isDefault()
+
+            // Assert
+            assertEquals(false, actual)
         }
 
         it("getJsonKey for geoLocation should be correct") {
@@ -66,7 +86,7 @@ class ClassExtensionUnitTest : Spek({
             assertEquals(expectedKey, actualJsonKey.key)
         }
 
-        it("getPropertyJsonKey for geoLocation  should be correct") {
+        it("getPropertyJsonKey for geoLocation should be correct") {
             // Arrange
             val geoLocation = GeoLocation()
             val expectedParent = "coord"
@@ -75,6 +95,58 @@ class ClassExtensionUnitTest : Spek({
             // Act
             val name = geoLocation::latitude.name
             val actualJsonKey = geoLocation.getPropertyJsonKey(name)
+
+            // Assert
+            assertEquals(expectedParent, actualJsonKey.parent)
+            assertEquals(expectedKey, actualJsonKey.key)
+        }
+
+        it("isDefault for geoLocation should be true") {
+            // Arrange
+            val geoLocation = GeoLocation()
+
+            // Act
+            val actual = geoLocation.isDefault()
+
+            // Assert
+            assertEquals(true, actual)
+        }
+
+        it("isDefault for geoLocation should be false") {
+            // Arrange
+            val geoLocation = GeoLocation()
+            geoLocation.longitude = 45.0
+
+            // Act
+            val actual = geoLocation.isDefault()
+
+            // Assert
+            assertEquals(false, actual)
+        }
+
+        it("getJsonKey for uv index should be correct") {
+            // Arrange
+            val uvIndex = UvIndex()
+            val expectedParent = ""
+            val expectedKey = ""
+
+            // Act
+            val actualJsonKey = uvIndex.getJsonKey()
+
+            // Assert
+            assertEquals(expectedParent, actualJsonKey.parent)
+            assertEquals(expectedKey, actualJsonKey.key)
+        }
+
+        it("getPropertyJsonKey for uv index should be correct") {
+            // Arrange
+            val uvIndex = UvIndex()
+            val expectedParent = ""
+            val expectedKey = "value"
+
+            // Act
+            val name = uvIndex::value.name
+            val actualJsonKey = uvIndex.getPropertyJsonKey(name)
 
             // Assert
             assertEquals(expectedParent, actualJsonKey.parent)
@@ -95,7 +167,7 @@ class ClassExtensionUnitTest : Spek({
             assertEquals(expectedKey, actualJsonKey.key)
         }
 
-        it("getPropertyJsonKey for weather current  should be correct") {
+        it("getPropertyJsonKey for weather current should be correct") {
             // Arrange
             val weatherCurrent = WeatherCurrent()
             val expectedParent = "main"

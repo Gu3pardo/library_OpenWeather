@@ -14,34 +14,25 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import com.baoyz.widget.PullRefreshLayout
-import com.flaviofaria.kenburnsview.KenBurnsView
 import de.mateware.snacky.Snacky
 import es.dmoral.toasty.Toasty
 import guepardoapps.lib.openweather.adapter.ForecastListAdapter
 import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
-import guepardoapps.lib.openweather.models.WeatherCurrent
-import guepardoapps.lib.openweather.models.WeatherForecast
+import guepardoapps.lib.openweather.models.*
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.app_bar.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var context: Context
 
-    private lateinit var mainImageView: KenBurnsView
-    private lateinit var listView: ListView
-    private lateinit var progressBar: ProgressBar
-    private lateinit var noDataFallback: TextView
-
-    private lateinit var searchField: EditText
-
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
-    private lateinit var pullRefreshLayout: PullRefreshLayout
 
     private lateinit var currentWeather: WeatherCurrent
     private lateinit var forecastWeather: WeatherForecast
+    private lateinit var uvIndex: UvIndex
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,13 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         context = this
         OpenWeatherService.instance.initialize(context)
 
-        mainImageView = findViewById(R.id.kenBurnsView)
-        listView = findViewById(R.id.listView)
-        progressBar = findViewById(R.id.progressBar)
-        noDataFallback = findViewById(R.id.fallBackTextView)
-
-        searchField = findViewById(R.id.search)
-        searchField.addTextChangedListener(object : TextWatcher {
+        searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
@@ -84,16 +69,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        pullRefreshLayout = findViewById(R.id.pullRefreshLayout)
         pullRefreshLayout.setOnRefreshListener {
             listView.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
-            searchField.visibility = View.INVISIBLE
+            searchEditText.visibility = View.INVISIBLE
             OpenWeatherService.instance.loadWeatherForecast()
         }
 
+        val geoLocation = GeoLocation()
+        geoLocation.latitude = 49.4539
+        geoLocation.longitude = 11.0773
+
+        val city = City()
+        city.id = 2861650
+        city.name = getString(R.string.openweather_city)
+        city.country = "DE"
+        city.population = 499237
+        city.geoLocation = geoLocation
+
         OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)
-        OpenWeatherService.instance.city = getString(R.string.openweather_city)
+        OpenWeatherService.instance.city = city
         OpenWeatherService.instance.notificationEnabled = true
         OpenWeatherService.instance.wallpaperEnabled = true
         OpenWeatherService.instance.receiverActivity = MainActivity::class.java
@@ -105,17 +100,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             if (response.value != null) {
                                 handleOnCurrentWeather(response.value as WeatherCurrent)
                             } else {
-                                progressBar.visibility = View.GONE
-                                noDataFallback.visibility = View.VISIBLE
                                 runOnUiThread {
                                     Toasty.warning(context, "weather current subscribe  was  not successfully", Toast.LENGTH_LONG).show()
                                 }
                             }
                         },
-                        { _ ->
-                            progressBar.visibility = View.GONE
-                            noDataFallback.visibility = View.VISIBLE
-                        }
+                        { _ -> }
                 )
 
         OpenWeatherService.instance.weatherForecastPublishSubject
@@ -125,7 +115,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             pullRefreshLayout.setRefreshing(false)
                             if (response.value != null) {
                                 handleOnForecastWeather(response.value as WeatherForecast)
-                                searchField.setText("")
+                                searchEditText.setText("")
                             } else {
                                 progressBar.visibility = View.GONE
                                 noDataFallback.visibility = View.VISIBLE
@@ -139,6 +129,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             noDataFallback.visibility = View.VISIBLE
                         }
                 )
+
+        OpenWeatherService.instance.uvIndexPublishSubject
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        { response ->
+                            if (response.value != null) {
+                                handleOnUvIndex(response.value as UvIndex)
+                            } else {
+                                runOnUiThread {
+                                    Toasty.warning(context, "uv index subscribe  was  not successfully", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        },
+                        { _ -> })
 
         OpenWeatherService.instance.reloadEnabled = true
         OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000
@@ -197,7 +201,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val forecastList = forecastWeather.list
         if (forecastList.isNotEmpty()) {
             noDataFallback.visibility = View.GONE
-            searchField.visibility = View.VISIBLE
+            searchEditText.visibility = View.VISIBLE
             listView.visibility = View.VISIBLE
 
             val adapter = ForecastListAdapter(this, forecastList)
@@ -207,5 +211,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         progressBar.visibility = View.GONE
+    }
+
+    private fun handleOnUvIndex(uvIndex: UvIndex) {
+        this.uvIndex = uvIndex
     }
 }
