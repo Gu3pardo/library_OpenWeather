@@ -24,15 +24,24 @@ class JsonToWeatherConverterUnitTest : Spek({
             // Arrange
             val jsonToWeatherConverter = JsonToWeatherConverter()
             val jsonStringToTest = "{\"coord\":{\"lon\":11.08,\"lat\":49.45}," +
-                    "\"weather\":[{\"id\":802,\"main\":\"Clouds\",\"description\":\"scattered clouds\"," +
-                    "\"icon\":\"03d\"}],\"base\":\"stations\",\"main\":{\"temp\":21.37," +
-                    "\"pressure\":1021,\"humidity\":56,\"temp_min\":20,\"temp_max\":23}," +
-                    "\"visibility\":10000,\"wind\":{\"speed\":3.1,\"deg\":90}," +
-                    "\"clouds\":{\"all\":40},\"dt\":1527326400," +
-                    "\"sys\":{\"type\":1,\"id\":4888,\"message\":0.0147," +
-                    "\"country\":\"DE\"," +
-                    "\"sunrise\":1527304731,\"sunset\":1527361642}," +
-                    "\"id\":2861650,\"name\":\"Nuremberg\",\"cod\":200}"
+                    "\"weather\":" +
+                    "[" +
+                    "{\"id\":802,\"main\":\"Clouds\",\"description\":\"scattered clouds\",\"icon\":\"03d\"}" +
+                    "]," +
+                    "\"base\":\"stations\"," +
+                    "\"main\":" +
+                    "{\"temp\":21.37,\"pressure\":1021,\"humidity\":56,\"temp_min\":20,\"temp_max\":23}," +
+                    "\"visibility\":10000," +
+                    "\"wind\":" +
+                    "{\"speed\":3.1,\"deg\":90}," +
+                    "\"clouds\":" +
+                    "{\"all\":40}," +
+                    "\"dt\":1527326400," +
+                    "\"sys\":" +
+                    "{\"type\":1,\"id\":4888,\"message\":0.0147,\"country\":\"DE\",\"sunrise\":1527304731,\"sunset\":1527361642}," +
+                    "\"id\":2861650," +
+                    "\"name\":\"Nuremberg\"," +
+                    "\"cod\":200}"
 
             val sunriseTime = Calendar.getInstance()
             sunriseTime.timeInMillis = 1527304731000
@@ -78,7 +87,14 @@ class JsonToWeatherConverterUnitTest : Spek({
             val jsonToWeatherConverter = JsonToWeatherConverter()
             val jsonStringToTest = "{\"cod\":\"200\",\"message\":0.0026,\"cnt\":40," +
                     "\"list\":[" +
-                    "{\"dt\":1530219600,\"main\":{\"temp\":14.79,\"temp_min\":14.79,\"temp_max\":17.08,\"pressure\":980.7,\"sea_level\":1031.63,\"grnd_level\":980.7,\"humidity\":71,\"temp_kf\":-2.29},\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}],\"clouds\":{\"all\":100},\"wind\":{\"speed\":3.36,\"deg\":33.0006},\"rain\":{\"3h\":0.0775},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2018-06-28 21:00:00\"}," +
+                    "{\"dt\":1530219600," +
+                    "\"main\":{\"temp\":14.79,\"temp_min\":14.79,\"temp_max\":17.08,\"pressure\":980.7,\"sea_level\":1031.63,\"grnd_level\":980.7,\"humidity\":71,\"temp_kf\":-2.29}," +
+                    "\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}]," +
+                    "\"clouds\":{\"all\":100}," +
+                    "\"wind\":{\"speed\":3.36,\"deg\":33.0006}," +
+                    "\"rain\":{\"3h\":0.0775}," +
+                    "\"sys\":{\"pod\":\"n\"}," +
+                    "\"dt_txt\":\"2018-06-28 21:00:00\"}," +
                     "{\"dt\":1530230400,\"main\":{\"temp\":15.21,\"temp_min\":15.21,\"temp_max\":16.93,\"pressure\":980.15,\"sea_level\":1031.31,\"grnd_level\":980.15,\"humidity\":71,\"temp_kf\":-1.72},\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}],\"clouds\":{\"all\":92},\"wind\":{\"speed\":3.13,\"deg\":34.0042},\"rain\":{\"3h\":0.0575},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2018-06-29 00:00:00\"}," +
                     "{\"dt\":1530241200,\"main\":{\"temp\":14.94,\"temp_min\":14.94,\"temp_max\":16.08,\"pressure\":979.77,\"sea_level\":1030.91,\"grnd_level\":979.77,\"humidity\":82,\"temp_kf\":-1.15},\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}],\"clouds\":{\"all\":88},\"wind\":{\"speed\":2.52,\"deg\":22.001},\"rain\":{\"3h\":0.21},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2018-06-29 03:00:00\"}]," +
                     "\"city\":{\"id\":2861650,\"name\":\"Nuremberg\",\"coord\":{\"lat\":49.4539,\"lon\":11.0773},\"country\":\"DE\",\"population\":499237}}"
