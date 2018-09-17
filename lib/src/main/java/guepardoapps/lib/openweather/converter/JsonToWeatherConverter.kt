@@ -18,6 +18,10 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
     private val dateKey: String = "dt_txt"
     private val dateSplitter: String = " "
 
+    override fun convertToCity(jsonString: String): City? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun convertToWeatherCurrent(jsonString: String): WeatherCurrent? {
         try {
             val jsonObject = JSONObject(jsonString)
