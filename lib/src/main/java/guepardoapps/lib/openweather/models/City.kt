@@ -18,9 +18,9 @@ class City {
     @JsonKey("city", "population")
     var population: Int = 0
 
-    var geoLocation: GeoLocation = GeoLocation()
+    var coordinates: Coordinates = Coordinates()
 
     override fun toString(): String {
-        return "{Class: $tag, Id: $id, Name: $name, Country: $country, GeoLocation: $geoLocation, Population: $population}"
+        return "{Class: $tag, Id: $id, Name: $name, Country: $country, Coordinates: $coordinates, Population: $population}"
     }
 }

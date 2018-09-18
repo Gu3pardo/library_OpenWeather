@@ -72,53 +72,53 @@ class ClassExtensionUnitTest : Spek({
             assertEquals(false, actual)
         }
 
-        it("getJsonKey for geoLocation should be correct") {
+        it("getJsonKey for coordinates should be correct") {
             // Arrange
-            val geoLocation = GeoLocation()
+            val coordinates = Coordinates()
             val expectedParent = "city"
             val expectedKey = "coord"
 
             // Act
-            val actualJsonKey = geoLocation.getJsonKey()
+            val actualJsonKey = coordinates.getJsonKey()
 
             // Assert
             assertEquals(expectedParent, actualJsonKey.parent)
             assertEquals(expectedKey, actualJsonKey.key)
         }
 
-        it("getPropertyJsonKey for geoLocation should be correct") {
+        it("getPropertyJsonKey for coordinates should be correct") {
             // Arrange
-            val geoLocation = GeoLocation()
+            val coordinates = Coordinates()
             val expectedParent = "coord"
             val expectedKey = "lat"
 
             // Act
-            val name = geoLocation::latitude.name
-            val actualJsonKey = geoLocation.getPropertyJsonKey(name)
+            val name = coordinates::lat.name
+            val actualJsonKey = coordinates.getPropertyJsonKey(name)
 
             // Assert
             assertEquals(expectedParent, actualJsonKey.parent)
             assertEquals(expectedKey, actualJsonKey.key)
         }
 
-        it("isDefault for geoLocation should be true") {
+        it("isDefault for Coordinates should be true") {
             // Arrange
-            val geoLocation = GeoLocation()
+            val coordinates = Coordinates()
 
             // Act
-            val actual = geoLocation.isDefault()
+            val actual = coordinates.isDefault()
 
             // Assert
             assertEquals(true, actual)
         }
 
-        it("isDefault for geoLocation should be false") {
+        it("isDefault for Coordinates should be false") {
             // Arrange
-            val geoLocation = GeoLocation()
-            geoLocation.longitude = 45.0
+            val coordinates = Coordinates()
+            coordinates.lon = 45.0
 
             // Act
-            val actual = geoLocation.isDefault()
+            val actual = coordinates.isDefault()
 
             // Assert
             assertEquals(false, actual)

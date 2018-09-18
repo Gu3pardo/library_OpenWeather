@@ -7,7 +7,7 @@ import java.util.*
 class UvIndex {
     private val tag: String = UvIndex::class.java.simpleName
 
-    var geoLocation: GeoLocation = GeoLocation()
+    var coordinates: Coordinates = Coordinates()
 
     @JsonKey("", "date")
     var dateTime: Calendar = Calendar.getInstance()
@@ -16,6 +16,6 @@ class UvIndex {
     var value: Double = 0.0
 
     override fun toString(): String {
-        return "{Class: $tag, GeoLocation: $geoLocation, DateTime: $dateTime, Value: $value}"
+        return "{Class: $tag, Coordinates: $coordinates, DateTime: $dateTime, Value: $value}"
     }
 }

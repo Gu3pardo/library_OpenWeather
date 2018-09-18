@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases)
-[![Version](https://img.shields.io/badge/version-v1.3.0.180913-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases/openweather-android-2018-09-13.aar)
+[![Version](https://img.shields.io/badge/version-v1.4.0.180913-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases/openweather-android-2018-09-18.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/app (Fork project and add your private OpenWeather ApiKey to strings.xml)
@@ -53,21 +53,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState);
         ...
 
-        OpenWeatherService.instance.initialize(this)
+        OpenWeatherService.instance.initialize(this, "Nuremberg")                       // Initialize Service already with your preferred city
 
-        val geoLocation = GeoLocation()
-        geoLocation.latitude = 49.4539
-        geoLocation.longitude = 11.0773
-
-        val city = City()
-        city.id = 2861650
-        city.name = getString(R.string.openweather_city)
-        city.country = "DE"
-        city.population = 499237
-        city.geoLocation = geoLocation
-		
         OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)    // Set ApiKey => Will be read from xml file
-        OpenWeatherService.instance.city = city                                         // Set your preferred city
         OpenWeatherService.instance.notificationEnabled = true                          // Enable/Disable notifications
         OpenWeatherService.instance.wallpaperEnabled = true                             // Enable/Disable set of wallpaper
         OpenWeatherService.instance.receiverActivity = MainActivity::class.java         // Set receiver for notifications

@@ -20,7 +20,7 @@ internal interface IOpenWeatherService {
     val weatherForecastPublishSubject: PublishSubject<RxOptional<WeatherForecast>>
     val uvIndexPublishSubject: PublishSubject<RxOptional<UvIndex>>
 
-    fun initialize(context: Context)
+    fun initialize(context: Context, cityName: String)
     fun start()
     fun dispose()
 

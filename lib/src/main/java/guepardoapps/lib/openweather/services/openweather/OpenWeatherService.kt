@@ -17,7 +17,9 @@ import java.util.*
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import com.google.gson.Gson
 import guepardoapps.lib.openweather.R
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.receiver.PeriodicActionReceiver
 
 class OpenWeatherService private constructor() : IOpenWeatherService {
@@ -41,8 +43,10 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private lateinit var sharedPreferenceController: SharedPreferenceController
 
     var city: City? = null
+        get() = Gson().fromJson<City>(sharedPreferenceController.load(Constants.sharedPrefKeyCity, Gson().toJson(field)), City::class.java)
         private set(value) {
-            field = value
+            field = value ?: City()
+            sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(field))
             cityPublishSubject.onNext(RxOptional(value))
         }
     override val cityPublishSubject = PublishSubject.create<RxOptional<City>>()!!
@@ -81,6 +85,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 notificationController.close(uvIndexNotificationId)
             }
         }
+
     override var receiverActivity: Class<*>? = null
         set(value) {
             field = value
@@ -109,6 +114,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 scheduleReload()
             }
         }
+
     override var reloadTimeout: Long = minTimeoutMs
         set(value) {
             field = when {
@@ -131,7 +137,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         val instance: OpenWeatherService by lazy { Holder.instance }
     }
 
-    override fun initialize(context: Context) {
+    override fun initialize(context: Context, cityName: String) {
         this.context = context
 
         this.networkController = NetworkController(this.context)
@@ -139,6 +145,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         this.sharedPreferenceController = SharedPreferenceController(this.context)
 
         Logger.instance.initialize(context)
+
+        if (!this.sharedPreferenceController.exists(Constants.sharedPrefKeyCity)) {
+            Logger.instance.info(tag, "Initial save of default city")
+            val city = City()
+            city.name = cityName
+            this.sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(city))
+        }
 
         apiService.setOnApiServiceListener(object : OnApiServiceListener {
             override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
@@ -167,6 +180,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 }
             }
         })
+
+        loadCityData(cityName)
     }
 
     override fun start() {
@@ -183,10 +198,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun loadCityData(cityName: String) {
-        if (!mayLoad) {
-            return
-        }
-
         val result = apiService.geoCodeForCity(cityName)
         if (result != DownloadResult.Performing) {
             Logger.instance.error(tag, "Failure in loadCityData: $result")
@@ -195,7 +206,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun loadWeatherCurrent() {
-        if (!mayLoad || city == null) {
+        if (!mayLoad || city == null || city!!.isDefault()) {
             return
         }
 
@@ -212,7 +223,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun loadWeatherForecast() {
-        if (!mayLoad || city == null) {
+        if (!mayLoad || city == null || city!!.isDefault()) {
             return
         }
 
@@ -229,7 +240,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun loadUvIndex() {
-        if (!mayLoad || city == null) {
+        if (!mayLoad || city == null || city!!.isDefault()) {
             return
         }
 
@@ -308,6 +319,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 if (notificationEnabled) {
                     displayNotification()
                 }
+                city!!.id = weatherCurrent!!.city.id
+                city!!.population = weatherCurrent!!.city.population
             }
         }
     }
@@ -324,6 +337,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 if (notificationEnabled) {
                     displayNotification()
                 }
+                city!!.id = weatherForecast!!.city.id
+                city!!.population = weatherForecast!!.city.population
             }
         }
     }
@@ -348,14 +363,22 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         if (!success) {
             city = null
         } else {
-            val convertedCity = converter.convertToCity(jsonString)
-            if (convertedCity == null) {
+            val convertedCity2 = converter.convertToCity(jsonString)
+            if (convertedCity2 == null) {
                 city = null
             } else {
-                city = convertedCity
-                if (notificationEnabled) {
-                    displayNotification()
-                }
+                val newCoordinates = Coordinates()
+                newCoordinates.lat = convertedCity2.geometry.location.lat
+                newCoordinates.lon = convertedCity2.geometry.location.lng
+
+                val newCity = City()
+                newCity.id = city!!.id
+                newCity.name = convertedCity2.addressComponents[0].shortName
+                newCity.country = convertedCity2.addressComponents[1].shortName
+                newCity.population = city!!.population
+                newCity.coordinates = newCoordinates
+
+                city = newCity
             }
         }
     }

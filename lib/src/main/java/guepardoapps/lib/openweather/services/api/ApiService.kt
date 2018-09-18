@@ -26,20 +26,28 @@ internal class ApiService : IApiService {
     }
 
     override fun currentWeather(apiKey: String, city: City): DownloadResult {
+        if (city.isDefault()) {
+            Logger.instance.warning(tag, "currentWeather: City needs to be set before call!")
+            return DownloadResult.InvalidCity
+        }
         return this.doApiRestCall(DownloadType.Current, String.format(this.currentWeatherUrl, city.name, apiKey))
     }
 
     override fun forecastWeather(apiKey: String, city: City): DownloadResult {
+        if (city.isDefault()) {
+            Logger.instance.warning(tag, "forecastWeather: City needs to be set before call!")
+            return DownloadResult.InvalidCity
+        }
         return this.doApiRestCall(DownloadType.Forecast, String.format(this.forecastWeatherUrl, city.name, apiKey))
     }
 
     override fun uvIndex(apiKey: String, city: City): DownloadResult {
-        if (city.geoLocation.isDefault()) {
+        if (city.coordinates.isDefault()) {
             Logger.instance.warning(tag, "uvIndex: City.geoLocation needs to be set before call!")
             return DownloadResult.InvalidCity
         }
 
-        return this.doApiRestCall(DownloadType.UvIndex, String.format(this.uvIndexUrl, city.geoLocation.latitude, city.geoLocation.longitude, apiKey))
+        return this.doApiRestCall(DownloadType.UvIndex, String.format(this.uvIndexUrl, city.coordinates.lat, city.coordinates.lon, apiKey))
     }
 
     private fun doApiRestCall(downloadType: DownloadType, url: String): DownloadResult {

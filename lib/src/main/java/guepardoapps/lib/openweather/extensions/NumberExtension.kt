@@ -9,3 +9,7 @@ internal fun Int.integerFormat(digits: Int): String {
 internal fun Double.doubleFormat(digits: Int): String {
     return String.format(Locale.getDefault(), "%.${digits}f", this)
 }
+
+internal fun Float.floatFormat(digits: Int): String {
+    return String.format(Locale.getDefault(), "%.${digits}f", this)
+}
