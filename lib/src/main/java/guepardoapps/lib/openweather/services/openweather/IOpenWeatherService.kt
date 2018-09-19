@@ -4,8 +4,7 @@ import android.content.Context
 import guepardoapps.lib.openweather.models.*
 import io.reactivex.subjects.PublishSubject
 
-internal interface IOpenWeatherService {
-    var city: City
+interface IOpenWeatherService {
     var apiKey: String
 
     var notificationEnabled: Boolean
@@ -16,14 +15,16 @@ internal interface IOpenWeatherService {
     var reloadEnabled: Boolean
     var reloadTimeout: Long
 
+    val cityPublishSubject: PublishSubject<RxOptional<City>>
     val weatherCurrentPublishSubject: PublishSubject<RxOptional<WeatherCurrent>>
     val weatherForecastPublishSubject: PublishSubject<RxOptional<WeatherForecast>>
     val uvIndexPublishSubject: PublishSubject<RxOptional<UvIndex>>
 
-    fun initialize(context: Context)
+    fun initialize(context: Context, cityName: String)
     fun start()
     fun dispose()
 
+    fun loadCityData(cityName: String)
     fun loadWeatherCurrent()
     fun loadWeatherForecast()
     fun loadUvIndex()

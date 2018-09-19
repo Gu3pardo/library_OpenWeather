@@ -42,49 +42,37 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private lateinit var notificationController: NotificationController
     private lateinit var sharedPreferenceController: SharedPreferenceController
 
+    var city: City? = null
+        get() = Gson().fromJson<City>(sharedPreferenceController.load(Constants.sharedPrefKeyCity, Gson().toJson(field)), City::class.java)
+        private set(value) {
+            field = value ?: City()
+            sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(field))
+            cityPublishSubject.onNext(RxOptional(value))
+        }
+    override val cityPublishSubject = PublishSubject.create<RxOptional<City>>()!!
+
     var weatherCurrent: WeatherCurrent? = null
         private set(value) {
             field = value
-            if (value != null) {
-                city = value.city
-            }
+            weatherCurrentPublishSubject.onNext(RxOptional(value))
         }
     override val weatherCurrentPublishSubject = PublishSubject.create<RxOptional<WeatherCurrent>>()!!
 
     var weatherForecast: WeatherForecast? = null
         private set(value) {
             field = value
-            if (value != null) {
-                city = value.city
-            }
+            weatherForecastPublishSubject.onNext(RxOptional(value))
         }
     override val weatherForecastPublishSubject = PublishSubject.create<RxOptional<WeatherForecast>>()!!
 
     var uvIndex: UvIndex? = null
         private set(value) {
             field = value
+            uvIndexPublishSubject.onNext(RxOptional(value))
         }
     override val uvIndexPublishSubject = PublishSubject.create<RxOptional<UvIndex>>()!!
 
-    override var city: City
-        get() {
-            val cityString = this.sharedPreferenceController.load(Constants.sharedPrefKeyCity, "")
-            if (cityString.isBlank()) {
-                return City()
-            }
-            Logger.instance.debug(tag,"CityStringGet: $cityString")
-            return Gson().fromJson<City>(cityString, City::class.java)
-        }
-        set(value) {
-            apiService.city = value
-            Logger.instance.debug(tag,"CityStringSet: ${Gson().toJson(value)}")
-            this.sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(value).toString())
-        }
-    override var apiKey: String
-        get() = apiService.apiKey
-        set(value) {
-            apiService.apiKey = value
-        }
+    override lateinit var apiKey: String
 
     override var notificationEnabled: Boolean = true
         set(value) {
@@ -97,6 +85,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 notificationController.close(uvIndexNotificationId)
             }
         }
+
     override var receiverActivity: Class<*>? = null
         set(value) {
             field = value
@@ -125,6 +114,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 scheduleReload()
             }
         }
+
     override var reloadTimeout: Long = minTimeoutMs
         set(value) {
             field = when {
@@ -147,7 +137,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         val instance: OpenWeatherService by lazy { Holder.instance }
     }
 
-    override fun initialize(context: Context) {
+    override fun initialize(context: Context, cityName: String) {
         this.context = context
 
         this.networkController = NetworkController(this.context)
@@ -155,6 +145,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         this.sharedPreferenceController = SharedPreferenceController(this.context)
 
         Logger.instance.initialize(context)
+
+        if (!this.sharedPreferenceController.exists(Constants.sharedPrefKeyCity)) {
+            Logger.instance.info(tag, "Initial save of default city")
+            val city = City()
+            city.name = cityName
+            this.sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(city))
+        }
 
         apiService.setOnApiServiceListener(object : OnApiServiceListener {
             override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
@@ -170,20 +167,21 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     DownloadType.UvIndex -> {
                         handleUvIndexUpdate(success, jsonString)
                     }
+                    DownloadType.City -> {
+                        handleCityUpdate(success, jsonString)
+                    }
                     DownloadType.Null -> {
                         Logger.instance.error(tag, "Received download update with downloadType Null and jsonString: $jsonString")
-
+                        city = null
                         weatherCurrent = null
                         weatherForecast = null
                         uvIndex = null
-
-                        weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
-                        weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
-                        uvIndexPublishSubject.onNext(RxOptional(uvIndex))
                     }
                 }
             }
         })
+
+        loadCityData(cityName)
     }
 
     override fun start() {
@@ -199,16 +197,23 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         cancelReload()
     }
 
+    override fun loadCityData(cityName: String) {
+        val result = apiService.geoCodeForCity(cityName)
+        if (result != DownloadResult.Performing) {
+            Logger.instance.error(tag, "Failure in loadCityData: $result")
+            city = null
+        }
+    }
+
     override fun loadWeatherCurrent() {
-        if (!mayLoad) {
+        if (!mayLoad || city == null || city!!.isDefault()) {
             return
         }
 
-        val result = apiService.currentWeather()
+        val result = apiService.currentWeather(apiKey, city!!)
         if (result != DownloadResult.Performing) {
-            Logger.instance.error(tag, "Failure in loadCurrentWeather: $result")
+            Logger.instance.error(tag, "Failure in loadWeatherCurrent: $result")
             weatherCurrent = null
-            weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
         }
 
         cancelReload()
@@ -218,15 +223,14 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun loadWeatherForecast() {
-        if (!mayLoad) {
+        if (!mayLoad || city == null || city!!.isDefault()) {
             return
         }
 
-        val result = apiService.forecastWeather()
+        val result = apiService.forecastWeather(apiKey, city!!)
         if (result != DownloadResult.Performing) {
-            Logger.instance.error(tag, "Failure in loadForecastWeather: $result")
+            Logger.instance.error(tag, "Failure in loadWeatherForecast: $result")
             weatherForecast = null
-            weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
         }
 
         cancelReload()
@@ -236,15 +240,14 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     }
 
     override fun loadUvIndex() {
-        if (!mayLoad) {
+        if (!mayLoad || city == null || city!!.isDefault()) {
             return
         }
 
-        val result = apiService.uvIndex()
+        val result = apiService.uvIndex(apiKey, city!!)
         if (result != DownloadResult.Performing) {
-            Logger.instance.error(tag, "Failure in uvIndex: $result")
+            Logger.instance.error(tag, "Failure in loadUvIndex: $result")
             uvIndex = null
-            uvIndexPublishSubject.onNext(RxOptional(uvIndex))
         }
 
         cancelReload()
@@ -316,10 +319,10 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 if (notificationEnabled) {
                     displayNotification()
                 }
+                city!!.id = weatherCurrent!!.city.id
+                city!!.population = weatherCurrent!!.city.population
             }
         }
-
-        weatherCurrentPublishSubject.onNext(RxOptional(weatherCurrent))
     }
 
     private fun handleForecastWeatherUpdate(success: Boolean, jsonString: String) {
@@ -334,10 +337,10 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 if (notificationEnabled) {
                     displayNotification()
                 }
+                city!!.id = weatherForecast!!.city.id
+                city!!.population = weatherForecast!!.city.population
             }
         }
-
-        weatherForecastPublishSubject.onNext(RxOptional(weatherForecast))
     }
 
     private fun handleUvIndexUpdate(success: Boolean, jsonString: String) {
@@ -354,8 +357,30 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 }
             }
         }
+    }
 
-        uvIndexPublishSubject.onNext(RxOptional(uvIndex))
+    private fun handleCityUpdate(success: Boolean, jsonString: String) {
+        if (!success) {
+            city = null
+        } else {
+            val convertedCity2 = converter.convertToCity(jsonString)
+            if (convertedCity2 == null) {
+                city = null
+            } else {
+                val newCoordinates = Coordinates()
+                newCoordinates.lat = convertedCity2.geometry.location.lat
+                newCoordinates.lon = convertedCity2.geometry.location.lng
+
+                val newCity = City()
+                newCity.id = city!!.id
+                newCity.name = convertedCity2.addressComponents[0].shortName
+                newCity.country = convertedCity2.addressComponents[1].shortName
+                newCity.population = city!!.population
+                newCity.coordinates = newCoordinates
+
+                city = newCity
+            }
+        }
     }
 
     private fun displayNotification() {

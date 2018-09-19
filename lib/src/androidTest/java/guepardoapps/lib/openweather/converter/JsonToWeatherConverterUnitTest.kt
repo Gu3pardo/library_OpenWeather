@@ -24,30 +24,39 @@ class JsonToWeatherConverterUnitTest : Spek({
             // Arrange
             val jsonToWeatherConverter = JsonToWeatherConverter()
             val jsonStringToTest = "{\"coord\":{\"lon\":11.08,\"lat\":49.45}," +
-                    "\"weather\":[{\"id\":802,\"main\":\"Clouds\",\"description\":\"scattered clouds\"," +
-                    "\"icon\":\"03d\"}],\"base\":\"stations\",\"main\":{\"temp\":21.37," +
-                    "\"pressure\":1021,\"humidity\":56,\"temp_min\":20,\"temp_max\":23}," +
-                    "\"visibility\":10000,\"wind\":{\"speed\":3.1,\"deg\":90}," +
-                    "\"clouds\":{\"all\":40},\"dt\":1527326400," +
-                    "\"sys\":{\"type\":1,\"id\":4888,\"message\":0.0147," +
-                    "\"country\":\"DE\"," +
-                    "\"sunrise\":1527304731,\"sunset\":1527361642}," +
-                    "\"id\":2861650,\"name\":\"Nuremberg\",\"cod\":200}"
+                    "\"weather\":" +
+                    "[" +
+                    "{\"id\":802,\"main\":\"Clouds\",\"description\":\"scattered clouds\",\"icon\":\"03d\"}" +
+                    "]," +
+                    "\"base\":\"stations\"," +
+                    "\"main\":" +
+                    "{\"temp\":21.37,\"pressure\":1021,\"humidity\":56,\"temp_min\":20,\"temp_max\":23}," +
+                    "\"visibility\":10000," +
+                    "\"wind\":" +
+                    "{\"speed\":3.1,\"deg\":90}," +
+                    "\"clouds\":" +
+                    "{\"all\":40}," +
+                    "\"dt\":1527326400," +
+                    "\"sys\":" +
+                    "{\"type\":1,\"id\":4888,\"message\":0.0147,\"country\":\"DE\",\"sunrise\":1527304731,\"sunset\":1527361642}," +
+                    "\"id\":2861650," +
+                    "\"name\":\"Nuremberg\"," +
+                    "\"cod\":200}"
 
             val sunriseTime = Calendar.getInstance()
             sunriseTime.timeInMillis = 1527304731000
             val sunsetTime = Calendar.getInstance()
             sunsetTime.timeInMillis = 1527361642000
 
-            val geoLocation = GeoLocation()
-            geoLocation.longitude = 11.08
-            geoLocation.latitude = 49.45
+            val coordinates = Coordinates()
+            coordinates.lon = 11.08
+            coordinates.lat = 49.45
 
             val city = City()
             city.id = 2861650
             city.name = "Nuremberg"
             city.country = "DE"
-            city.geoLocation = geoLocation
+            city.coordinates = coordinates
 
             val expectedWeatherCurrent = WeatherCurrent()
             expectedWeatherCurrent.description = "scattered clouds"
@@ -78,21 +87,28 @@ class JsonToWeatherConverterUnitTest : Spek({
             val jsonToWeatherConverter = JsonToWeatherConverter()
             val jsonStringToTest = "{\"cod\":\"200\",\"message\":0.0026,\"cnt\":40," +
                     "\"list\":[" +
-                    "{\"dt\":1530219600,\"main\":{\"temp\":14.79,\"temp_min\":14.79,\"temp_max\":17.08,\"pressure\":980.7,\"sea_level\":1031.63,\"grnd_level\":980.7,\"humidity\":71,\"temp_kf\":-2.29},\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}],\"clouds\":{\"all\":100},\"wind\":{\"speed\":3.36,\"deg\":33.0006},\"rain\":{\"3h\":0.0775},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2018-06-28 21:00:00\"}," +
+                    "{\"dt\":1530219600," +
+                    "\"main\":{\"temp\":14.79,\"temp_min\":14.79,\"temp_max\":17.08,\"pressure\":980.7,\"sea_level\":1031.63,\"grnd_level\":980.7,\"humidity\":71,\"temp_kf\":-2.29}," +
+                    "\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}]," +
+                    "\"clouds\":{\"all\":100}," +
+                    "\"wind\":{\"speed\":3.36,\"deg\":33.0006}," +
+                    "\"rain\":{\"3h\":0.0775}," +
+                    "\"sys\":{\"pod\":\"n\"}," +
+                    "\"dt_txt\":\"2018-06-28 21:00:00\"}," +
                     "{\"dt\":1530230400,\"main\":{\"temp\":15.21,\"temp_min\":15.21,\"temp_max\":16.93,\"pressure\":980.15,\"sea_level\":1031.31,\"grnd_level\":980.15,\"humidity\":71,\"temp_kf\":-1.72},\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}],\"clouds\":{\"all\":92},\"wind\":{\"speed\":3.13,\"deg\":34.0042},\"rain\":{\"3h\":0.0575},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2018-06-29 00:00:00\"}," +
                     "{\"dt\":1530241200,\"main\":{\"temp\":14.94,\"temp_min\":14.94,\"temp_max\":16.08,\"pressure\":979.77,\"sea_level\":1030.91,\"grnd_level\":979.77,\"humidity\":82,\"temp_kf\":-1.15},\"weather\":[{\"id\":500,\"main\":\"Rain\",\"description\":\"light rain\",\"icon\":\"10n\"}],\"clouds\":{\"all\":88},\"wind\":{\"speed\":2.52,\"deg\":22.001},\"rain\":{\"3h\":0.21},\"sys\":{\"pod\":\"n\"},\"dt_txt\":\"2018-06-29 03:00:00\"}]," +
                     "\"city\":{\"id\":2861650,\"name\":\"Nuremberg\",\"coord\":{\"lat\":49.4539,\"lon\":11.0773},\"country\":\"DE\",\"population\":499237}}"
 
-            val geoLocation = GeoLocation()
-            geoLocation.longitude = 11.0773
-            geoLocation.latitude = 49.4539
+            val coordinates = Coordinates()
+            coordinates.lon = 11.0773
+            coordinates.lat = 49.4539
 
             val city = City()
             city.id = 2861650
             city.name = "Nuremberg"
             city.country = "DE"
             city.population = 499237
-            city.geoLocation = geoLocation
+            city.coordinates = coordinates
 
             val dateTime = Calendar.getInstance()
             dateTime.timeInMillis = 1530219600
@@ -145,9 +161,9 @@ class JsonToWeatherConverterUnitTest : Spek({
             val jsonToWeatherConverter = JsonToWeatherConverter()
             val jsonStringToTest = "{\"lat\":37.75,\"lon\":-122.37,\"date_iso\":\"2018-09-13T12:00:00Z\",\"date\":1536840000,\"value\":6.96}"
 
-            val geoLocation = GeoLocation()
-            geoLocation.longitude = -122.37
-            geoLocation.latitude = 37.75
+            val coordinates = Coordinates()
+            coordinates.lon = -122.37
+            coordinates.lat = 37.75
 
             val datetime = Calendar.getInstance()
             datetime.timeInMillis = 1527304731000
@@ -155,7 +171,7 @@ class JsonToWeatherConverterUnitTest : Spek({
             val value = 6.96
 
             val expectedUvIndex = UvIndex()
-            expectedUvIndex.geoLocation = geoLocation
+            expectedUvIndex.coordinates = coordinates
             expectedUvIndex.dateTime = datetime
             expectedUvIndex.value = value
 
@@ -163,8 +179,8 @@ class JsonToWeatherConverterUnitTest : Spek({
             val actualUvIndex = jsonToWeatherConverter.convertToUvIndex(jsonStringToTest)
 
             // Assert
-            assertEquals(expectedUvIndex.geoLocation.longitude, actualUvIndex!!.geoLocation.longitude)
-            assertEquals(expectedUvIndex.geoLocation.latitude, actualUvIndex.geoLocation.latitude)
+            assertEquals(expectedUvIndex.coordinates.lon, actualUvIndex!!.coordinates.lon)
+            assertEquals(expectedUvIndex.coordinates.lat, actualUvIndex.coordinates.lat)
             assertEquals(expectedUvIndex.dateTime.timeInMillis, actualUvIndex.dateTime.timeInMillis)
             assertEquals(expectedUvIndex.value, actualUvIndex.value)
         }

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="define_OpenWeather"></string>
-    <string name="OpenWeather_Android_author">Jonas Schubert</string>
-    <string name="OpenWeather_Android_authorWebsite">https://guepardoapps.github.io/</string>
-    <string name="OpenWeather_Android_libraryName">OpenWeather-Android</string>
-    <string name="OpenWeather_Android_libraryDescription">OpenWeather-Android
+    <string name="define_OpenWeatherAndroid"></string>
+    <string name="OpenWeatherAndroid_author">Jonas Schubert</string>
+    <string name="OpenWeatherAndroid_authorWebsite">https://guepardoapps.github.io/</string>
+    <string name="OpenWeatherAndroid_libraryName">OpenWeather-Android</string>
+    <string name="OpenWeatherAndroid_libraryDescription">OpenWeather-Android
         is a library used for calling current weather or forecast weather for a given location.
         It also provides notifications and wallpaper to display.
         Made with Kotlin.
     </string>
-    <string name="OpenWeather_Android_libraryVersion">1.3.0.180913</string>
-    <string name="OpenWeather_Android_libraryWebsite">https://github.com/OpenWeatherLib/OpenWeather-Android/</string>
-    <string name="OpenWeather_Android_licenseId">mit</string>
-    <string name="OpenWeather_Android_isOpenSource">true</string>
-    <string name="OpenWeather_Android_repositoryLink">https://github.com/OpenWeatherLib/OpenWeather-Android/</string>
+    <string name="OpenWeatherAndroid_libraryVersion">1.4.0.180918</string>
+    <string name="OpenWeatherAndroid_libraryWebsite">https://github.com/OpenWeatherLib/OpenWeather-Android/</string>
+    <string name="OpenWeatherAndroid_licenseId">mit</string>
+    <string name="OpenWeatherAndroid_isOpenSource">true</string>
+    <string name="OpenWeatherAndroid_repositoryLink">https://github.com/OpenWeatherLib/OpenWeather-Android/</string>
 </resources>

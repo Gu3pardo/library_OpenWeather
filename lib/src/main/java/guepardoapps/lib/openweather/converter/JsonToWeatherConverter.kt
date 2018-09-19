@@ -15,8 +15,81 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
     private val codeKey: String = "cod"
     private val successCode: Int = 200
 
+    private val statusKey: String = "status"
+    private val okCode: String = "OK"
+
     private val dateKey: String = "dt_txt"
     private val dateSplitter: String = " "
+
+    override fun convertToCity(jsonString: String): City2? {
+        try {
+            val jsonObject = JSONObject(jsonString)
+            if (jsonObject.getString(statusKey) != okCode) {
+                Logger.instance.error(tag, "Error in parsing jsonObject in convertToCity: $jsonObject")
+                return null
+            }
+
+            val city2 = City2()
+
+            val resultsJsonObject = jsonObject.getJSONArray(city2.getJsonKey().key).getJSONObject(0)
+            val addressComponentJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::addressComponents.name).key)
+
+            val addressComponentCity = AddressComponent()
+            val addressComponentCityJsonObject = addressComponentJsonArray.getJSONObject(0)
+            addressComponentCity.shortName = addressComponentCityJsonObject.getString(addressComponentCity.getPropertyJsonKey(addressComponentCity::shortName.name).key)
+            addressComponentCity.longName = addressComponentCityJsonObject.getString(addressComponentCity.getPropertyJsonKey(addressComponentCity::longName.name).key)
+            val addressComponentCityTypesJsonArray = addressComponentCityJsonObject.getJSONArray(addressComponentCity.getPropertyJsonKey(addressComponentCity::types.name).key)
+            for (index in 0 until addressComponentCityTypesJsonArray.length() step 1) {
+                addressComponentCity.types = addressComponentCity.types.plus(addressComponentCityTypesJsonArray.getString(index))
+            }
+            city2.addressComponents = city2.addressComponents.plus(addressComponentCity)
+
+            val addressComponentCountry = AddressComponent()
+            val addressComponentCountryJsonObject = addressComponentJsonArray.getJSONObject(1)
+            addressComponentCountry.shortName = addressComponentCountryJsonObject.getString(addressComponentCountry.getPropertyJsonKey(addressComponentCountry::shortName.name).key)
+            addressComponentCountry.longName = addressComponentCountryJsonObject.getString(addressComponentCountry.getPropertyJsonKey(addressComponentCountry::longName.name).key)
+            val addressComponentCountryTypesJsonArray = addressComponentCountryJsonObject.getJSONArray(addressComponentCountry.getPropertyJsonKey(addressComponentCountry::types.name).key)
+            for (index in 0 until addressComponentCountryTypesJsonArray.length() step 1) {
+                addressComponentCountry.types = addressComponentCountry.types.plus(addressComponentCountryTypesJsonArray.getString(index))
+            }
+            city2.addressComponents = city2.addressComponents.plus(addressComponentCountry)
+
+            city2.geometry = Geometry()
+            val geometryJsonObject = resultsJsonObject.getJSONObject(city2.geometry.getJsonKey().key)
+            city2.geometry.locationType = geometryJsonObject.getString(city2.geometry.getPropertyJsonKey(city2.geometry::locationType.name).key)
+
+            city2.geometry.viewport = Viewport()
+            val viewportJsonObject = geometryJsonObject.getJSONObject(city2.geometry.viewport.getJsonKey().key)
+
+            val northeast = Coordinates2()
+            val northeastJsonObject = viewportJsonObject.getJSONObject(city2.geometry.viewport.getPropertyJsonKey(city2.geometry.viewport::northeast.name).key)
+            northeast.lat = northeastJsonObject.getDouble(northeast.getPropertyJsonKey(northeast::lat.name).key)
+            northeast.lng = northeastJsonObject.getDouble(northeast.getPropertyJsonKey(northeast::lng.name).key)
+            city2.geometry.viewport.northeast = northeast
+
+            val southwest = Coordinates2()
+            val southwestJsonObject = viewportJsonObject.getJSONObject(city2.geometry.viewport.getPropertyJsonKey(city2.geometry.viewport::southwest.name).key)
+            southwest.lat = southwestJsonObject.getDouble(southwest.getPropertyJsonKey(southwest::lat.name).key)
+            southwest.lng = southwestJsonObject.getDouble(southwest.getPropertyJsonKey(southwest::lng.name).key)
+            city2.geometry.viewport.southwest = southwest
+
+            city2.geometry.location = Coordinates2()
+            val locationJsonObject = geometryJsonObject.getJSONObject(city2.geometry.getPropertyJsonKey(city2.geometry::location.name).key)
+            city2.geometry.location.lat = locationJsonObject.getDouble(city2.geometry.getPropertyJsonKey(city2.geometry.location::lat.name).key)
+            city2.geometry.location.lng = locationJsonObject.getDouble(city2.geometry.getPropertyJsonKey(city2.geometry.location::lng.name).key)
+
+            val typesJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::types.name).key)
+            for (index in 0 until typesJsonArray.length() step 1) {
+                city2.types = city2.types.plus(typesJsonArray.getString(index))
+            }
+
+            return city2
+
+        } catch (exception: Exception) {
+            Logger.instance.error(tag, exception)
+            return null
+        }
+    }
 
     override fun convertToWeatherCurrent(jsonString: String): WeatherCurrent? {
         try {
@@ -27,23 +100,20 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             }
             val weatherCurrent = WeatherCurrent()
 
-            val sys = jsonObject.getJSONObject(weatherCurrent.getJsonKey().key)
+            val sysJsonObject = jsonObject.getJSONObject(weatherCurrent.getJsonKey().key)
 
-            val geoLocation = GeoLocation()
-            val coordinationJsonObject = jsonObject.getJSONObject(geoLocation.getJsonKey().key)
-            geoLocation.latitude = coordinationJsonObject.getDouble(geoLocation.getPropertyJsonKey(geoLocation::latitude.name).key)
-            geoLocation.longitude = coordinationJsonObject.getDouble(geoLocation.getPropertyJsonKey(geoLocation::longitude.name).key)
+            weatherCurrent.city = City()
+            weatherCurrent.city.id = jsonObject.getInt(weatherCurrent.city.getPropertyJsonKey(weatherCurrent.city::id.name).key)
+            weatherCurrent.city.name = jsonObject.getString(weatherCurrent.city.getPropertyJsonKey(weatherCurrent.city::name.name).key)
+            weatherCurrent.city.country = sysJsonObject.getString(weatherCurrent.city.getPropertyJsonKey(weatherCurrent.city::country.name).key)
 
-            val city = City()
-            city.id = jsonObject.getInt(city.getPropertyJsonKey(city::id.name).key)
-            city.name = jsonObject.getString(city.getPropertyJsonKey(city::name.name).key)
-            city.country = sys.getString(city.getPropertyJsonKey(city::country.name).key)
-            city.geoLocation = geoLocation
+            weatherCurrent.city.coordinates = Coordinates()
+            val coordinationJsonObject = jsonObject.getJSONObject(weatherCurrent.city.coordinates.getJsonKey().key)
+            weatherCurrent.city.coordinates.lat = coordinationJsonObject.getDouble(weatherCurrent.city.coordinates.getPropertyJsonKey(weatherCurrent.city.coordinates::lat.name).key)
+            weatherCurrent.city.coordinates.lon = coordinationJsonObject.getDouble(weatherCurrent.city.coordinates.getPropertyJsonKey(weatherCurrent.city.coordinates::lon.name).key)
 
-            weatherCurrent.city = city
-
-            weatherCurrent.sunriseTime.timeInMillis = sys.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunriseTime.name).key) * 1000
-            weatherCurrent.sunsetTime.timeInMillis = sys.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunsetTime.name).key) * 1000
+            weatherCurrent.sunriseTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunriseTime.name).key) * 1000
+            weatherCurrent.sunsetTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunsetTime.name).key) * 1000
 
             val details = jsonObject.getJSONArray(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).parent).getJSONObject(0)
             weatherCurrent.icon = details.getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::icon.name).key)
@@ -92,21 +162,17 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             }
             val weatherForecast = WeatherForecast()
 
-            val city = City()
-            val cityJsonObject = jsonObject.getJSONObject(city.getJsonKey().key)
-            city.id = cityJsonObject.getInt(city.getPropertyJsonKey(city::id.name).key)
-            city.name = cityJsonObject.getString(city.getPropertyJsonKey(city::name.name).key)
-            city.country = cityJsonObject.getString(city.getPropertyJsonKey(city::country.name).key)
-            city.population = cityJsonObject.getInt(city.getPropertyJsonKey(city::population.name).key)
+            weatherForecast.city = City()
+            val cityJsonObject = jsonObject.getJSONObject(weatherForecast.city.getJsonKey().key)
+            weatherForecast.city.id = cityJsonObject.getInt(weatherForecast.city.getPropertyJsonKey(weatherForecast.city::id.name).key)
+            weatherForecast.city.name = cityJsonObject.getString(weatherForecast.city.getPropertyJsonKey(weatherForecast.city::name.name).key)
+            weatherForecast.city.country = cityJsonObject.getString(weatherForecast.city.getPropertyJsonKey(weatherForecast.city::country.name).key)
+            weatherForecast.city.population = cityJsonObject.getInt(weatherForecast.city.getPropertyJsonKey(weatherForecast.city::population.name).key)
 
-            val geoLocation = GeoLocation()
-            val coordinationJsonObject = cityJsonObject.getJSONObject(geoLocation.getJsonKey().key)
-            geoLocation.latitude = coordinationJsonObject.getDouble(geoLocation.getPropertyJsonKey(geoLocation::latitude.name).key)
-            geoLocation.longitude = coordinationJsonObject.getDouble(geoLocation.getPropertyJsonKey(geoLocation::longitude.name).key)
-
-            city.geoLocation = geoLocation
-
-            weatherForecast.city = city
+            weatherForecast.city.coordinates = Coordinates()
+            val coordinationJsonObject = cityJsonObject.getJSONObject(weatherForecast.city.coordinates.getJsonKey().key)
+            weatherForecast.city.coordinates.lat = coordinationJsonObject.getDouble(weatherForecast.city.coordinates.getPropertyJsonKey(weatherForecast.city.coordinates::lat.name).key)
+            weatherForecast.city.coordinates.lon = coordinationJsonObject.getDouble(weatherForecast.city.coordinates.getPropertyJsonKey(weatherForecast.city.coordinates::lon.name).key)
 
             val weatherForecastPartC = WeatherForecastPart()
             val dataListJsonArray = jsonObject.getJSONArray(weatherForecastPartC.getJsonKey().parent)
@@ -197,10 +263,9 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             val jsonObject = JSONObject(jsonString)
             val uvIndex = UvIndex()
 
-            val geoLocation = GeoLocation()
-            geoLocation.latitude = jsonObject.getDouble(geoLocation.getPropertyJsonKey(geoLocation::latitude.name).key)
-            geoLocation.longitude = jsonObject.getDouble(geoLocation.getPropertyJsonKey(geoLocation::longitude.name).key)
-            uvIndex.geoLocation = geoLocation
+            uvIndex.coordinates = Coordinates()
+            uvIndex.coordinates.lat = jsonObject.getDouble(uvIndex.coordinates.getPropertyJsonKey(uvIndex.coordinates::lat.name).key)
+            uvIndex.coordinates.lon = jsonObject.getDouble(uvIndex.coordinates.getPropertyJsonKey(uvIndex.coordinates::lon.name).key)
 
             uvIndex.dateTime.timeInMillis = jsonObject.getLong(uvIndex.getPropertyJsonKey(uvIndex::dateTime.name).key) * 1000
             uvIndex.value = jsonObject.getDouble(uvIndex.getPropertyJsonKey(uvIndex::value.name).key)

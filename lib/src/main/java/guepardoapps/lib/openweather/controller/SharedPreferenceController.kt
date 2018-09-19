@@ -44,6 +44,10 @@ class SharedPreferenceController(context: Context) : ISharedPreferenceController
         } as T
     }
 
+    override fun exists(key: String): Boolean {
+        return cryptoPrefs.allPrefsMap.any { x -> x.key == key }
+    }
+
     override fun remove(key: String) {
         cryptoPrefs.remove(key)
     }

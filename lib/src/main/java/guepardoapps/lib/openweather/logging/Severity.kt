@@ -3,5 +3,9 @@ package guepardoapps.lib.openweather.logging
 import java.io.Serializable
 
 internal enum class Severity : Serializable {
-    Verbose, Debug, Info, Warning, Error
+    Verbose,
+    Debug,
+    Info,
+    Warning,
+    Error
 }

@@ -42,5 +42,18 @@ class NumberExtensionUnitTest : Spek({
             // Assert
             assertEquals(expectedString, actualString)
         }
+
+        it("doubleFormat should be correct") {
+            // Arrange
+            val floatToTest = 5.402f
+            val decimalCount = 4
+            val expectedString = "5.4020"
+
+            // Act
+            val actualString = floatToTest.floatFormat(decimalCount)
+
+            // Assert
+            assertEquals(expectedString, actualString)
+        }
     }
 })

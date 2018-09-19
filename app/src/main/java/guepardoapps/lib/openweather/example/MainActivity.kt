@@ -17,6 +17,7 @@ import android.widget.*
 import de.mateware.snacky.Snacky
 import es.dmoral.toasty.Toasty
 import guepardoapps.lib.openweather.adapter.ForecastListAdapter
+import guepardoapps.lib.openweather.extensions.doubleFormat
 import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
 import guepardoapps.lib.openweather.models.*
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity)
 
         context = this
-        OpenWeatherService.instance.initialize(context)
+        OpenWeatherService.instance.initialize(context, "Nuremberg")
 
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
@@ -76,19 +77,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             OpenWeatherService.instance.loadWeatherForecast()
         }
 
-        val geoLocation = GeoLocation()
-        geoLocation.latitude = 49.4539
-        geoLocation.longitude = 11.0773
-
-        val city = City()
-        city.id = 2861650
-        city.name = getString(R.string.openweather_city)
-        city.country = "DE"
-        city.population = 499237
-        city.geoLocation = geoLocation
-
         OpenWeatherService.instance.apiKey = getString(R.string.openweather_api_key)
-        OpenWeatherService.instance.city = city
         OpenWeatherService.instance.notificationEnabled = true
         OpenWeatherService.instance.wallpaperEnabled = true
         OpenWeatherService.instance.receiverActivity = MainActivity::class.java
@@ -193,6 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun handleOnCurrentWeather(currentWeather: WeatherCurrent) {
         this.currentWeather = currentWeather
+        Toasty.info(this, "CurrentWeather: ${currentWeather.description} with ${currentWeather.temperature.doubleFormat(2)}${0x00B0.toChar()}C", Toast.LENGTH_LONG).show()
     }
 
     private fun handleOnForecastWeather(forecastWeather: WeatherForecast) {
@@ -215,5 +205,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun handleOnUvIndex(uvIndex: UvIndex) {
         this.uvIndex = uvIndex
+        Toasty.info(this, "UvIndex: ${uvIndex.value.doubleFormat(2)}", Toast.LENGTH_LONG).show()
     }
 }
