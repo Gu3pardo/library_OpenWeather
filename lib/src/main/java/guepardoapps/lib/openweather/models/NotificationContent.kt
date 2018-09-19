@@ -1,6 +1,6 @@
 package guepardoapps.lib.openweather.models
 
-data class NotificationContent(
+internal data class NotificationContent(
         val id: Int,
         val title: String,
         val text: String,

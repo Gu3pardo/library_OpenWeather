@@ -4,7 +4,7 @@ import android.content.Context
 import guepardoapps.lib.openweather.models.*
 import io.reactivex.subjects.PublishSubject
 
-internal interface IOpenWeatherService {
+interface IOpenWeatherService {
     var apiKey: String
 
     var notificationEnabled: Boolean

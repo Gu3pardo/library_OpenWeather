@@ -17,6 +17,7 @@ import android.widget.*
 import de.mateware.snacky.Snacky
 import es.dmoral.toasty.Toasty
 import guepardoapps.lib.openweather.adapter.ForecastListAdapter
+import guepardoapps.lib.openweather.extensions.doubleFormat
 import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
 import guepardoapps.lib.openweather.models.*
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
@@ -181,6 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun handleOnCurrentWeather(currentWeather: WeatherCurrent) {
         this.currentWeather = currentWeather
+        Toasty.info(this, "CurrentWeather: ${currentWeather.description} with ${currentWeather.temperature.doubleFormat(2)}${0x00B0.toChar()}C", Toast.LENGTH_LONG).show()
     }
 
     private fun handleOnForecastWeather(forecastWeather: WeatherForecast) {
@@ -203,5 +205,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun handleOnUvIndex(uvIndex: UvIndex) {
         this.uvIndex = uvIndex
+        Toasty.info(this, "UvIndex: ${uvIndex.value.doubleFormat(2)}", Toast.LENGTH_LONG).show()
     }
 }

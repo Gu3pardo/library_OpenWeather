@@ -3,7 +3,7 @@ package guepardoapps.lib.openweather.models
 import guepardoapps.lib.openweather.annotations.JsonKey
 
 @JsonKey("geometry", "viewport")
-class Viewport {
+internal class Viewport {
     private val tag: String = Viewport::class.java.simpleName
 
     @JsonKey("viewport", "northeast")

@@ -3,7 +3,7 @@ package guepardoapps.lib.openweather.models
 import guepardoapps.lib.openweather.annotations.JsonKey
 
 @JsonKey("results", "address_components")
-class AddressComponent {
+internal class AddressComponent {
     private val tag: String = AddressComponent::class.java.simpleName
 
     @JsonKey("address_components", "short_name")

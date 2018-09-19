@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases)
-[![Version](https://img.shields.io/badge/version-v1.4.0.180913-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases/openweather-android-2018-09-18.aar)
+[![Version](https://img.shields.io/badge/version-v1.4.0.180919-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases/openweather-android-2018-09-19.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/app (Fork project and add your private OpenWeather ApiKey to strings.xml)
