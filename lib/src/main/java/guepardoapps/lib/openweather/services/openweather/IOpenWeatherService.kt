@@ -24,10 +24,10 @@ interface IOpenWeatherService {
     fun start()
     fun dispose()
 
-    fun loadCityData(cityName: String)
-    fun loadWeatherCurrent()
-    fun loadWeatherForecast()
-    fun loadUvIndex()
+    fun loadCityData(cityName: String): Boolean
+    fun loadWeatherCurrent(): Boolean
+    fun loadWeatherForecast(): Boolean
+    fun loadUvIndex(): Boolean
 
     fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast
 }

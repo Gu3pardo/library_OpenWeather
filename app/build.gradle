@@ -9,8 +9,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10400
-        versionName "1.4.0.180919"
+        versionCode 10500
+        versionName "1.5.0.180923"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -62,6 +62,7 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.2.5'
     implementation 'com.github.matecode:Snacky:1.0.2'
     implementation 'com.github.rey5137:material:1.2.4'
+    implementation 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1'
     implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
 
     testImplementation "junit:junit:$junit_version"

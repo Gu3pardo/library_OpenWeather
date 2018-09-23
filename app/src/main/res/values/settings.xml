@@ -1,4 +1,5 @@
 <resources>
-    <string name="openweather_api_key">TODO Add key here</string>
     <string name="openweather_city">Nuremberg</string>
+    <string name="openweather_api_key">TODO add api key here</string>
+    <string name="image_api_access_key">TODO add access key here</string>
 </resources>
