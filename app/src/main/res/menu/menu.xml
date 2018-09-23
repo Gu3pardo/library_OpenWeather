@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/black"
+    app:bbn_badgeColor="@color/colorPrimaryDark"
+    app:bbn_rippleColor="@color/colorAccent">
     <item
-        android:id="@+id/nav_current_weather"
-        android:icon="@drawable/icon_temperature_black"
-        android:title="Reload current Weather" />
+        android:id="@+id/btn_menu_city"
+        android:color="@color/colorPrimary"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="City" />
     <item
-        android:id="@+id/nav_forecast_weather"
-        android:icon="@drawable/icon_wind_black"
-        android:title="Reload forecast Weather" />
+        android:id="@+id/btn_menu_current_weather"
+        android:color="@color/colorPrimary"
+        android:icon="@drawable/weather_clear"
+        android:title="Current weather" />
+    <item
+        android:id="@+id/btn_menu_forecast_weather"
+        android:color="@color/colorPrimary"
+        android:icon="@drawable/weather_dummy"
+        android:title="Forecast weather" />
+    <item
+        android:id="@+id/btn_menu_uv_index"
+        android:color="@color/colorPrimary"
+        android:icon="@drawable/uv_index"
+        android:title="UV index" />
 </menu>

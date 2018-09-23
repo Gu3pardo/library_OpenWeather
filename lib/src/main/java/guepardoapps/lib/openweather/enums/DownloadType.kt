@@ -4,8 +4,9 @@ import java.io.Serializable
 
 internal enum class DownloadType : Serializable {
     Null,
-    City,
-    Current,
-    Forecast,
+    CityData,
+    CityImage,
+    CurrentWeather,
+    ForecastWeather,
     UvIndex
 }

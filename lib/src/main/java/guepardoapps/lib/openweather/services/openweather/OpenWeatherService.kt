@@ -9,8 +9,6 @@ import guepardoapps.lib.openweather.extensions.*
 import guepardoapps.lib.openweather.logging.Logger
 import guepardoapps.lib.openweather.models.*
 import android.app.WallpaperManager
-import guepardoapps.lib.openweather.services.api.ApiService
-import guepardoapps.lib.openweather.services.api.OnApiServiceListener
 import io.reactivex.subjects.PublishSubject
 import java.io.IOException
 import java.util.*
@@ -21,9 +19,16 @@ import com.google.gson.Gson
 import guepardoapps.lib.openweather.R
 import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.receiver.PeriodicActionReceiver
+import guepardoapps.lib.openweather.services.api.OnApiServiceListener
+import guepardoapps.lib.openweather.tasks.ApiRestCallTask
 
 class OpenWeatherService private constructor() : IOpenWeatherService {
     private val tag: String = OpenWeatherService::class.java.simpleName
+
+    private val geoCodeForCityUrl: String = "http://www.datasciencetoolkit.org/maps/api/geocode/json?address=%s"
+    private val currentWeatherUrl: String = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=%s"
+    private val forecastWeatherUrl: String = "http://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=%s"
+    private val uvIndexUrl: String = "http://api.openweathermap.org/data/2.5/uvi?lat=%.2f&lon=%.2f&APPID=%s"
 
     private val currentWeatherNotificationId: Int = 260520181
     private val forecastWeatherNotificationId: Int = 260520182
@@ -35,7 +40,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private var mayLoad: Boolean = false
 
     private var converter: JsonToWeatherConverter = JsonToWeatherConverter()
-    private var apiService: ApiService = ApiService()
 
     private lateinit var context: Context
     private lateinit var networkController: NetworkController
@@ -71,6 +75,36 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             uvIndexPublishSubject.onNext(RxOptional(value))
         }
     override val uvIndexPublishSubject = PublishSubject.create<RxOptional<UvIndex>>()!!
+
+    private val onApiServiceListener = object : OnApiServiceListener {
+        override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
+            Logger.instance.verbose(tag, "Received onFinished")
+            when (downloadType) {
+                DownloadType.CityData -> {
+                    handleCityDataUpdate(success, jsonString)
+                }
+                DownloadType.CityImage -> {
+                    // Nothing to do here
+                }
+                DownloadType.CurrentWeather -> {
+                    handleCurrentWeatherUpdate(success, jsonString)
+                }
+                DownloadType.ForecastWeather -> {
+                    handleForecastWeatherUpdate(success, jsonString)
+                }
+                DownloadType.UvIndex -> {
+                    handleUvIndexUpdate(success, jsonString)
+                }
+                DownloadType.Null -> {
+                    Logger.instance.error(tag, "Received download update with downloadType Null and jsonString: $jsonString")
+                    city = null
+                    weatherCurrent = null
+                    weatherForecast = null
+                    uvIndex = null
+                }
+            }
+        }
+    }
 
     override lateinit var apiKey: String
 
@@ -153,34 +187,6 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             this.sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(city))
         }
 
-        apiService.setOnApiServiceListener(object : OnApiServiceListener {
-            override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
-                Logger.instance.verbose(tag, "Received onDownloadListener onFinished")
-
-                when (downloadType) {
-                    DownloadType.Current -> {
-                        handleCurrentWeatherUpdate(success, jsonString)
-                    }
-                    DownloadType.Forecast -> {
-                        handleForecastWeatherUpdate(success, jsonString)
-                    }
-                    DownloadType.UvIndex -> {
-                        handleUvIndexUpdate(success, jsonString)
-                    }
-                    DownloadType.City -> {
-                        handleCityUpdate(success, jsonString)
-                    }
-                    DownloadType.Null -> {
-                        Logger.instance.error(tag, "Received download update with downloadType Null and jsonString: $jsonString")
-                        city = null
-                        weatherCurrent = null
-                        weatherForecast = null
-                        uvIndex = null
-                    }
-                }
-            }
-        })
-
         loadCityData(cityName)
     }
 
@@ -197,63 +203,52 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         cancelReload()
     }
 
-    override fun loadCityData(cityName: String) {
-        val result = apiService.geoCodeForCity(cityName)
-        if (result != DownloadResult.Performing) {
-            Logger.instance.error(tag, "Failure in loadCityData: $result")
-            city = null
-        }
+    override fun loadCityData(cityName: String): Boolean {
+        doApiRestCall(DownloadType.CityData, String.format(geoCodeForCityUrl, cityName))
+        return true
     }
 
-    override fun loadWeatherCurrent() {
+    override fun loadWeatherCurrent(): Boolean {
         if (!mayLoad || city == null || city!!.isDefault()) {
-            return
+            return false
         }
 
-        val result = apiService.currentWeather(apiKey, city!!)
-        if (result != DownloadResult.Performing) {
-            Logger.instance.error(tag, "Failure in loadWeatherCurrent: $result")
-            weatherCurrent = null
-        }
+        doApiRestCall(DownloadType.CurrentWeather, String.format(currentWeatherUrl, city?.name, apiKey))
 
         cancelReload()
         if (reloadEnabled) {
             scheduleReload()
         }
+
+        return true
     }
 
-    override fun loadWeatherForecast() {
+    override fun loadWeatherForecast(): Boolean {
         if (!mayLoad || city == null || city!!.isDefault()) {
-            return
+            return false
         }
 
-        val result = apiService.forecastWeather(apiKey, city!!)
-        if (result != DownloadResult.Performing) {
-            Logger.instance.error(tag, "Failure in loadWeatherForecast: $result")
-            weatherForecast = null
-        }
+        doApiRestCall(DownloadType.ForecastWeather, String.format(forecastWeatherUrl, city?.name, apiKey))
 
         cancelReload()
         if (reloadEnabled) {
             scheduleReload()
         }
+        return true
     }
 
-    override fun loadUvIndex() {
+    override fun loadUvIndex(): Boolean {
         if (!mayLoad || city == null || city!!.isDefault()) {
-            return
+            return false
         }
 
-        val result = apiService.uvIndex(apiKey, city!!)
-        if (result != DownloadResult.Performing) {
-            Logger.instance.error(tag, "Failure in loadUvIndex: $result")
-            uvIndex = null
-        }
+        doApiRestCall(DownloadType.UvIndex, String.format(uvIndexUrl, city?.coordinates?.lat, city?.coordinates?.lon, apiKey))
 
         cancelReload()
         if (reloadEnabled) {
             scheduleReload()
         }
+        return true
     }
 
     override fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast {
@@ -359,7 +354,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         }
     }
 
-    private fun handleCityUpdate(success: Boolean, jsonString: String) {
+    private fun handleCityDataUpdate(success: Boolean, jsonString: String) {
         if (!success) {
             city = null
         } else {
@@ -439,5 +434,12 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                 Logger.instance.error(tag, exception)
             }
         }
+    }
+
+    private fun doApiRestCall(downloadType: DownloadType, url: String) {
+        val task = ApiRestCallTask()
+        task.onApiServiceListener = onApiServiceListener
+        task.downloadType = downloadType
+        task.execute(url)
     }
 }

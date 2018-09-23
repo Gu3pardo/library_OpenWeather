@@ -75,8 +75,8 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
 
             city2.geometry.location = Coordinates2()
             val locationJsonObject = geometryJsonObject.getJSONObject(city2.geometry.getPropertyJsonKey(city2.geometry::location.name).key)
-            city2.geometry.location.lat = locationJsonObject.getDouble(city2.geometry.getPropertyJsonKey(city2.geometry.location::lat.name).key)
-            city2.geometry.location.lng = locationJsonObject.getDouble(city2.geometry.getPropertyJsonKey(city2.geometry.location::lng.name).key)
+            city2.geometry.location.lat = locationJsonObject.getDouble(city2.geometry.location.getPropertyJsonKey(city2.geometry.location::lat.name).key)
+            city2.geometry.location.lng = locationJsonObject.getDouble(city2.geometry.location.getPropertyJsonKey(city2.geometry.location::lng.name).key)
 
             val typesJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::types.name).key)
             for (index in 0 until typesJsonArray.length() step 1) {
