@@ -5,7 +5,7 @@
 <a target="_blank" href="https://android-arsenal.com/api?level=21" title="API21+"><img src="https://img.shields.io/badge/API-21+-blue.svg" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases)
+[![Build](https://img.shields.io/badge/build-failing-red.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases)
 [![Version](https://img.shields.io/badge/version-v1.5.0.180923-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases/openweather-android-2018-09-23.aar)
 
 library for downloading and handling data from openweather
@@ -33,6 +33,9 @@ Used Libraries are
 - tests based on mockito and spek
 
 - and some more
+
+## Warning 
+latest Android Studio caused some errors on my machine. Have to figure this out in the next few days
 
 ---
 
