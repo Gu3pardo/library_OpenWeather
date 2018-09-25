@@ -1,17 +1,13 @@
 package guepardoapps.lib.openweather.example
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import guepardoapps.lib.openweather.services.image.ImageService
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
-import io.reactivex.disposables.Disposable
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation
-import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.activity.*
 
 class MainActivity : FragmentActivity(), BottomNavigation.OnMenuItemSelectionListener {
-
-    private var subscriptions: Array<Disposable?> = arrayOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +35,6 @@ class MainActivity : FragmentActivity(), BottomNavigation.OnMenuItemSelectionLis
 
     override fun onDestroy() {
         super.onDestroy()
-        subscriptions.forEach { x -> x?.dispose() }
-        subscriptions = arrayOf()
         OpenWeatherService.instance.dispose()
     }
 
@@ -53,7 +47,7 @@ class MainActivity : FragmentActivity(), BottomNavigation.OnMenuItemSelectionLis
     }
 
     private fun performMenuAction(itemId: Int) {
-        var fragment: Fragment? = null
+        var fragment: androidx.fragment.app.Fragment? = null
         when (itemId) {
             R.id.btn_menu_city -> {
                 fragment = FragmentCity()

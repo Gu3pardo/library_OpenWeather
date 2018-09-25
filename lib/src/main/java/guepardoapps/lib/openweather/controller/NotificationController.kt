@@ -10,7 +10,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import guepardoapps.lib.openweather.extensions.circleBitmap
 import guepardoapps.lib.openweather.models.NotificationContent
 

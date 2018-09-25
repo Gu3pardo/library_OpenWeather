@@ -1,6 +1,6 @@
 package guepardoapps.lib.openweather.converter
 
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import guepardoapps.lib.openweather.models.City2
 import guepardoapps.lib.openweather.models.UvIndex
 import guepardoapps.lib.openweather.models.WeatherCurrent

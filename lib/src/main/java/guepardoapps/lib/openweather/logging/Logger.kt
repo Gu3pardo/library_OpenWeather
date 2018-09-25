@@ -1,7 +1,7 @@
 package guepardoapps.lib.openweather.logging
 
 import android.content.Context
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import android.util.Log
 import java.sql.Date
 import java.util.*

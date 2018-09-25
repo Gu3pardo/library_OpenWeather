@@ -1,6 +1,6 @@
 package guepardoapps.lib.openweather.extensions
 
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 
 internal fun String.occurenceCount(@NonNull find: String): Int {
     var lastIndex = 0

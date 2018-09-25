@@ -2,4 +2,6 @@
     <string name="app_name">OpenWeather - Android Library</string>
     <string name="example">Example</string>
     <string name="contentDescription">This is an image</string>
+    <string name="noData">There is no data!</string>
+    <string name="searchHint">Enter search value here</string>
 </resources>

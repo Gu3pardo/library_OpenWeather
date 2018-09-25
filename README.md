@@ -2,11 +2,11 @@
 
 [![Platform](https://img.shields.io/badge/platform-Android-blue.svg)](https://www.android.com)
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
-<a target="_blank" href="https://android-arsenal.com/api?level=21" title="API21+"><img src="https://img.shields.io/badge/API-21+-blue.svg" /></a>
+<a target="_blank" href="https://android-arsenal.com/api?level=24" title="API24+"><img src="https://img.shields.io/badge/API-24+-blue.svg" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/releases)
-[![Version](https://img.shields.io/badge/version-v1.5.0.180923-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/releases/openweather-android-2018-09-23.aar)
+[![Version](https://img.shields.io/badge/version-v1.5.0.180925-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/releases/openweather-android-2018-09-25.aar)
 
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/app (Fork project and add your private OpenWeather ApiKey to strings.xml)
@@ -15,20 +15,20 @@ Based on Kotlin, using Listener, Extensions and more.
 
 Used Libraries are
 
-- com.baoyz.pullrefreshlayout:library:1.2.0
-- com.flaviofaria:kenburnsview:1.0.7
-- com.github.florent37:expansionpanel:1.1.1
-- com.github.GrenderG:Toasty:1.2.5
-- com.github.matecode:Snacky:1.0.2
-- com.github.rey5137:material:1.2.4
-- com.google.code.gson:gson:2.8.5
-- com.squareup.okhttp3:okhttp:3.9.1
+- com.flaviofaria:kenburnsview
+- com.github.AndreaCioccarelli:CryptoPrefs
+- com.github.florent37:expansionpanel
+- com.google.code.gson:gson
+- com.baoyz.pullrefreshlayout:library
+- com.squareup.okhttp3:okhttp
+- com.squareup.picasso:picasso
 - it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1
 
-- io.reactivex.rxjava2:rxkotlin:2.2.0
+- io.reactivex.rxjava2:rxkotlin
+- org.jetbrains.kotlin:kotlin-reflect
+- org.jetbrains.kotlin:kotlin-stdlib-jdk8
 
-- com.android.support.constraint:constraint-layout:1.1.3
-- using also latest API28 libs
+- and the new androidx-libraries
 
 - tests based on mockito and spek
 
@@ -47,9 +47,10 @@ Used Libraries are
 # Integration
 
 First you have to register an account at [OpenWeatherMap.org](http://www.openweathermap.org/) and receive an API key.
-This key is an important parameter of the OpenWeatherService!
+This key is an important parameter of the OpenWeatherService and needs to be set in the settings.xml along with the key for unsplash api (new, not needed but fancy for city image)!
 
-The easiest way to integrate the library is to use the OpenWeatherService and to subscribe on weatherCurrentPublishSubject and weatherForecastPublishSubject using ReactiveX2
+The easiest way to integrate the library is to use the OpenWeatherService and to subscribe on weatherCurrentPublishSubject and weatherForecastPublishSubject using ReactiveX2.
+You can also use the build in views for the city, current and forecast weather and  the uv index.
 
 ```java
 class MainActivity : AppCompatActivity() {

@@ -29,5 +29,5 @@ interface IOpenWeatherService {
     fun loadWeatherForecast(): Boolean
     fun loadUvIndex(): Boolean
 
-    fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast
+    fun searchForecast(searchValue: String): WeatherForecast
 }

@@ -251,8 +251,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         return true
     }
 
-    override fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast {
-        val foundEntries = forecast.list.filter { x ->
+    override fun searchForecast(searchValue: String): WeatherForecast {
+        val foundEntries = this.weatherForecast!!.list.filter { x ->
             when (searchValue) {
                 "Today", "Heute", "Hoy", "Inru" -> {
                     val todayCalendar = Calendar.getInstance()
@@ -274,7 +274,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         }
 
         val weatherForecast = WeatherForecast()
-        weatherForecast.city = forecast.city
+        weatherForecast.city = this.weatherForecast!!.city
         weatherForecast.list = foundEntries
         return weatherForecast
     }
@@ -385,7 +385,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     "Current Weather: " + weatherCurrent!!.description,
                     weatherCurrent!!.temperature.doubleFormat(1) + "${0x00B0.toChar()}C, "
                             + "(" + weatherCurrent!!.temperatureMin.doubleFormat(1) + "${0x00B0.toChar()}C - "
-                            + "(" + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${0x00B0.toChar()}C), "
+                            + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${0x00B0.toChar()}C), "
                             + weatherCurrent!!.pressure.doubleFormat(1) + "mBar, "
                             + weatherCurrent!!.humidity.doubleFormat(1) + "%",
                     weatherCurrent!!.weatherCondition.iconId,
