@@ -9,7 +9,7 @@
     android:paddingStart="5dp"
     android:paddingTop="5dp">
 
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -58,7 +58,7 @@
                     android:textStyle="bold" />
 
                 <!-- HEADER INDICATOR -->
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/headerIndicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -220,5 +220,5 @@
 
             </com.github.florent37.expansionpanel.ExpansionLayout>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>

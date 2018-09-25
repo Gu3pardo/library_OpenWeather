@@ -1,6 +1,6 @@
 package guepardoapps.lib.openweather.controller
 
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import guepardoapps.lib.openweather.models.NotificationContent
 
 internal interface INotificationController {

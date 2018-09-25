@@ -11,7 +11,7 @@ android {
         targetSdkVersion 28
         versionCode 10500
         versionName "1.5.0.180925"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
     buildTypes {
@@ -46,7 +46,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation "com.android.support:design:$android_support_version"
+    implementation "com.google.android.material:material:$android_material_version"
 
     implementation 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1'
 }

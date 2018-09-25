@@ -1,7 +1,7 @@
 package guepardoapps.lib.openweather.controller
 
 import android.content.Context
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager

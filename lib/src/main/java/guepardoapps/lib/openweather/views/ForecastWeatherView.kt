@@ -3,9 +3,9 @@ package guepardoapps.lib.openweather.views
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.CoordinatorLayout
-import android.support.v4.content.ContextCompat
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet

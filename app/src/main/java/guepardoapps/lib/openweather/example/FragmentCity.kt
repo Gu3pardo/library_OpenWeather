@@ -2,10 +2,10 @@ package guepardoapps.lib.openweather.example
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 
 class FragmentCity : Fragment() {
