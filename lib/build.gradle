@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 10500
-        versionName "1.5.0.180924"
+        versionName "1.5.0.180925"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         testOptions {
@@ -24,8 +24,14 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
+            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -73,10 +79,13 @@ dependencies {
     implementation "com.android.support:support-compat:$android_support_version"
     implementation "com.android.support:support-v4:$android_support_version"
 
+    implementation "com.flaviofaria:kenburnsview:$kenburns_view_version"
     implementation "com.github.AndreaCioccarelli:CryptoPrefs:$cryptoprefs_version"
     implementation "com.github.florent37:expansionpanel:$expansion_panel_version"
     implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.baoyz.pullrefreshlayout:library:$pull_refresh_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
+    implementation "com.squareup.picasso:picasso:$picasso_version"
 
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test:runner:$test_runner_version"

@@ -1,5 +1,5 @@
 [x] update libraries
-[ ] add aoi call for city data (see OpenWeather library for Angular)
+[x] add aoi call for city data (see OpenWeather library for Angular)
 [ ] add additional OpenWeather APIs
     [x] UV Index
     [ ] Air pollution

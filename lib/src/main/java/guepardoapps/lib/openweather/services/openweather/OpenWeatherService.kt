@@ -251,8 +251,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         return true
     }
 
-    override fun searchForecast(forecast: WeatherForecast, searchValue: String): WeatherForecast {
-        val foundEntries = forecast.list.filter { x ->
+    override fun searchForecast(searchValue: String): WeatherForecast {
+        val foundEntries = this.weatherForecast!!.list.filter { x ->
             when (searchValue) {
                 "Today", "Heute", "Hoy", "Inru" -> {
                     val todayCalendar = Calendar.getInstance()
@@ -274,7 +274,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         }
 
         val weatherForecast = WeatherForecast()
-        weatherForecast.city = forecast.city
+        weatherForecast.city = this.weatherForecast!!.city
         weatherForecast.list = foundEntries
         return weatherForecast
     }

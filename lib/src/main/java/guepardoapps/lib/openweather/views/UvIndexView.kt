@@ -1,4 +1,4 @@
-package guepardoapps.lib.openweather.view
+package guepardoapps.lib.openweather.views
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,23 +13,25 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult", "SetTextI18n")
-class UvIndexView(context: Context?, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+class UvIndexView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 
     private var valueTextView: TextView? = null
     private var coordinatesTextView: TextView? = null
 
-    private var subscription: Disposable? = null
+    private var subscriptions: Array<Disposable?> = arrayOf()
 
     init {
-        val layoutInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         layoutInflater.inflate(R.layout.lib_uv_index, this, true)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+
         valueTextView = findViewById(R.id.lib_uv_index_value)
         coordinatesTextView = findViewById(R.id.lib_uv_index_coordinates)
-        subscription = OpenWeatherService.instance.uvIndexPublishSubject
+
+        subscriptions = subscriptions.plus(OpenWeatherService.instance.uvIndexPublishSubject
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->
@@ -39,11 +41,11 @@ class UvIndexView(context: Context?, attrs: AttributeSet?) : ConstraintLayout(co
                                 coordinatesTextView!!.text = "Lat: ${uvIndex.coordinates.lat.doubleFormat(2)}, Lon:${uvIndex.coordinates.lon.doubleFormat(2)}"
                             }
                         },
-                        { _ -> })
+                        { _ -> }))
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        subscription?.dispose()
+        subscriptions.forEach { x -> x?.dispose() }
     }
 }

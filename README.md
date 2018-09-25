@@ -8,6 +8,9 @@
 [![Build](https://img.shields.io/badge/build-failing-red.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases)
 [![Version](https://img.shields.io/badge/version-v1.5.0.180923-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases/openweather-android-2018-09-23.aar)
 
+## Warning 
+latest Android Studio caused some errors on my machine. Have to figure this out in the next few days
+
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/app (Fork project and add your private OpenWeather ApiKey to strings.xml)
 
@@ -33,9 +36,6 @@ Used Libraries are
 - tests based on mockito and spek
 
 - and some more
-
-## Warning 
-latest Android Studio caused some errors on my machine. Have to figure this out in the next few days
 
 ---
 

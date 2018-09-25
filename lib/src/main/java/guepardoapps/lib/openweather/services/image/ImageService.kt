@@ -76,7 +76,7 @@ class ImageService private constructor() : IImageService {
             return false
         }
 
-        doApiRestCall(DownloadType.CityImage, String.format(imageApiUrl, accessKey, orientation, cityName))
+        doApiRestCall(DownloadType.CityImage, String.format(imageApiUrl, accessKey, orientation.value, cityName))
         return true
     }
 
