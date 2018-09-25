@@ -1,5 +1,5 @@
 <resources>
     <string name="openweather_city">Nuremberg</string>
-    <string name="openweather_api_key">f1fa9a949c8143a0ad415f090187f2f9</string>
-    <string name="image_api_access_key">81c0094abc87b3621ddb29c27e377c205bfd26784089c225bd250277d71494d7</string>
+    <string name="openweather_api_key">TODO add api key here</string>
+    <string name="image_api_access_key">TODO add api key here</string>
 </resources>

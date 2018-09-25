@@ -7,7 +7,7 @@ apply plugin: "de.mannodermaus.android-junit5"
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    buildToolsVersion "28.0.3"
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 28
@@ -85,7 +85,9 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
     implementation "com.baoyz.pullrefreshlayout:library:$pull_refresh_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
-    implementation "com.squareup.picasso:picasso:$picasso_version"
+    implementation ("com.squareup.picasso:picasso:$picasso_version") {
+        exclude group: 'com.android.support'
+    }
 
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test:runner:$test_runner_version"
