@@ -385,7 +385,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     "Current Weather: " + weatherCurrent!!.description,
                     weatherCurrent!!.temperature.doubleFormat(1) + "${0x00B0.toChar()}C, "
                             + "(" + weatherCurrent!!.temperatureMin.doubleFormat(1) + "${0x00B0.toChar()}C - "
-                            + "(" + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${0x00B0.toChar()}C), "
+                            + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${0x00B0.toChar()}C), "
                             + weatherCurrent!!.pressure.doubleFormat(1) + "mBar, "
                             + weatherCurrent!!.humidity.doubleFormat(1) + "%",
                     weatherCurrent!!.weatherCondition.iconId,

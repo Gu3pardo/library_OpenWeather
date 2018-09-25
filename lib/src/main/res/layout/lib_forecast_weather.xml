@@ -4,86 +4,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/lib_forecast_weather_collapsing"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <com.flaviofaria.kenburnsview.KenBurnsView
-                android:id="@+id/lib_forecast_weather_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/contentDescription"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/weather_wallpaper_dummy"
-                app:layout_collapseMode="parallax" />
-
-            <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:fitsSystemWindows="true"
-                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:fillViewport="true"
-        android:padding="5dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/lib_forecast_weather_search"
+        <com.flaviofaria.kenburnsview.KenBurnsView
+            android:id="@+id/lib_forecast_weather_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/searchHint"
-            android:inputType="textAutoComplete"
-            android:visibility="invisible" />
+            android:layout_height="200dp"
+            android:contentDescription="@string/contentDescription"
+            android:fitsSystemWindows="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/weather_wallpaper_dummy"
+            app:layout_collapseMode="parallax" />
 
-        <ProgressBar
-            android:id="@+id/lib_forecast_weather_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            android:id="@+id/lib_forecast_weather_no_data_fallback"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="@string/noData"
-            android:textColor="@color/Black"
-            android:visibility="invisible" />
+            android:fillViewport="true"
+            android:padding="5dp">
 
-        <com.baoyz.widget.PullRefreshLayout
-            android:id="@+id/pull_lib_forecast_weather_refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/lib_forecast_weather_search"
-            android:layout_marginBottom="?attr/actionBarSize">
-
-            <ListView
-                android:id="@+id/lib_forecast_weather_list_view"
+            <EditText
+                android:id="@+id/lib_forecast_weather_search"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:hint="@string/searchHint"
+                android:inputType="textAutoComplete"
+                android:visibility="invisible" />
 
-        </com.baoyz.widget.PullRefreshLayout>
-    </RelativeLayout>
+            <ProgressBar
+                android:id="@+id/lib_forecast_weather_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/lib_forecast_weather_no_data_fallback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/noData"
+                android:textColor="@color/Black"
+                android:visibility="invisible" />
+
+            <com.baoyz.widget.PullRefreshLayout
+                android:id="@+id/pull_lib_forecast_weather_refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/lib_forecast_weather_search"
+                android:layout_marginBottom="?attr/actionBarSize">
+
+                <ListView
+                    android:id="@+id/lib_forecast_weather_list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </com.baoyz.widget.PullRefreshLayout>
+        </RelativeLayout>
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

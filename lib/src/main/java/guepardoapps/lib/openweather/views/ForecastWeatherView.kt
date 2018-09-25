@@ -1,11 +1,8 @@
 package guepardoapps.lib.openweather.views
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -46,10 +43,6 @@ class ForecastWeatherView(context: Context, attrs: AttributeSet?) : CoordinatorL
         fallbackTextView = findViewById(R.id.lib_forecast_weather_no_data_fallback)
         pullRefreshLayout = findViewById(R.id.pull_lib_forecast_weather_refresh_layout)
         listView = findViewById(R.id.lib_forecast_weather_list_view)
-
-        val collapsingToolbar = (context as Activity).findViewById<CollapsingToolbarLayout>(R.id.lib_forecast_weather_collapsing)
-        collapsingToolbar.setExpandedTitleColor(android.graphics.Color.argb(0, 0, 0, 0))
-        collapsingToolbar.setCollapsedTitleTextColor(ContextCompat.getColor(context!!, R.color.TextIcon))
 
         searchEditText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}

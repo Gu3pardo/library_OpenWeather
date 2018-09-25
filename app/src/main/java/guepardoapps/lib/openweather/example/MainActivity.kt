@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import guepardoapps.lib.openweather.services.image.ImageService
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation
-import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.activity.*
 
 class MainActivity : FragmentActivity(), BottomNavigation.OnMenuItemSelectionListener {
 

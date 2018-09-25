@@ -9,7 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import guepardoapps.lib.openweather.R
+import guepardoapps.lib.openweather.enums.UnsplashImageOrientation
 import guepardoapps.lib.openweather.extensions.doubleFormat
+import guepardoapps.lib.openweather.logging.Logger
 import guepardoapps.lib.openweather.services.image.ImageService
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import io.reactivex.disposables.Disposable
@@ -17,6 +19,7 @@ import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult", "SetTextI18n")
 class CityView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+    private val tag: String = CityView::class.java.simpleName
 
     private var cityImageView: ImageView? = null
     private var nameTextView: TextView? = null
@@ -50,6 +53,8 @@ class CityView(context: Context, attrs: AttributeSet?) : ConstraintLayout(contex
                                 countryTextView!!.text = city.country
                                 populationTextView!!.text = "Population: ${city.population}"
                                 coordinatesTextView!!.text = "Lat: ${city.coordinates.lat.doubleFormat(2)}, Lon:${city.coordinates.lon.doubleFormat(2)}"
+
+                                ImageService.instance.receiveImagePictureUrl(city.name, UnsplashImageOrientation.Landscape)
                             }
                         },
                         { _ -> }))
@@ -60,7 +65,10 @@ class CityView(context: Context, attrs: AttributeSet?) : ConstraintLayout(contex
                         { response ->
                             val url = response?.value
                             if (url != null) {
+                                Logger.instance.info(tag, "Received url $url")
                                 Picasso.get().load(url).into(cityImageView)
+                            } else {
+                                Logger.instance.warning(tag, "Received empty url")
                             }
                         },
                         { _ -> }))

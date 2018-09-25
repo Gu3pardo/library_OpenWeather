@@ -7,7 +7,7 @@ android {
     buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "guepardoapps.library.openweather.example"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 10500
         versionName "1.5.0.180925"
@@ -43,10 +43,16 @@ repositories {
 dependencies {
     implementation project(':lib')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
+    implementation "androidx.annotation:annotation:$android_material_version"
+    implementation "androidx.appcompat:appcompat:$android_material_version"
+    implementation "androidx.cardview:cardview:$android_material_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+    implementation "androidx.core:core:$android_material_version"
+    implementation "androidx.cursoradapter:cursoradapter:$android_material_version"
+    implementation "androidx.documentfile:documentfile:$android_material_version"
+    implementation "androidx.legacy:legacy-support-v4:$android_material_version"
+    implementation "androidx.percentlayout:percentlayout:$android_material_version"
+    implementation "androidx.recyclerview:recyclerview:$android_material_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    implementation "com.google.android.material:material:$android_material_version"
-
     implementation 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1'
 }
