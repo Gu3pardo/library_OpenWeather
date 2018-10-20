@@ -175,4 +175,4 @@ class MainActivity : AppCompatActivity() {
 
 ## License
 
-TimeXt-Kotlin is distributed under the MIT license. [See LICENSE](https://github.com/TimeXt/TimeXt-Kotlin/blob/develop/LICENSE.md) for details.
+OpenWeather-Android is distributed under the MIT license. [See LICENSE](https://github.com/OpenWeatherLib/OpenWeather-Android/blob/develop/LICENSE.md) for details.
