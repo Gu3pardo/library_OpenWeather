@@ -1,8 +1,9 @@
 package guepardoapps.lib.openweather.models
 
 import guepardoapps.lib.openweather.annotations.JsonKey
+import guepardoapps.lib.openweather.common.Constants
 
-@JsonKey("", "results")
+@JsonKey(Constants.String.Empty, "results")
 internal class City2 {
     private val tag: String = City2::class.java.simpleName
 

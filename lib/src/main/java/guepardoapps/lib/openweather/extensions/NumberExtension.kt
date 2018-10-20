@@ -1,5 +1,6 @@
 package guepardoapps.lib.openweather.extensions
 
+import guepardoapps.lib.openweather.common.Constants
 import java.util.*
 
 fun Int.integerFormat(digits: Int): String {
@@ -12,4 +13,12 @@ fun Double.doubleFormat(digits: Int): String {
 
 fun Float.floatFormat(digits: Int): String {
     return String.format(Locale.getDefault(), "%.${digits}f", this)
+}
+
+fun Number.isZero(): Boolean {
+    return this == Constants.Defaults.Zero
+}
+
+fun Long.toMillis(): Long {
+    return (this * Constants.Defaults.Thousand)
 }

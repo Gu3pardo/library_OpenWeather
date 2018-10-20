@@ -1,8 +1,9 @@
 package guepardoapps.lib.openweather.models
 
 import guepardoapps.lib.openweather.annotations.JsonKey
+import guepardoapps.lib.openweather.common.Constants
 
-@JsonKey("", "")
+@JsonKey(Constants.String.Empty, Constants.String.Empty)
 class WeatherForecast {
     private val tag: String = WeatherForecast::class.java.simpleName
 

@@ -21,6 +21,8 @@ import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.receiver.PeriodicActionReceiver
 import guepardoapps.lib.openweather.services.api.OnApiServiceListener
 import guepardoapps.lib.openweather.tasks.ApiRestCallTask
+import guepardoapps.timext.kotlin.extensions.days
+import guepardoapps.timext.kotlin.extensions.minutes
 
 class OpenWeatherService private constructor() : IOpenWeatherService {
     private val tag: String = OpenWeatherService::class.java.simpleName
@@ -34,8 +36,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private val forecastWeatherNotificationId: Int = 260520182
     private val uvIndexNotificationId: Int = 260520183
 
-    private val minTimeoutMs: Long = 15 * 60 * 1000
-    private val maxTimeoutMs: Long = 24 * 60 * 60 * 1000
+    private val minTimeoutMs: Long = 15.minutes.inMilliSeconds.value.toLong()
+    private val maxTimeoutMs: Long = 1.days.inMilliSeconds.value.toLong()
 
     private var mayLoad: Boolean = false
 
@@ -47,10 +49,10 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
     private lateinit var sharedPreferenceController: SharedPreferenceController
 
     var city: City? = null
-        get() = Gson().fromJson<City>(sharedPreferenceController.load(Constants.sharedPrefKeyCity, Gson().toJson(field)), City::class.java)
+        get() = Gson().fromJson<City>(sharedPreferenceController.load(Constants.SharedPref.KeyCity, Gson().toJson(field)), City::class.java)
         private set(value) {
             field = value ?: City()
-            sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(field))
+            sharedPreferenceController.save(Constants.SharedPref.KeyCity, Gson().toJson(field))
             cityPublishSubject.onNext(RxOptional(value))
         }
     override val cityPublishSubject = PublishSubject.create<RxOptional<City>>()!!
@@ -180,11 +182,11 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
 
         Logger.instance.initialize(context)
 
-        if (!this.sharedPreferenceController.exists(Constants.sharedPrefKeyCity)) {
+        if (!this.sharedPreferenceController.exists(Constants.SharedPref.KeyCity)) {
             Logger.instance.info(tag, "Initial save of default city")
             val city = City()
             city.name = cityName
-            this.sharedPreferenceController.save(Constants.sharedPrefKeyCity, Gson().toJson(city))
+            this.sharedPreferenceController.save(Constants.SharedPref.KeyCity, Gson().toJson(city))
         }
 
         loadCityData(cityName)
@@ -368,8 +370,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
 
                 val newCity = City()
                 newCity.id = city!!.id
-                newCity.name = convertedCity2.addressComponents[0].shortName
-                newCity.country = convertedCity2.addressComponents[1].shortName
+                newCity.name = convertedCity2.addressComponents.first().shortName
+                newCity.country = convertedCity2.addressComponents.second().shortName
                 newCity.population = city!!.population
                 newCity.coordinates = newCoordinates
 
@@ -383,9 +385,9 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             val currentWeatherNotificationContent = NotificationContent(
                     currentWeatherNotificationId,
                     "Current Weather: " + weatherCurrent!!.description,
-                    weatherCurrent!!.temperature.doubleFormat(1) + "${0x00B0.toChar()}C, "
-                            + "(" + weatherCurrent!!.temperatureMin.doubleFormat(1) + "${0x00B0.toChar()}C - "
-                            + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${0x00B0.toChar()}C), "
+                    weatherCurrent!!.temperature.doubleFormat(1) + "${Constants.String.DegreeSign}C, "
+                            + "(" + weatherCurrent!!.temperatureMin.doubleFormat(1) + "${Constants.String.DegreeSign}C - "
+                            + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${Constants.String.DegreeSign}C), "
                             + weatherCurrent!!.pressure.doubleFormat(1) + "mBar, "
                             + weatherCurrent!!.humidity.doubleFormat(1) + "%",
                     weatherCurrent!!.weatherCondition.iconId,
@@ -399,8 +401,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             val forecastWeatherNotificationContent = NotificationContent(
                     forecastWeatherNotificationId,
                     "Forecast: " + weatherForecast!!.getMostWeatherCondition().description,
-                    weatherForecast!!.getMinTemperature().doubleFormat(1) + "${0x00B0.toChar()}C - "
-                            + weatherForecast!!.getMaxTemperature().doubleFormat(1) + "${0x00B0.toChar()}C, "
+                    weatherForecast!!.getMinTemperature().doubleFormat(1) + "${Constants.String.DegreeSign}C - "
+                            + weatherForecast!!.getMaxTemperature().doubleFormat(1) + "${Constants.String.DegreeSign}C, "
                             + weatherForecast!!.getMinPressure().doubleFormat(1) + "mBar - "
                             + weatherForecast!!.getMaxPressure().doubleFormat(1) + "mBar, "
                             + weatherForecast!!.getMinHumidity().doubleFormat(1) + "% - "

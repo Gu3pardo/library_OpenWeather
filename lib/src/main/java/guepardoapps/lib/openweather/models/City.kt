@@ -1,22 +1,23 @@
 package guepardoapps.lib.openweather.models
 
 import guepardoapps.lib.openweather.annotations.JsonKey
+import guepardoapps.lib.openweather.common.Constants
 
-@JsonKey("", "city")
+@JsonKey(Constants.String.Empty, "city")
 class City {
     private val tag: String = City::class.java.simpleName
 
     @JsonKey("city", "id")
-    var id: Int = 0
+    var id: Int = Constants.Defaults.Zero
 
     @JsonKey("city", "name")
-    var name: String = ""
+    var name: String = Constants.String.Empty
 
     @JsonKey("city", "country")
-    var country: String = ""
+    var country: String = Constants.String.Empty
 
     @JsonKey("city", "population")
-    var population: Int = 0
+    var population: Int = Constants.Defaults.Zero
 
     var coordinates: Coordinates = Coordinates()
 

@@ -1,6 +1,7 @@
 package guepardoapps.lib.openweather.models
 
 import guepardoapps.lib.openweather.annotations.JsonKey
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
 import guepardoapps.lib.openweather.extensions.integerFormat
@@ -11,49 +12,49 @@ class WeatherForecastPart {
     private val tag: String = WeatherForecastPart::class.java.simpleName
 
     @JsonKey("weather", "main")
-    var main: String = ""
+    var main: String = Constants.String.Empty
     var weatherCondition: WeatherCondition = WeatherCondition.Null
 
     @JsonKey("weather", "description")
-    var description: String = ""
+    var description: String = Constants.String.Empty
 
     @JsonKey("weather", "icon")
-    var weatherDefaultIcon: String = ""
+    var weatherDefaultIcon: String = Constants.String.Empty
 
     @JsonKey("main", "temp")
-    var temperature: Double = 0.0
+    var temperature: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "temp_min")
-    var temperatureMin: Double = 0.0
+    var temperatureMin: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "temp_max")
-    var temperatureMax: Double = 0.0
+    var temperatureMax: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "temp_kf")
-    var temperatureKf: Double = 0.0
+    var temperatureKf: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "pressure")
-    var pressure: Double = 0.0
+    var pressure: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "sea_level")
-    var pressureSeaLevel: Double = 0.0
+    var pressureSeaLevel: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "grnd_level")
-    var pressureGroundLevel: Double = 0.0
+    var pressureGroundLevel: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "humidity")
-    var humidity: Double = 0.0
+    var humidity: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("clouds", "all")
-    var cloudsAll: Int = 0
+    var cloudsAll: Int = Constants.Defaults.Zero
 
     @JsonKey("wind", "speed")
-    var windSpeed: Double = 0.0
+    var windSpeed: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("wind", "deg")
-    var windDegree: Double = 0.0
+    var windDegree: Double = Constants.Defaults.Zero.toDouble()
 
-    @JsonKey("", "dt")
+    @JsonKey(Constants.String.Empty, "dt")
     var dateTime: Calendar = Calendar.getInstance()
 
     var listType: ForecastListType = ForecastListType.Null

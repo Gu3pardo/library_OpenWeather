@@ -1,5 +1,6 @@
 package guepardoapps.lib.openweather.extensions
 
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.enums.ForecastDayTime
 import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
@@ -21,7 +22,7 @@ fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
             WeatherCondition.Squalls,
             WeatherCondition.Sun,
             WeatherCondition.Thunderstorm)
-    weatherConditionCountList.forEach { x -> x.count = 0 }
+    weatherConditionCountList.forEach { x -> x.count = Constants.Defaults.Zero }
 
     val futureCalendar: Calendar = Calendar.getInstance()
     futureCalendar.add(Calendar.DAY_OF_YEAR, days)

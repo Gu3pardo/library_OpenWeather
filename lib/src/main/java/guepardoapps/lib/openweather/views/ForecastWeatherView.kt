@@ -12,6 +12,7 @@ import android.widget.*
 import com.baoyz.widget.PullRefreshLayout
 import guepardoapps.lib.openweather.R
 import guepardoapps.lib.openweather.adapter.ForecastListAdapter
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.extensions.getMostWeatherCondition
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import io.reactivex.disposables.Disposable
@@ -76,7 +77,7 @@ class ForecastWeatherView(context: Context, attrs: AttributeSet?) : CoordinatorL
 
                                     val forecastWeather = response?.value
                                     if (forecastWeather != null) {
-                                        searchEditText?.setText("")
+                                        searchEditText?.setText(Constants.String.Empty)
 
                                         val forecastList = forecastWeather.list
                                         if (forecastList.isNotEmpty()) {
@@ -92,6 +93,7 @@ class ForecastWeatherView(context: Context, attrs: AttributeSet?) : CoordinatorL
                                     }
                                 },
                                 { _ ->
+                                    pullRefreshLayout?.setRefreshing(false)
                                     progressBar?.visibility = View.GONE
                                     fallbackTextView?.visibility = View.VISIBLE
                                 }

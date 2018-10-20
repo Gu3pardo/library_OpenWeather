@@ -8,7 +8,7 @@ import guepardoapps.lib.openweather.logging.Logger
 class SharedPreferenceController(context: Context) : ISharedPreferenceController {
     private val tag: String = SharedPreferenceController::class.java.simpleName
 
-    private val cryptoPrefs: CryptoPrefs = CryptoPrefs(context, Constants.sharedPrefName, Constants.sharedPrefCryptoKey)
+    private val cryptoPrefs: CryptoPrefs = CryptoPrefs(context, Constants.SharedPref.Name, Constants.SharedPref.CryptoKey)
 
     override fun <T : Any> save(key: String, value: T) {
         when (value::class) {

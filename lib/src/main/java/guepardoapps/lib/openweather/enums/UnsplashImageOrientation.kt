@@ -1,6 +1,8 @@
 package guepardoapps.lib.openweather.enums
 
-enum class UnsplashImageOrientation(val value: String) {
+import java.io.Serializable
+
+enum class UnsplashImageOrientation(val value: String) :Serializable {
     Landscape("landscape"),
     Portrait("portrait"),
     Squarish("squarish")

@@ -1,6 +1,7 @@
 package guepardoapps.lib.openweather.extensions
 
 import guepardoapps.lib.openweather.annotations.JsonKey
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.models.*
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -25,7 +26,7 @@ internal fun City.getPropertyJsonKey(propertyName: String): JsonKey {
 }
 
 internal fun City.isDefault(): Boolean {
-    return id == 0 && name.isBlank() && country.isBlank() && population == 0 && coordinates.isDefault()
+    return id.isZero() && name.isBlank() && country.isBlank() && population.isZero() && coordinates.isDefault()
 }
 
 internal fun City2.getJsonKey(): JsonKey {
@@ -49,7 +50,7 @@ internal fun Coordinates.getPropertyJsonKey(propertyName: String): JsonKey {
 }
 
 internal fun Coordinates.isDefault(): Boolean {
-    return lat == 720.0 && lon == 720.0
+    return lat == Constants.Defaults.Coordinates && lon == Constants.Defaults.Coordinates
 }
 
 internal fun Coordinates2.getJsonKey(): JsonKey {
@@ -61,7 +62,7 @@ internal fun Coordinates2.getPropertyJsonKey(propertyName: String): JsonKey {
 }
 
 internal fun Coordinates2.isDefault(): Boolean {
-    return lat == 720.0 && lng == 720.0
+    return lat == Constants.Defaults.Coordinates && lng == Constants.Defaults.Coordinates
 }
 
 internal fun Geometry.getJsonKey(): JsonKey {

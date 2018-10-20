@@ -10,11 +10,12 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import guepardoapps.lib.openweather.R
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.enums.ForecastListType
+import guepardoapps.lib.openweather.extensions.DDMMYYYY
 import guepardoapps.lib.openweather.extensions.doubleFormat
-import guepardoapps.lib.openweather.extensions.integerFormat
+import guepardoapps.lib.openweather.extensions.hhmm
 import guepardoapps.lib.openweather.models.WeatherForecastPart
-import java.util.*
 
 class ForecastListAdapter(
         @NonNull private val context: Context,
@@ -73,12 +74,10 @@ class ForecastListAdapter(
                 holder.weatherConditionImageView.setImageResource(forecastPart.weatherCondition.iconId)
                 holder.weatherHeaderTextView = rowView.findViewById(R.id.weatherHeaderTextView)
 
-                val dateTime = forecastPart.dateTime
                 holder.weatherHeaderTextView.text =
-                        "${dateTime.get(Calendar.HOUR_OF_DAY).integerFormat(2)}:" +
-                        "${dateTime.get(Calendar.MINUTE).integerFormat(2)}, " +
+                        forecastPart.dateTime.hhmm() + ", " +
                         "${forecastPart.temperature.doubleFormat(2)} " +
-                        "${0x00B0.toChar()}C, " +
+                        "${Constants.String.DegreeSign}C, " +
                         forecastPart.description
 
                 holder.weatherTemperatureView = rowView.findViewById(R.id.weatherTemperatureView)
@@ -86,9 +85,9 @@ class ForecastListAdapter(
                 holder.weatherTemperatureTextView = rowView.findViewById(R.id.weatherTemperatureTextView)
                 holder.weatherTemperatureTextView.text =
                         "${forecastPart.temperatureMin.doubleFormat(2)} " +
-                        "${0x00B0.toChar()}C - " +
+                        "${Constants.String.DegreeSign}C - " +
                         "${forecastPart.temperatureMax.doubleFormat(2)} " +
-                        "${0x00B0.toChar()}C"
+                        "${Constants.String.DegreeSign}C"
 
                 holder.weatherPressureView = rowView.findViewById(R.id.weatherPressureView)
                 holder.weatherPressureImageView = rowView.findViewById(R.id.weatherPressureImageView)
@@ -109,14 +108,8 @@ class ForecastListAdapter(
             }
             ForecastListType.DateDivider, ForecastListType.Null -> {
                 rowView = inflater.inflate(R.layout.listview_card_divider, parentView, false)
-
                 holder.dividerCardTitleText = rowView.findViewById(R.id.dividerCardTitleText)
-
-                val dateTime = forecastPart.dateTime
-                holder.dividerCardTitleText.text =
-                        "${dateTime.get(Calendar.DAY_OF_MONTH).integerFormat(2)}." +
-                        "${(dateTime.get(Calendar.MONTH) + 1).integerFormat(2)}." +
-                        dateTime.get(Calendar.YEAR).integerFormat(4)
+                holder.dividerCardTitleText.text = forecastPart.dateTime.DDMMYYYY()
             }
         }
 

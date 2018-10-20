@@ -1,9 +1,11 @@
 package guepardoapps.lib.openweather.converter
 
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.enums.ForecastListType
 import guepardoapps.lib.openweather.enums.WeatherCondition
 import guepardoapps.lib.openweather.extensions.getJsonKey
 import guepardoapps.lib.openweather.extensions.getPropertyJsonKey
+import guepardoapps.lib.openweather.extensions.toMillis
 import guepardoapps.lib.openweather.logging.Logger
 import guepardoapps.lib.openweather.models.*
 import org.json.JSONObject
@@ -31,11 +33,11 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
 
             val city2 = City2()
 
-            val resultsJsonObject = jsonObject.getJSONArray(city2.getJsonKey().key).getJSONObject(0)
+            val resultsJsonObject = jsonObject.getJSONArray(city2.getJsonKey().key).getJSONObject(Constants.Defaults.Zero)
             val addressComponentJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::addressComponents.name).key)
 
             val addressComponentCity = AddressComponent()
-            val addressComponentCityJsonObject = addressComponentJsonArray.getJSONObject(0)
+            val addressComponentCityJsonObject = addressComponentJsonArray.getJSONObject(Constants.Defaults.Zero)
             addressComponentCity.shortName = addressComponentCityJsonObject.getString(addressComponentCity.getPropertyJsonKey(addressComponentCity::shortName.name).key)
             addressComponentCity.longName = addressComponentCityJsonObject.getString(addressComponentCity.getPropertyJsonKey(addressComponentCity::longName.name).key)
             val addressComponentCityTypesJsonArray = addressComponentCityJsonObject.getJSONArray(addressComponentCity.getPropertyJsonKey(addressComponentCity::types.name).key)
@@ -79,7 +81,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             city2.geometry.location.lng = locationJsonObject.getDouble(city2.geometry.location.getPropertyJsonKey(city2.geometry.location::lng.name).key)
 
             val typesJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::types.name).key)
-            for (index in 0 until typesJsonArray.length() step 1) {
+            for (index in Constants.Defaults.Zero until typesJsonArray.length() step 1) {
                 city2.types = city2.types.plus(typesJsonArray.getString(index))
             }
 
@@ -112,10 +114,10 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             weatherCurrent.city.coordinates.lat = coordinationJsonObject.getDouble(weatherCurrent.city.coordinates.getPropertyJsonKey(weatherCurrent.city.coordinates::lat.name).key)
             weatherCurrent.city.coordinates.lon = coordinationJsonObject.getDouble(weatherCurrent.city.coordinates.getPropertyJsonKey(weatherCurrent.city.coordinates::lon.name).key)
 
-            weatherCurrent.sunriseTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunriseTime.name).key) * 1000
-            weatherCurrent.sunsetTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunsetTime.name).key) * 1000
+            weatherCurrent.sunriseTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunriseTime.name).key).toMillis()
+            weatherCurrent.sunsetTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunsetTime.name).key).toMillis()
 
-            val details = jsonObject.getJSONArray(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).parent).getJSONObject(0)
+            val details = jsonObject.getJSONArray(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).parent).getJSONObject(Constants.Defaults.Zero)
             weatherCurrent.icon = details.getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::icon.name).key)
             weatherCurrent.description = details.getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).key)
             val main = details.getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::weatherCondition.name).key)
@@ -141,7 +143,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
                     .getJSONObject(weatherCurrent.getPropertyJsonKey(weatherCurrent::windDegree.name).parent)
                     .getDouble(weatherCurrent.getPropertyJsonKey(weatherCurrent::windDegree.name).key)
 
-            weatherCurrent.dateTime.timeInMillis = jsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::dateTime.name).key) * 1000
+            weatherCurrent.dateTime.timeInMillis = jsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::dateTime.name).key).toMillis()
 
             weatherCurrent.lastUpdate = Calendar.getInstance()
 
@@ -178,19 +180,18 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             val dataListJsonArray = jsonObject.getJSONArray(weatherForecastPartC.getJsonKey().parent)
             var list = listOf<WeatherForecastPart>()
 
-            var previousDateString = ""
+            var previousDateString = Constants.String.Empty
 
-            for (index in 0 until dataListJsonArray.length() step 1) {
+            for (index in Constants.Defaults.Zero until dataListJsonArray.length() step 1) {
                 val dataJsonObject = dataListJsonArray.getJSONObject(index)
 
-                val currentDateString = dataJsonObject.getString(dateKey).split(dateSplitter)[0]
+                val currentDateString = dataJsonObject.getString(dateKey).split(dateSplitter).first()
 
-                if (index == 0 || !currentDateString.contains(previousDateString)) {
+                if (index == Constants.Defaults.Zero || !currentDateString.contains(previousDateString)) {
                     val weatherForecastPartDivider = WeatherForecastPart()
                     weatherForecastPartDivider.listType = ForecastListType.DateDivider
 
-                    val dateTimeLong = dataJsonObject.getLong(weatherForecastPartDivider.getPropertyJsonKey(weatherForecastPartDivider::dateTime.name).key)
-                    weatherForecastPartDivider.dateTime.timeInMillis = dateTimeLong * 1000
+                    weatherForecastPartDivider.dateTime.timeInMillis = dataJsonObject.getLong(weatherForecastPartDivider.getPropertyJsonKey(weatherForecastPartDivider::dateTime.name).key).toMillis()
 
                     list = list.plus(weatherForecastPartDivider)
                 }
@@ -217,7 +218,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             val weatherForecastPart = WeatherForecastPart()
 
             val jsonObjectWeather = jsonObject
-                    .getJSONArray(weatherForecastPart.getJsonKey().key).getJSONObject(0)
+                    .getJSONArray(weatherForecastPart.getJsonKey().key).getJSONObject(Constants.Defaults.Zero)
 
             weatherForecastPart.main = jsonObjectWeather.getString(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::main.name).key)
             weatherForecastPart.weatherCondition = WeatherCondition.valueOf(weatherForecastPart.main)
@@ -246,7 +247,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
                     .getJSONObject(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::windDegree.name).parent)
                     .getDouble(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::windDegree.name).key)
 
-            weatherForecastPart.dateTime.timeInMillis = jsonObject.getLong(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::dateTime.name).key) * 1000
+            weatherForecastPart.dateTime.timeInMillis = jsonObject.getLong(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::dateTime.name).key).toMillis()
 
             weatherForecastPart.listType = ForecastListType.Forecast
 
@@ -267,7 +268,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             uvIndex.coordinates.lat = jsonObject.getDouble(uvIndex.coordinates.getPropertyJsonKey(uvIndex.coordinates::lat.name).key)
             uvIndex.coordinates.lon = jsonObject.getDouble(uvIndex.coordinates.getPropertyJsonKey(uvIndex.coordinates::lon.name).key)
 
-            uvIndex.dateTime.timeInMillis = jsonObject.getLong(uvIndex.getPropertyJsonKey(uvIndex::dateTime.name).key) * 1000
+            uvIndex.dateTime.timeInMillis = jsonObject.getLong(uvIndex.getPropertyJsonKey(uvIndex::dateTime.name).key).toMillis()
             uvIndex.value = jsonObject.getDouble(uvIndex.getPropertyJsonKey(uvIndex::value.name).key)
 
             return uvIndex

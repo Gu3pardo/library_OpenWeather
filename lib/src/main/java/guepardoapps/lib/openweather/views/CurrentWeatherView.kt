@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import guepardoapps.lib.openweather.R
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.extensions.doubleFormat
 import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
 import io.reactivex.disposables.Disposable
@@ -47,7 +48,7 @@ class CurrentWeatherView(context: Context, attrs: AttributeSet?) : ConstraintLay
                                     if (currentWeather != null) {
                                         weatherImageView?.setImageResource(currentWeather.weatherCondition.wallpaperId)
                                         descriptionTextView?.text = currentWeather.description
-                                        temperatureTextView?.text = "${currentWeather.temperature.doubleFormat(2)}${0x00B0.toChar()}C (${currentWeather.temperatureMin.doubleFormat(2)}${0x00B0.toChar()}C - ${currentWeather.temperatureMax.doubleFormat(2)}${0x00B0.toChar()}C)"
+                                        temperatureTextView?.text = "${currentWeather.temperature.doubleFormat(2)}${ Constants.String.DegreeSign}C (${currentWeather.temperatureMin.doubleFormat(2)}${ Constants.String.DegreeSign}C - ${currentWeather.temperatureMax.doubleFormat(2)}${ Constants.String.DegreeSign}C)"
                                         humidityTextView?.text = "${currentWeather.humidity.doubleFormat(2)} %"
                                         pressureTextView?.text = "${currentWeather.pressure.doubleFormat(2)} mBar"
                                     }

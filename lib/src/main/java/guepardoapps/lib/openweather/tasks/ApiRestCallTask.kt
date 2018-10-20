@@ -1,6 +1,7 @@
 package guepardoapps.lib.openweather.tasks
 
 import android.os.AsyncTask
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.enums.DownloadType
 import guepardoapps.lib.openweather.logging.Logger
 import guepardoapps.lib.openweather.services.api.OnApiServiceListener
@@ -14,7 +15,7 @@ internal class ApiRestCallTask : AsyncTask<String, Void, String>() {
     lateinit var onApiServiceListener: OnApiServiceListener
 
     override fun doInBackground(vararg requestUrls: String?): String {
-        var result = ""
+        var result = Constants.String.Empty
 
         if (downloadType == DownloadType.Null) {
             return result
@@ -42,7 +43,7 @@ internal class ApiRestCallTask : AsyncTask<String, Void, String>() {
 
     override fun onPostExecute(result: String?) {
         if (result.isNullOrEmpty()) {
-            onApiServiceListener.onFinished(downloadType, "", false)
+            onApiServiceListener.onFinished(downloadType, Constants.String.Empty, false)
             return
         }
         onApiServiceListener.onFinished(downloadType, result!!, true)

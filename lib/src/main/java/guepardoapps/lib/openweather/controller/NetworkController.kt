@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.logging.Logger
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -37,13 +38,17 @@ internal class NetworkController(@NonNull private val context: Context) : INetwo
                     val inetAddress = enumInetAddress.nextElement()
 
                     if (inetAddress.isSiteLocalAddress) {
-                        ip.append("SiteLocalAddress: ").append(inetAddress.hostAddress).append("\n")
+                        ip.append("SiteLocalAddress: ")
+                                .append(inetAddress.hostAddress)
+                                .append(Constants.String.NewLine)
                     }
                 }
             }
         } catch (exception: SocketException) {
             Logger.instance.error(tag, exception)
-            ip.append("Error: Something Wrong! ").append(exception.toString()).append("\n")
+            ip.append("Error: Something Wrong! ")
+                    .append(exception.toString())
+                    .append(Constants.String.NewLine)
         }
 
         return ip.toString()
@@ -79,7 +84,7 @@ internal class NetworkController(@NonNull private val context: Context) : INetwo
     override fun getWifiSsid(): String {
         val networkPair = isWifiConnected()
         if (!networkPair.second) {
-            return ""
+            return Constants.String.Empty
         }
 
         if (networkPair.first?.type == ConnectivityManager.TYPE_WIFI) {
@@ -87,11 +92,11 @@ internal class NetworkController(@NonNull private val context: Context) : INetwo
         }
 
         Logger.instance.warning(tag, "Active network is not wifi: ${networkPair.first?.type}")
-        return ""
+        return Constants.String.Empty
     }
 
     override fun getWifiDBM(): Int {
-        var dbm = 0
+        var dbm = Constants.Defaults.Zero
 
         if (wifiManager.isWifiEnabled) {
             val wifiInfo = wifiManager.connectionInfo

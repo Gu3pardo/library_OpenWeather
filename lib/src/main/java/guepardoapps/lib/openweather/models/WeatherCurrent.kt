@@ -1,50 +1,51 @@
 package guepardoapps.lib.openweather.models
 
 import guepardoapps.lib.openweather.annotations.JsonKey
+import guepardoapps.lib.openweather.common.Constants
 import guepardoapps.lib.openweather.enums.WeatherCondition
 import java.util.*
 
-@JsonKey("", "sys")
+@JsonKey(Constants.String.Empty, "sys")
 class WeatherCurrent {
     private val tag: String = WeatherCurrent::class.java.simpleName
 
     @JsonKey("weather", "icon")
-    var icon: String = ""
+    var icon: String = Constants.String.Empty
 
     @JsonKey("weather", "description")
-    var description: String = ""
+    var description: String = Constants.String.Empty
 
     @JsonKey("weather", "main")
     var weatherCondition: WeatherCondition = WeatherCondition.Null
 
     @JsonKey("main", "temp")
-    var temperature: Double = 0.0
+    var temperature: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "temp_min")
-    var temperatureMin: Double = 0.0
+    var temperatureMin: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "temp_max")
-    var temperatureMax: Double = 0.0
+    var temperatureMax: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "humidity")
-    var humidity: Double = 0.0
+    var humidity: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("main", "pressure")
-    var pressure: Double = 0.0
+    var pressure: Double = Constants.Defaults.Zero.toDouble()
 
-    @JsonKey("", "visibility")
-    var visibility: Int = 0
+    @JsonKey(Constants.String.Empty, "visibility")
+    var visibility: Int = Constants.Defaults.Zero
 
     @JsonKey("clouds", "all")
-    var cloudsAll: Int = 0
+    var cloudsAll: Int = Constants.Defaults.Zero
 
     @JsonKey("wind", "speed")
-    var windSpeed: Double = 0.0
+    var windSpeed: Double = Constants.Defaults.Zero.toDouble()
 
     @JsonKey("wind", "deg")
-    var windDegree: Double = 0.0
+    var windDegree: Double = Constants.Defaults.Zero.toDouble()
 
-    @JsonKey("", "dt")
+    @JsonKey(Constants.String.Empty, "dt")
     var dateTime: Calendar = Calendar.getInstance()
 
     @JsonKey("sys", "sunrise")
