@@ -11,6 +11,8 @@
 ## Warning 
 latest Android Studio caused some errors on my machine. Have to figure this out in the next few days
 
+## About
+
 library for downloading and handling data from openweather
 example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/app (Fork project and add your private OpenWeather ApiKey to strings.xml)
 
@@ -47,7 +49,7 @@ Used Libraries are
 
 ---
 
-# Integration
+## Integration
 
 First you have to register an account at [OpenWeatherMap.org](http://www.openweathermap.org/) and receive an API key.
 This key is an important parameter of the OpenWeatherService and needs to be set in the settings.xml along with the key for unsplash api (new, not needed but fancy for city image)!
@@ -166,3 +168,11 @@ class MainActivity : AppCompatActivity() {
     ...
 }
 ```
+
+## Requirements
+
+- Use at least JVM 1.8
+
+## License
+
+TimeXt-Kotlin is distributed under the MIT license. [See LICENSE](https://github.com/TimeXt/TimeXt-Kotlin/blob/develop/LICENSE.md) for details.

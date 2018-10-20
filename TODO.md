@@ -3,4 +3,5 @@
 [ ] add additional OpenWeather APIs
     [x] UV Index
     [ ] Air pollution
+    [ ] History
     [ ] ...
