@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
+import com.github.openweather.library.services.openweather.OpenWeatherService
 
 class FragmentForecastWeather : Fragment() {
 
@@ -15,23 +15,7 @@ class FragmentForecastWeather : Fragment() {
         OpenWeatherService.instance.loadWeatherForecast()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_forecast_weather, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
     }
 }
