@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
+import com.github.openweather.library.services.openweather.OpenWeatherService
 
 class FragmentCity : Fragment() {
 

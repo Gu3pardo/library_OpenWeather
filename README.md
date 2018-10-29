@@ -5,39 +5,15 @@
 <a target="_blank" href="https://android-arsenal.com/api?level=24" title="API24+"><img src="https://img.shields.io/badge/API-24+-blue.svg" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases)
-[![Version](https://img.shields.io/badge/version-v1.5.0.180925-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/releases/openweather-android-2018-09-25.aar)
-
-## Warning 
-latest Android Studio caused some errors on my machine. Have to figure this out in the next few days
+[![](https://jitpack.io/v/OpenWeatherLib/OpenWeather-Android.svg)](https://jitpack.io/#OpenWeatherLib/OpenWeather-Android)
+[![Version](https://img.shields.io/badge/version-v1.6.0.181029-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.6.0-alpha01)
+[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/)
 
 ## About
 
 library for downloading and handling data from openweather
-example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/app (Fork project and add your private OpenWeather ApiKey to strings.xml)
-
+example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/develop/app (Fork project and add your private OpenWeather ApiKey to settings.xml)
 Based on Kotlin, using Listener, Extensions and more.
-
-Used Libraries are
-
-- com.flaviofaria:kenburnsview
-- com.github.AndreaCioccarelli:CryptoPrefs
-- com.github.florent37:expansionpanel
-- com.google.code.gson:gson
-- com.baoyz.pullrefreshlayout:library
-- com.squareup.okhttp3:okhttp
-- com.squareup.picasso:picasso
-- it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1
-
-- io.reactivex.rxjava2:rxkotlin
-- org.jetbrains.kotlin:kotlin-reflect
-- org.jetbrains.kotlin:kotlin-stdlib-jdk8
-
-- and the new androidx-libraries
-
-- tests based on mockito and spek
-
-- and some more
 
 ---
 
@@ -76,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         OpenWeatherService.instance.wallpaperEnabled = true                             // Enable/Disable set of wallpaper
         OpenWeatherService.instance.receiverActivity = MainActivity::class.java         // Set receiver for notifications
         OpenWeatherService.instance.reloadEnabled = true                                // Enable/Disable reload of data
-        OpenWeatherService.instance.reloadTimeout = 30 * 60 * 1000                      // Set timeout of reload of data in millisecond
+        OpenWeatherService.instance.reloadTimeout = 30.minutes.inMilliseconds           // Set timeout of reload of data in millisecond (using [TimeXt](https://github.com/TimeXt/TimeXt-Kotlin))
 		
         // Subscribe on weatherCurrentPublishSubject (Using ReactiveX2)
 		subscriptions = subscriptions.plus(
@@ -169,9 +145,29 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
+## Installation
+
+Add the JitPack repository to your `build.gradle`:
+
+```groovy
+allprojects {
+ repositories {
+    maven { url "https://jitpack.io" }
+    }
+}
+```
+
+Add the dependency to your `build.gradle`:
+
+```groovy
+dependencies {
+    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:v1.6.0-alpha01'
+}
+```
+
 ## Requirements
 
-- Use at least JVM 1.8
+- Use at least JVM 1.7
 
 ## License
 

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:fillViewport="true"
+        android:padding="5dp">
+
+        <ProgressBar
+            android:id="@+id/lib_carbonmonoxide_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/lib_carbonmonoxide_no_data_fallback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/noData"
+            android:textColor="@color/Black"
+            android:visibility="invisible" />
+
+        <com.baoyz.widget.PullRefreshLayout
+            android:id="@+id/pull_lib_carbonmonoxide_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="?attr/actionBarSize">
+
+            <ListView
+                android:id="@+id/lib_carbonmonoxide_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.baoyz.widget.PullRefreshLayout>
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,38 +1,24 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
+
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 10501
-        versionName "1.5.1.181020"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+        versionCode 10600
+        versionName "1.6.0.181029-alpha01"
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+
     buildTypes {
-        debug {
-            minifyEnabled false
-            useProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
         release {
             minifyEnabled false
-            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    productFlavors {
-    }
-    aaptOptions {
-        cruncherEnabled = false
     }
 }
 
@@ -41,12 +27,12 @@ repositories {
     jcenter()
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    maven { url "http://dl.bintray.com/jetbrains/spek" }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation files('libs/timext-lib-2018-10-20-1.jar')
+
+    implementation "com.github.TimeXt.TimeXt-Kotlin:timext-android:$timext_version"
 
     implementation "io.reactivex.rxjava2:rxkotlin:$reactivex_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
@@ -71,6 +57,4 @@ dependencies {
     implementation("com.squareup.picasso:picasso:$picasso_version") {
         exclude group: 'com.android.support'
     }
-    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
 }

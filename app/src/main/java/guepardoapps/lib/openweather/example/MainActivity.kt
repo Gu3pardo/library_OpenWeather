@@ -2,8 +2,8 @@ package guepardoapps.lib.openweather.example
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import guepardoapps.lib.openweather.services.image.ImageService
-import guepardoapps.lib.openweather.services.openweather.OpenWeatherService
+import com.github.openweather.library.services.image.ImageService
+import com.github.openweather.library.services.openweather.OpenWeatherService
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation
 import kotlinx.android.synthetic.main.activity.*
 
@@ -49,6 +49,9 @@ class MainActivity : FragmentActivity(), BottomNavigation.OnMenuItemSelectionLis
     private fun performMenuAction(itemId: Int) {
         var fragment: androidx.fragment.app.Fragment? = null
         when (itemId) {
+            R.id.btn_menu_air_pollution -> {
+                fragment = FragmentAirPollution()
+            }
             R.id.btn_menu_city -> {
                 fragment = FragmentCity()
             }

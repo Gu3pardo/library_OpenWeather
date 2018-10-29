@@ -2,32 +2,33 @@
 
 buildscript {
     ext.android_material_version = '1.0.0'
-    ext.kotlin_version = '1.2.71'
-
     ext.android_worker_version = '1.0.0-alpha10'
+    ext.bottom_navigation_version = '2.0.1-rc1'
     ext.constraint_layout_version = '2.0.0-alpha2'
     ext.cryptoprefs_version = '1.1.2.0'
     ext.expansion_panel_version = '1.1.1'
+    ext.gradle_version = '3.2.1'
     ext.gson_version = '2.8.5'
-    ext.pull_refresh_version = '1.2.0'
+    ext.jacoco_coverage_version = '0.4.0'
     ext.kenburns_view_version = '1.0.7'
+    ext.kotlin_version = '1.2.71'
+    ext.maven_gradle_version = '2.0'
     ext.okhttp3_version = '3.9.1'
     ext.picasso_version = '2.71828'
+    ext.pull_refresh_version = '1.2.0'
     ext.reactivex_version = '2.2.0'
+    ext.timext_version = 'v0.2.0'
 
     repositories {
         google()
         jcenter()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath "com.github.dcendents:android-maven-gradle-plugin:$maven_gradle_version"
+        classpath "com.palantir:jacoco-coverage:$jacoco_coverage_version"
     }
 }
 
@@ -41,3 +42,5 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+apply plugin: 'com.palantir.jacoco-full-report'

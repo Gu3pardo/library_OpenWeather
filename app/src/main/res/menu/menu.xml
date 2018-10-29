@@ -24,4 +24,9 @@
         android:color="@color/colorPrimary"
         android:icon="@drawable/uv_index"
         android:title="UV index" />
+    <item
+        android:id="@+id/btn_menu_air_pollution"
+        android:color="@color/colorPrimary"
+        android:icon="@drawable/carbon_monoxide"
+        android:title="Air pollution" />
 </menu>
