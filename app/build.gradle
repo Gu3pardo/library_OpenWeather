@@ -10,8 +10,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 10600
-        versionName "1.6.0.181029"
+        versionCode 10601
+        versionName "1.6.1.181129"
     }
 
     buildTypes {
