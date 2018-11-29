@@ -1,5 +1,6 @@
 [x] update libraries
 [x] add aoi call for city data (see OpenWeather library for Angular)
+[ ] update release
 [ ] add additional OpenWeather APIs
     [x] UV Index (beta)
     [x] Air pollution (beta) -> co2, no2, o3, so2

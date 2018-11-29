@@ -6,8 +6,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![](https://jitpack.io/v/OpenWeatherLib/OpenWeather-Android.svg)](https://jitpack.io/#OpenWeatherLib/OpenWeather-Android)
-[![Version](https://img.shields.io/badge/version-v1.6.0.181029-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.6.0-alpha01)
+[![Version](https://img.shields.io/badge/version-v1.6.1.181129-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.6.1-alpha02)
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 ## About
 
@@ -161,14 +162,14 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:v1.6.0-alpha01'
+    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:v1.6.1-alpha02'
 }
 ```
 
 ## Requirements
 
-- Use at least JVM 1.7
+- Use at least JVM 1.8
 
 ## License
 
-OpenWeather-Android is distributed under the MIT license. [See LICENSE](https://github.com/OpenWeatherLib/OpenWeather-Android/blob/develop/LICENSE.md) for details.
+OpenWeather-Android is distributed under the MIT license. [See LICENSE](LICENSE.md) for details.
