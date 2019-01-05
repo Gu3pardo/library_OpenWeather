@@ -6,23 +6,25 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![](https://jitpack.io/v/OpenWeatherLib/OpenWeather-Android.svg)](https://jitpack.io/#OpenWeatherLib/OpenWeather-Android)
-[![Version](https://img.shields.io/badge/version-v1.6.1.181129-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.6.1-alpha02)
-[![Build](https://img.shields.io/badge/build-passing-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/)
+[![Version](https://img.shields.io/badge/version-v1.6.1.181129-green.svg)](releases/tag/v1.6.1-alpha02)
+[![Build](https://img.shields.io/badge/build-passing-green.svg)](lib)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 ## About
 
 library for downloading and handling data from openweather
-example application can be found here: https://github.com/OpenWeatherLib/OpenWeather-Android/tree/master/app (Fork project and add your private OpenWeather ApiKey to settings.xml)
+
+example application can be found here: [app](app) (Fork project and add your private OpenWeather ApiKey to settings.xml)
+
 Based on Kotlin, using Listener, Extensions and more.
 
 ---
 
-![alt tag](https://github.com/OpenWeatherLib/OpenWeather-Android/blob/master/screenshots/example_usage.png)
+![alt tag](screenshots/example_usage.png)
 
 ---
 
-![alt tag](https://github.com/OpenWeatherLib/OpenWeather-Android/blob/master/screenshots/example_app.png)
+![alt tag](screenshots/example_app.png)
 
 ---
 
