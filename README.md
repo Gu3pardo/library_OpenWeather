@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![](https://jitpack.io/v/OpenWeatherLib/OpenWeather-Android.svg)](https://jitpack.io/#OpenWeatherLib/OpenWeather-Android)
-[![Version](https://img.shields.io/badge/version-v1.6.1.181129-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.6.1-alpha02)
+[![Version](https://img.shields.io/badge/version-v1.6.2.190128-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.6.2)
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](lib)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
@@ -164,7 +164,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:v1.6.1-alpha02'
+    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:v1.6.2'
 }
 ```
 
