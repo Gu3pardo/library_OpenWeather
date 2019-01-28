@@ -304,21 +304,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         return true
     }
 
-    override fun loadCarbonMonoxide(dateTime: String, accuracy: Int): Boolean {
-        return loadAirPollution(dateTime, accuracy, DownloadType.CarbonMonoxide, AirPollutionType.CarbonMonoxide)
-    }
+    override fun loadCarbonMonoxide(dateTime: String, accuracy: Int): Boolean = loadAirPollution(dateTime, accuracy, DownloadType.CarbonMonoxide, AirPollutionType.CarbonMonoxide)
 
-    override fun loadNitrogenDioxide(dateTime: String, accuracy: Int): Boolean {
-        return loadAirPollution(dateTime, accuracy, DownloadType.NitrogenDioxide, AirPollutionType.NitrogenDioxide)
-    }
+    override fun loadNitrogenDioxide(dateTime: String, accuracy: Int): Boolean = loadAirPollution(dateTime, accuracy, DownloadType.NitrogenDioxide, AirPollutionType.NitrogenDioxide)
 
-    override fun loadOzone(dateTime: String, accuracy: Int): Boolean {
-        return loadAirPollution(dateTime, accuracy, DownloadType.Ozone, AirPollutionType.Ozone)
-    }
+    override fun loadOzone(dateTime: String, accuracy: Int): Boolean = loadAirPollution(dateTime, accuracy, DownloadType.Ozone, AirPollutionType.Ozone)
 
-    override fun loadSulfurDioxide(dateTime: String, accuracy: Int): Boolean {
-        return loadAirPollution(dateTime, accuracy, DownloadType.SulfurDioxide, AirPollutionType.SulfurDioxide)
-    }
+    override fun loadSulfurDioxide(dateTime: String, accuracy: Int): Boolean = loadAirPollution(dateTime, accuracy, DownloadType.SulfurDioxide, AirPollutionType.SulfurDioxide)
 
     private fun loadAirPollution(dateTime: String, accuracy: Int, downloadType: DownloadType, airPollutionType: AirPollutionType): Boolean {
         if (!mayLoad || city == null || city!!.isDefault() || dateTime.isEmpty()) {

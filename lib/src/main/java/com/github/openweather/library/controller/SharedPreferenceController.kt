@@ -27,26 +27,9 @@ class SharedPreferenceController(context: Context) : ISharedPreferenceController
     }
 
     @Suppress("IMPLICIT_CAST_TO_ANY", "UNCHECKED_CAST")
-    override fun <T : Any> load(key: String, default: T): T {
-        return when (default::class) {
-            Boolean::class -> cryptoPrefs.getBoolean(key, default as Boolean)
-            Byte::class -> cryptoPrefs.getByte(key, default as Byte)
-            Double::class -> cryptoPrefs.getDouble(key, default as Double)
-            Float::class -> cryptoPrefs.getFloat(key, default as Float)
-            Int::class -> cryptoPrefs.getInt(key, default as Int)
-            Long::class -> cryptoPrefs.getLong(key, default as Long)
-            Short::class -> cryptoPrefs.getShort(key, default as Short)
-            String::class -> cryptoPrefs.getString(key, default)
-            else -> {
-                Log.e(tag, "Invalid generic type of $default")
-                return default
-            }
-        } as T
-    }
+    override fun <T : Any> load(key: String, default: T): T = cryptoPrefs.get(key, default)
 
-    override fun exists(key: String): Boolean {
-        return cryptoPrefs.allPrefsMap.any { x -> x.key == key }
-    }
+    override fun exists(key: String): Boolean = cryptoPrefs.allPrefsMap.any { x -> x.key == key }
 
     override fun remove(key: String) {
         cryptoPrefs.remove(key)

@@ -46,6 +46,6 @@ internal class ApiRestCallTask : AsyncTask<String, Void, String>() {
             onApiServiceListener.onFinished(downloadType, Constants.String.Empty, false)
             return
         }
-        onApiServiceListener.onFinished(downloadType, result!!, true)
+        onApiServiceListener.onFinished(downloadType, result, true)
     }
 }
