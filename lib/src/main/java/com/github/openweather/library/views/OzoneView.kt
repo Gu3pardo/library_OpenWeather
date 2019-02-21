@@ -5,14 +5,17 @@ import android.content.Context
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.ImageButton
 import android.widget.TextView
+import com.github.openweather.library.R
 import com.github.openweather.library.extensions.DDMMYYYY
+import com.github.openweather.library.extensions.airPollutionCurrentDateTime
 import com.github.openweather.library.extensions.doubleFormat
 import com.github.openweather.library.extensions.hhmmss
-import com.github.openweather.library.services.openweather.OpenWeatherService
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 @SuppressLint("CheckResult", "SetTextI18n")
 class OzoneView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
@@ -20,6 +23,7 @@ class OzoneView(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
     private var valueTextView: TextView? = null
     private var coordinatesTextView: TextView? = null
     private var datetimeTextView: TextView? = null
+    private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()
 
@@ -34,8 +38,12 @@ class OzoneView(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         valueTextView = findViewById(R.id.lib_ozone_value)
         coordinatesTextView = findViewById(R.id.lib_ozone_coordinates)
         datetimeTextView = findViewById(R.id.lib_ozone_datetime)
+        reloadImageButton = findViewById(R.id.lib_ozone_reload)
+        reloadImageButton?.setOnClickListener {
+            OpenWeatherMapService.instance.loadOzone(Calendar.getInstance().airPollutionCurrentDateTime(), 1)
+        }
 
-        subscriptions = subscriptions.plus(OpenWeatherService.instance.ozonePublishSubject
+        subscriptions = subscriptions.plus(OpenWeatherMapService.instance.ozonePublishSubject
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->

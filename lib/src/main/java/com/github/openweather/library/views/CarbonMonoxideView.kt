@@ -8,10 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.baoyz.widget.PullRefreshLayout
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.R
 import com.github.openweather.library.adapter.CarbonMonoxideListAdapter
 import com.github.openweather.library.extensions.airPollutionCurrentDateTime
-import com.github.openweather.library.services.openweather.OpenWeatherService
+import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -42,11 +42,11 @@ class CarbonMonoxideView(context: Context, attrs: AttributeSet?) : CoordinatorLa
         pullRefreshLayout?.setOnRefreshListener {
             listView?.visibility = View.GONE
             progressBar?.visibility = View.VISIBLE
-            OpenWeatherService.instance.loadCarbonMonoxide(Calendar.getInstance().airPollutionCurrentDateTime(), 1)
+            OpenWeatherMapService.instance.loadCarbonMonoxide(Calendar.getInstance().airPollutionCurrentDateTime(), 1)
         }
 
         subscriptions = subscriptions.plus(
-                OpenWeatherService.instance.carbonMonoxidePublishSubject
+                OpenWeatherMapService.instance.carbonMonoxidePublishSubject
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 { response ->

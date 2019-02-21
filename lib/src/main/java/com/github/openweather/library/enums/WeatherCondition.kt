@@ -1,6 +1,6 @@
 package com.github.openweather.library.enums
 
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.R
 import java.io.Serializable
 
 enum class WeatherCondition(val id: Int, val description: String, val wallpaperId: Int, val iconId: Int, var count: Int = 0) : Serializable {

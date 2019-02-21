@@ -6,14 +6,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import com.github.openweather.library.R
 import com.github.openweather.library.enums.UnsplashImageOrientation
 import com.github.openweather.library.extensions.doubleFormat
 import com.github.openweather.library.services.image.ImageService
-import com.github.openweather.library.services.openweather.OpenWeatherService
+import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import com.squareup.picasso.Picasso
-import guepardoapps.lib.openweather.R
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
@@ -26,6 +27,7 @@ class CityView(context: Context, attrs: AttributeSet?) : ConstraintLayout(contex
     private var countryTextView: TextView? = null
     private var populationTextView: TextView? = null
     private var coordinatesTextView: TextView? = null
+    private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()
 
@@ -42,8 +44,13 @@ class CityView(context: Context, attrs: AttributeSet?) : ConstraintLayout(contex
         countryTextView = findViewById(R.id.lib_city_country)
         populationTextView = findViewById(R.id.lib_city_population)
         coordinatesTextView = findViewById(R.id.lib_city_coordinates)
+        reloadImageButton = findViewById(R.id.lib_city_reload)
+        reloadImageButton?.setOnClickListener {
+            OpenWeatherMapService.instance.loadCityData(nameTextView!!.text.toString())
+            ImageService.instance.receiveImagePictureUrl(nameTextView!!.text.toString(), UnsplashImageOrientation.Landscape)
+        }
 
-        subscriptions = subscriptions.plus(OpenWeatherService.instance.cityPublishSubject
+        subscriptions = subscriptions.plus(OpenWeatherMapService.instance.cityPublishSubject
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->

@@ -27,14 +27,13 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
     private val errorMessage: String = "not found"
 
     override fun convertToCity(jsonString: String): City2? {
+        val city2 = City2()
         try {
             val jsonObject = JSONObject(jsonString)
             if (jsonObject.getString(statusKey) != okCode) {
                 Log.e(tag, "Error in parsing jsonObject in convertToCity: $jsonObject")
                 return null
             }
-
-            val city2 = City2()
 
             val resultsJsonObject = jsonObject.getJSONArray(city2.getJsonKey().key).getJSONObject(Constants.Defaults.Zero)
             val addressComponentJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::addressComponents.name).key)
@@ -92,18 +91,18 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
 
         } catch (exception: Exception) {
             Log.e(tag, exception.message)
-            return null
+            return city2
         }
     }
 
     override fun convertToWeatherCurrent(jsonString: String): WeatherCurrent? {
+        val weatherCurrent = WeatherCurrent()
         try {
             val jsonObject = JSONObject(jsonString)
             if (jsonObject.getInt(codeKey) != successCode) {
                 Log.e(tag, "Error in parsing jsonObject in convertToWeatherCurrent: $jsonObject")
                 return null
             }
-            val weatherCurrent = WeatherCurrent()
 
             val sysJsonObject = jsonObject.getJSONObject(weatherCurrent.getJsonKey().key)
 
@@ -153,18 +152,18 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             return weatherCurrent
         } catch (exception: Exception) {
             Log.e(tag, exception.message)
-            return null
+            return weatherCurrent
         }
     }
 
     override fun convertToWeatherForecast(jsonString: String): WeatherForecast? {
+        val weatherForecast = WeatherForecast()
         try {
             val jsonObject = JSONObject(jsonString)
             if (jsonObject.getInt(codeKey) != successCode) {
                 Log.e(tag, "Error in parsing jsonObject in convertToWeatherForecast: $jsonObject")
                 return null
             }
-            val weatherForecast = WeatherForecast()
 
             weatherForecast.city = City()
             val cityJsonObject = jsonObject.getJSONObject(weatherForecast.city.getJsonKey().key)
@@ -211,14 +210,13 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             return weatherForecast
         } catch (exception: Exception) {
             Log.e(tag, exception.message)
-            return null
+            return weatherForecast
         }
     }
 
     private fun convertToWeatherForecastPart(jsonObject: JSONObject): WeatherForecastPart? {
+        val weatherForecastPart = WeatherForecastPart()
         try {
-            val weatherForecastPart = WeatherForecastPart()
-
             val jsonObjectWeather = jsonObject
                     .getJSONArray(weatherForecastPart.getJsonKey().key).getJSONObject(Constants.Defaults.Zero)
 
@@ -257,14 +255,14 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
 
         } catch (exception: Exception) {
             Log.e(tag, exception.message)
-            return null
+            return weatherForecastPart
         }
     }
 
     override fun convertToUvIndex(jsonString: String): UvIndex? {
-        try {
+        val uvIndex = UvIndex()
+        return try {
             val jsonObject = JSONObject(jsonString)
-            val uvIndex = UvIndex()
 
             uvIndex.coordinates = Coordinates()
             uvIndex.coordinates.lat = jsonObject.getDouble(uvIndex.coordinates.getPropertyJsonKey(uvIndex.coordinates::lat.name).key)
@@ -273,10 +271,10 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             uvIndex.dateTime.timeInMillis = jsonObject.getLong(uvIndex.getPropertyJsonKey(uvIndex::dateTime.name).key).toMillis()
             uvIndex.value = jsonObject.getDouble(uvIndex.getPropertyJsonKey(uvIndex::value.name).key)
 
-            return uvIndex
+            uvIndex
         } catch (exception: Exception) {
             Log.e(tag, exception.message)
-            return null
+            uvIndex
         }
     }
 

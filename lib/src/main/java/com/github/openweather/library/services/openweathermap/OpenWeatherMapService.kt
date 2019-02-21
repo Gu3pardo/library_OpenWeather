@@ -1,4 +1,4 @@
-package com.github.openweather.library.services.openweather
+package com.github.openweather.library.services.openweathermap
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -8,7 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.github.guepardoapps.timext.kotlin.extensions.days
+import com.github.guepardoapps.timext.kotlin.extensions.minus
 import com.github.guepardoapps.timext.kotlin.extensions.minutes
+import com.github.openweather.library.R
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.controller.*
 import com.github.openweather.library.converter.*
@@ -19,13 +21,12 @@ import com.github.openweather.library.receiver.PeriodicActionReceiver
 import com.github.openweather.library.services.api.OnApiServiceListener
 import com.github.openweather.library.tasks.ApiRestCallTask
 import com.google.gson.Gson
-import guepardoapps.lib.openweather.R
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import java.io.IOException
 import java.util.*
 
-class OpenWeatherService private constructor() : IOpenWeatherService {
-    private val tag: String = OpenWeatherService::class.java.simpleName
+class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
+    private val tag: String = OpenWeatherMapService::class.java.simpleName
 
     private val geoCodeForCityUrl: String = "http://www.datasciencetoolkit.org/maps/api/geocode/json?address=%s"
     private val currentWeatherUrl: String = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=%s"
@@ -58,87 +59,79 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             sharedPreferenceController.save(Constants.SharedPref.KeyCity, Gson().toJson(field))
             cityPublishSubject.onNext(RxOptional(value))
         }
-    override val cityPublishSubject = PublishSubject.create<RxOptional<City>>()!!
+    override val cityPublishSubject = BehaviorSubject.create<RxOptional<City>>()!!
+    private var lastCityCallDate: Date = Date(0)
 
     var weatherCurrent: WeatherCurrent? = null
         private set(value) {
             field = value
             weatherCurrentPublishSubject.onNext(RxOptional(value))
         }
-    override val weatherCurrentPublishSubject = PublishSubject.create<RxOptional<WeatherCurrent>>()!!
+    override val weatherCurrentPublishSubject = BehaviorSubject.create<RxOptional<WeatherCurrent>>()!!
+    private var lastWeatherCurrentCallDate: Date = Date(0)
 
     var weatherForecast: WeatherForecast? = null
         private set(value) {
             field = value
             weatherForecastPublishSubject.onNext(RxOptional(value))
         }
-    override val weatherForecastPublishSubject = PublishSubject.create<RxOptional<WeatherForecast>>()!!
+    override val weatherForecastPublishSubject = BehaviorSubject.create<RxOptional<WeatherForecast>>()!!
+    private var lastWeatherForecastCallDate: Date = Date(0)
 
     var uvIndex: UvIndex? = null
         private set(value) {
             field = value
             uvIndexPublishSubject.onNext(RxOptional(value))
         }
-    override val uvIndexPublishSubject = PublishSubject.create<RxOptional<UvIndex>>()!!
+    override val uvIndexPublishSubject = BehaviorSubject.create<RxOptional<UvIndex>>()!!
+    private var lastUvIndexCallDate: Date = Date(0)
 
     var carbonMonoxide: CarbonMonoxide? = null
         private set(value) {
             field = value
             carbonMonoxidePublishSubject.onNext(RxOptional(value))
         }
-    override val carbonMonoxidePublishSubject = PublishSubject.create<RxOptional<CarbonMonoxide>>()!!
+    override val carbonMonoxidePublishSubject = BehaviorSubject.create<RxOptional<CarbonMonoxide>>()!!
+    private var lastCarbonMonoxideCallDate: Date = Date(0)
 
     var nitrogenDioxide: NitrogenDioxide? = null
         private set(value) {
             field = value
             nitrogenDioxidePublishSubject.onNext(RxOptional(value))
         }
-    override val nitrogenDioxidePublishSubject = PublishSubject.create<RxOptional<NitrogenDioxide>>()!!
+    override val nitrogenDioxidePublishSubject = BehaviorSubject.create<RxOptional<NitrogenDioxide>>()!!
+    private var lastNitrogenDioxideCallDate: Date = Date(0)
 
     var ozone: Ozone? = null
         private set(value) {
             field = value
             ozonePublishSubject.onNext(RxOptional(value))
         }
-    override val ozonePublishSubject = PublishSubject.create<RxOptional<Ozone>>()!!
+    override val ozonePublishSubject = BehaviorSubject.create<RxOptional<Ozone>>()!!
+    private var lastOzoneCallDate: Date = Date(0)
 
     var sulfurDioxide: SulfurDioxide? = null
         private set(value) {
             field = value
             sulfurDioxidePublishSubject.onNext(RxOptional(value))
         }
-    override val sulfurDioxidePublishSubject = PublishSubject.create<RxOptional<SulfurDioxide>>()!!
+    override val sulfurDioxidePublishSubject = BehaviorSubject.create<RxOptional<SulfurDioxide>>()!!
+    private var lastSulfurDioxideCallDate: Date = Date(0)
 
     private val onApiServiceListener = object : OnApiServiceListener {
         override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
             Log.v(tag, "Received onFinished")
             when (downloadType) {
-                DownloadType.CarbonMonoxide -> {
-                    handleCarbonMonoxideDataUpdate(success, jsonString)
-                }
-                DownloadType.CityData -> {
-                    handleCityDataUpdate(success, jsonString)
-                }
+                DownloadType.CarbonMonoxide -> handleCarbonMonoxideDataUpdate(success, jsonString)
+                DownloadType.CityData -> handleCityDataUpdate(success, jsonString)
+                DownloadType.CurrentWeather -> handleCurrentWeatherUpdate(success, jsonString)
+                DownloadType.ForecastWeather -> handleForecastWeatherUpdate(success, jsonString)
+                DownloadType.NitrogenDioxide -> handleNitrogenDioxideDataUpdate(success, jsonString)
+                DownloadType.Ozone -> handleOzoneDataUpdate(success, jsonString)
+                DownloadType.SulfurDioxide -> handleSulfurDioxideDataUpdate(success, jsonString)
+                DownloadType.UvIndex -> handleUvIndexUpdate(success, jsonString)
                 DownloadType.CityImage -> {
                     // Nothing to do here
-                }
-                DownloadType.CurrentWeather -> {
-                    handleCurrentWeatherUpdate(success, jsonString)
-                }
-                DownloadType.ForecastWeather -> {
-                    handleForecastWeatherUpdate(success, jsonString)
-                }
-                DownloadType.NitrogenDioxide -> {
-                    handleNitrogenDioxideDataUpdate(success, jsonString)
-                }
-                DownloadType.Ozone -> {
-                    handleOzoneDataUpdate(success, jsonString)
-                }
-                DownloadType.SulfurDioxide -> {
-                    handleSulfurDioxideDataUpdate(success, jsonString)
-                }
-                DownloadType.UvIndex -> {
-                    handleUvIndexUpdate(success, jsonString)
                 }
                 DownloadType.Null -> {
                     Log.e(tag, "Received download update with downloadType Null and jsonString: $jsonString")
@@ -159,36 +152,36 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
 
     override lateinit var apiKey: String
 
-    override var notificationEnabled: Boolean = true
+    override var notificationEnabledWeatherCurrent: Boolean = true
         set(value) {
             field = value
-            if (field) {
-                displayNotification()
-            } else {
-                notificationController.close(currentWeatherNotificationId)
-                notificationController.close(forecastWeatherNotificationId)
-                notificationController.close(uvIndexNotificationId)
-            }
+            displayNotificationWeatherCurrent()
+        }
+
+    override var notificationEnabledWeatherForecast: Boolean = true
+        set(value) {
+            field = value
+            displayNotificationWeatherForecast()
+        }
+
+    override var notificationEnabledUvIndex: Boolean = true
+        set(value) {
+            field = value
+            displayNotificationUvIndex()
         }
 
     override var receiverActivity: Class<*>? = null
         set(value) {
             field = value
-            if (field != null && notificationEnabled) {
-                displayNotification()
-            } else {
-                notificationController.close(currentWeatherNotificationId)
-                notificationController.close(forecastWeatherNotificationId)
-                notificationController.close(uvIndexNotificationId)
-            }
+            displayNotificationWeatherCurrent()
+            displayNotificationWeatherForecast()
+            displayNotificationUvIndex()
         }
 
     override var wallpaperEnabled: Boolean = false
         set(value) {
             field = value
-            if (field) {
-                changeWallpaper()
-            }
+            changeWallpaper()
         }
 
     override var reloadEnabled: Boolean = true
@@ -215,11 +208,11 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
 
     private object Holder {
         @SuppressLint("StaticFieldLeak")
-        val instance: OpenWeatherService = OpenWeatherService()
+        val instance: OpenWeatherMapService = OpenWeatherMapService()
     }
 
     companion object {
-        val instance: OpenWeatherService by lazy { Holder.instance }
+        val instance: OpenWeatherMapService by lazy { Holder.instance }
     }
 
     override fun initialize(context: Context, cityName: String) {
@@ -264,11 +257,16 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             return false
         }
 
-        doApiRestCall(DownloadType.CurrentWeather, String.format(currentWeatherUrl, city?.name, apiKey))
+        if (Date() - lastWeatherCurrentCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            weatherCurrent = weatherCurrent
+        } else {
+            doApiRestCall(DownloadType.CurrentWeather, String.format(currentWeatherUrl, city?.name, apiKey))
 
-        cancelReload()
-        if (reloadEnabled) {
-            scheduleReload()
+            cancelReload()
+            if (reloadEnabled) {
+                scheduleReload()
+            }
         }
 
         return true
@@ -279,11 +277,16 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             return false
         }
 
-        doApiRestCall(DownloadType.ForecastWeather, String.format(forecastWeatherUrl, city?.name, apiKey))
+        if (Date() - lastWeatherCurrentCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            weatherForecast = weatherForecast
+        } else {
+            doApiRestCall(DownloadType.ForecastWeather, String.format(forecastWeatherUrl, city?.name, apiKey))
 
-        cancelReload()
-        if (reloadEnabled) {
-            scheduleReload()
+            cancelReload()
+            if (reloadEnabled) {
+                scheduleReload()
+            }
         }
 
         return true
@@ -294,11 +297,16 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             return false
         }
 
-        doApiRestCall(DownloadType.UvIndex, String.format(uvIndexUrl, city?.coordinates?.lat, city?.coordinates?.lon, apiKey))
+        if (Date() - lastWeatherCurrentCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            uvIndex = uvIndex
+        } else {
+            doApiRestCall(DownloadType.UvIndex, String.format(uvIndexUrl, city?.coordinates?.lat, city?.coordinates?.lon, apiKey))
 
-        cancelReload()
-        if (reloadEnabled) {
-            scheduleReload()
+            cancelReload()
+            if (reloadEnabled) {
+                scheduleReload()
+            }
         }
 
         return true
@@ -317,23 +325,43 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             return false
         }
 
-        doApiRestCall(downloadType,
-                String.format(airPollutionUrl,
-                        airPollutionType.type,
-                        "${city?.coordinates?.lat?.doubleFormat(accuracy)},${city?.coordinates?.lon?.doubleFormat(accuracy)}",
-                        dateTime,
-                        apiKey))
+        if (downloadType == DownloadType.CarbonMonoxide && Date() - lastCarbonMonoxideCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            carbonMonoxide = carbonMonoxide
+        } else if (downloadType == DownloadType.NitrogenDioxide && Date() - lastNitrogenDioxideCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            nitrogenDioxide = nitrogenDioxide
+        } else if (downloadType == DownloadType.Ozone && Date() - lastOzoneCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            ozone = ozone
+        } else if (downloadType == DownloadType.SulfurDioxide && Date() - lastSulfurDioxideCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            sulfurDioxide = sulfurDioxide
+        } else {
+            doApiRestCall(downloadType,
+                    String.format(airPollutionUrl,
+                            airPollutionType.type,
+                            "${city?.coordinates?.lat?.doubleFormat(accuracy)},${city?.coordinates?.lon?.doubleFormat(accuracy)}",
+                            dateTime,
+                            apiKey))
 
-        cancelReload()
-        if (reloadEnabled) {
-            scheduleReload()
+            cancelReload()
+            if (reloadEnabled) {
+                scheduleReload()
+            }
         }
 
         return true
     }
 
     override fun loadCityData(cityName: String): Boolean {
-        doApiRestCall(DownloadType.CityData, String.format(geoCodeForCityUrl, cityName))
+        if (Date() - lastCityCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            city = city
+        } else {
+            doApiRestCall(DownloadType.CityData, String.format(geoCodeForCityUrl, cityName))
+        }
+
         return true
     }
 
@@ -389,6 +417,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         carbonMonoxide = if (!success) {
             null
         } else {
+            lastCarbonMonoxideCallDate = Date()
             converter.convertToCarbonMonoxide(jsonString)
         }
     }
@@ -397,6 +426,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         nitrogenDioxide = if (!success) {
             null
         } else {
+            lastNitrogenDioxideCallDate = Date()
             converter.convertToNitrogenDioxide(jsonString)
         }
     }
@@ -405,6 +435,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         ozone = if (!success) {
             null
         } else {
+            lastOzoneCallDate = Date()
             converter.convertToOzone(jsonString)
         }
     }
@@ -413,6 +444,7 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         sulfurDioxide = if (!success) {
             null
         } else {
+            lastSulfurDioxideCallDate = Date()
             converter.convertToSulfurDioxide(jsonString)
         }
     }
@@ -425,13 +457,10 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             if (convertedCurrentWeather == null) {
                 weatherCurrent = null
             } else {
+                lastWeatherCurrentCallDate = Date()
                 weatherCurrent = convertedCurrentWeather
-                if (wallpaperEnabled) {
-                    changeWallpaper()
-                }
-                if (notificationEnabled) {
-                    displayNotification()
-                }
+                changeWallpaper()
+                displayNotificationWeatherCurrent()
                 city!!.id = weatherCurrent!!.city.id
                 city!!.population = weatherCurrent!!.city.population
             }
@@ -446,10 +475,9 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             if (convertedForecastWeather == null) {
                 weatherForecast = null
             } else {
+                lastWeatherForecastCallDate = Date()
                 weatherForecast = convertedForecastWeather
-                if (notificationEnabled) {
-                    displayNotification()
-                }
+                displayNotificationWeatherForecast()
                 city!!.id = weatherForecast!!.city.id
                 city!!.population = weatherForecast!!.city.population
             }
@@ -464,10 +492,9 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             if (convertedUvIndex == null) {
                 uvIndex = null
             } else {
+                lastUvIndexCallDate = Date()
                 uvIndex = convertedUvIndex
-                if (notificationEnabled) {
-                    displayNotification()
-                }
+                displayNotificationUvIndex()
             }
         }
     }
@@ -480,6 +507,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
             if (convertedCity2 == null) {
                 city = null
             } else {
+                lastCityCallDate = Date()
+
                 val newCoordinates = Coordinates()
                 newCoordinates.lat = convertedCity2.geometry.location.lat
                 newCoordinates.lon = convertedCity2.geometry.location.lng
@@ -496,8 +525,8 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
         }
     }
 
-    private fun displayNotification() {
-        if (weatherCurrent != null) {
+    private fun displayNotificationWeatherCurrent() {
+        if (notificationEnabledWeatherCurrent && weatherCurrent != null) {
             val currentWeatherNotificationContent = NotificationContent(
                     currentWeatherNotificationId,
                     "Current Weather: " + weatherCurrent!!.description,
@@ -511,9 +540,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     receiverActivity!!,
                     true)
             notificationController.create(currentWeatherNotificationContent)
+        } else {
+            notificationController.close(currentWeatherNotificationId)
         }
+    }
 
-        if (weatherForecast != null) {
+    private fun displayNotificationWeatherForecast() {
+        if (notificationEnabledWeatherForecast && weatherForecast != null) {
             val forecastWeatherNotificationContent = NotificationContent(
                     forecastWeatherNotificationId,
                     "Forecast: " + weatherForecast!!.getMostWeatherCondition().description,
@@ -528,9 +561,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     receiverActivity!!,
                     true)
             notificationController.create(forecastWeatherNotificationContent)
+        } else {
+            notificationController.close(forecastWeatherNotificationId)
         }
+    }
 
-        if (uvIndex != null) {
+    private fun displayNotificationUvIndex() {
+        if (notificationEnabledUvIndex && uvIndex != null) {
             val forecastWeatherNotificationContent = NotificationContent(
                     uvIndexNotificationId,
                     "UvIndex",
@@ -540,11 +577,13 @@ class OpenWeatherService private constructor() : IOpenWeatherService {
                     receiverActivity!!,
                     true)
             notificationController.create(forecastWeatherNotificationContent)
+        } else {
+            notificationController.close(uvIndexNotificationId)
         }
     }
 
     private fun changeWallpaper() {
-        if (weatherCurrent != null) {
+        if (wallpaperEnabled && weatherCurrent != null) {
             try {
                 val wallpaperManager = WallpaperManager.getInstance(context.applicationContext)
                 wallpaperManager.setResource(weatherCurrent!!.weatherCondition.wallpaperId)

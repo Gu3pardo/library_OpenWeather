@@ -48,6 +48,15 @@
                 android:text="Pressure"
                 android:textStyle="bold" />
 
+            <ImageButton
+                android:id="@+id/lib_current_weather_reload"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="bottom|end"
+                android:background="@xml/circle_blue"
+                android:contentDescription="@string/contentDescription"
+                android:padding="1dp"
+                android:src="@android:drawable/stat_notify_sync" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
