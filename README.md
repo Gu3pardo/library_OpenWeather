@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![](https://jitpack.io/v/OpenWeatherLib/OpenWeather-Android.svg)](https://jitpack.io/#OpenWeatherLib/OpenWeather-Android)
-[![Version](https://img.shields.io/badge/version-v1.6.2.190128-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.6.2)
+[![Version](https://img.shields.io/badge/version-v1.8.0.190221-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.8.0)
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](lib)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 

@@ -1,3 +1,44 @@
 <resources>
     <string name="app_name">OpenWeatherExample</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_reload">Data &amp; reload</string>
+
+    <string name="pref_title_reload_enabled">Reload enabled</string>
+    <string name="pref_title_reload_frequency">Reload frequency</string>
+    <string name="default_reload_frequency">30</string>
+    <string-array name="pref_reload_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+    </string-array>
+    <string-array name="pref_reload_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_notifications_weather_current">Notifications weather current</string>
+    <string name="pref_title_notifications_weather_forecast">Notifications weather forecast</string>
+    <string name="pref_title_notifications_uv_index">Notifications uv index</string>
+
+    <!-- Example settings for Wallpaper -->
+    <string name="pref_header_wallpaper">Wallpaper</string>
+
+    <string name="pref_title_wallpaper">Set wallpaper</string>
 </resources>

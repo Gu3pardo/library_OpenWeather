@@ -6,13 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.openweather.library.services.openweather.OpenWeatherService
+import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 
 class FragmentForecastWeather : Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        OpenWeatherService.instance.loadWeatherForecast()
+        OpenWeatherMapService.instance.loadWeatherForecast()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

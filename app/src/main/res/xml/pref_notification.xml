@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notifications_weather_current"
+        android:title="@string/pref_title_notifications_weather_current" />
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notifications_weather_forecast"
+        android:title="@string/pref_title_notifications_weather_forecast" />
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="notifications_uv_index"
+        android:title="@string/pref_title_notifications_uv_index" />
+
+</PreferenceScreen>

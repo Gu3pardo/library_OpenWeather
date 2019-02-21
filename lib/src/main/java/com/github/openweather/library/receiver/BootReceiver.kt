@@ -8,12 +8,12 @@ import android.util.Log
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.services.intent.OpenWeatherIntentService
 
-internal class PeriodicActionReceiver : BroadcastReceiver() {
+internal class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.i(PeriodicActionReceiver::class.java.simpleName, "onReceive")
+        Log.i(BootReceiver::class.java.simpleName, "onReceive")
         /*
         val bootIntent = Intent(context, OpenWeatherIntentService::class.java).apply {
-            putExtra(Constants.OpenWeatherIntentService.IntentActionKey, Constants.OpenWeatherIntentService.IntentActionEnum.PeriodicReload)
+            putExtra(Constants.OpenWeatherIntentService.IntentActionKey, Constants.OpenWeatherIntentService.IntentActionEnum.Boot)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context?.startForegroundService(bootIntent)
@@ -21,9 +21,5 @@ internal class PeriodicActionReceiver : BroadcastReceiver() {
             context?.startService(bootIntent)
         }
         */
-    }
-
-    companion object {
-        const val requestCode = 432834
     }
 }

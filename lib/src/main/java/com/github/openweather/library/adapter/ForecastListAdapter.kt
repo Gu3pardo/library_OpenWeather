@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.R
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.ForecastListType
 import com.github.openweather.library.extensions.DDMMYYYY

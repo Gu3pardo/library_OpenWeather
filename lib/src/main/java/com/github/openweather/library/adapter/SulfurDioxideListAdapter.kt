@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.R
 import com.github.openweather.library.models.SulfurDioxideData
 
 class SulfurDioxideListAdapter(

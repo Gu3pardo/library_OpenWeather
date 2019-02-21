@@ -10,8 +10,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 10602
-        versionName "1.6.2.190128"
+        versionCode 10800
+        versionName "1.8.0.190221"
     }
 
     buildTypes {
@@ -45,4 +45,5 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$android_material_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "it.sephiroth.android.library.bottomnavigation:bottom-navigation:$bottom_navigation_version"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

@@ -3,6 +3,8 @@ package com.github.openweather.library.services.image
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import com.github.guepardoapps.timext.kotlin.extensions.minus
+import com.github.openweather.library.common.Constants
 import com.github.openweather.library.controller.NetworkController
 import com.github.openweather.library.converter.JsonToImageUrlConverter
 import com.github.openweather.library.enums.DownloadType
@@ -10,7 +12,8 @@ import com.github.openweather.library.enums.UnsplashImageOrientation
 import com.github.openweather.library.models.RxOptional
 import com.github.openweather.library.services.api.OnApiServiceListener
 import com.github.openweather.library.tasks.ApiRestCallTask
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
+import java.util.*
 
 class ImageService private constructor() : IImageService {
     private val tag: String = ImageService::class.java.simpleName
@@ -27,18 +30,15 @@ class ImageService private constructor() : IImageService {
             field = value
             urlPublishSubject.onNext(RxOptional(value))
         }
-    override val urlPublishSubject = PublishSubject.create<RxOptional<String>>()!!
+    override val urlPublishSubject = BehaviorSubject.create<RxOptional<String>>()!!
+    private var lastCallDate: Date = Date(0)
 
     private val onApiServiceListener = object : OnApiServiceListener {
         override fun onFinished(downloadType: DownloadType, jsonString: String, success: Boolean) {
             Log.v(tag, "Received onFinished")
             when (downloadType) {
-                DownloadType.CityImage -> {
-                    handleCityImageUpdate(success, jsonString)
-                }
-                DownloadType.Null -> {
-                    Log.e(tag, "Received download update with downloadType Null and jsonString: $jsonString")
-                }
+                DownloadType.CityImage -> handleCityImageUpdate(success, jsonString)
+                DownloadType.Null -> Log.e(tag, "Received download update with downloadType Null and jsonString: $jsonString")
                 else -> {
                     // Nothing to do here
                 }
@@ -67,7 +67,13 @@ class ImageService private constructor() : IImageService {
             return false
         }
 
-        doApiRestCall(DownloadType.CityImage, String.format(imageApiUrl, accessKey, orientation.value, cityName))
+        if (Date() - lastCallDate < Constants.Defaults.MinReloadDifference) {
+            // Set it to itself again to trigger subscriptions
+            url = url
+        } else {
+            doApiRestCall(DownloadType.CityImage, String.format(imageApiUrl, accessKey, orientation.value, cityName))
+        }
+
         return true
     }
 
@@ -75,6 +81,7 @@ class ImageService private constructor() : IImageService {
         url = if (!success) {
             null
         } else {
+            lastCallDate = Date()
             converter.convert(jsonString)
         }
     }

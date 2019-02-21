@@ -5,28 +5,23 @@
     app:bbn_badgeColor="@color/colorPrimaryDark"
     app:bbn_rippleColor="@color/colorAccent">
     <item
-        android:id="@+id/btn_menu_city"
+        android:id="@+id/btn_menu_forecast_weather"
         android:color="@color/colorPrimary"
-        android:icon="@android:drawable/ic_dialog_info"
-        android:title="City" />
+        android:icon="@drawable/weather_dummy"
+        android:title="Forecast weather" />
     <item
         android:id="@+id/btn_menu_current_weather"
         android:color="@color/colorPrimary"
         android:icon="@drawable/weather_clear"
         android:title="Current weather" />
     <item
-        android:id="@+id/btn_menu_forecast_weather"
-        android:color="@color/colorPrimary"
-        android:icon="@drawable/weather_dummy"
-        android:title="Forecast weather" />
-    <item
-        android:id="@+id/btn_menu_uv_index"
+        android:id="@+id/btn_menu_information"
         android:color="@color/colorPrimary"
         android:icon="@drawable/uv_index"
-        android:title="UV index" />
+        android:title="Information" />
     <item
-        android:id="@+id/btn_menu_air_pollution"
+        android:id="@+id/btn_menu_settings"
         android:color="@color/colorPrimary"
-        android:icon="@drawable/carbon_monoxide"
-        android:title="Air pollution" />
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Settings" />
 </menu>

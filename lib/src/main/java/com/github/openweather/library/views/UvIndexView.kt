@@ -5,10 +5,11 @@ import android.content.Context
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.ImageButton
 import android.widget.TextView
+import com.github.openweather.library.R
 import com.github.openweather.library.extensions.doubleFormat
-import com.github.openweather.library.services.openweather.OpenWeatherService
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
@@ -17,6 +18,7 @@ class UvIndexView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
     private var valueTextView: TextView? = null
     private var coordinatesTextView: TextView? = null
+    private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()
 
@@ -30,8 +32,12 @@ class UvIndexView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
         valueTextView = findViewById(R.id.lib_uv_index_value)
         coordinatesTextView = findViewById(R.id.lib_uv_index_coordinates)
+        reloadImageButton = findViewById(R.id.lib_uv_index_reload)
+        reloadImageButton?.setOnClickListener {
+            OpenWeatherMapService.instance.loadUvIndex()
+        }
 
-        subscriptions = subscriptions.plus(OpenWeatherService.instance.uvIndexPublishSubject
+        subscriptions = subscriptions.plus(OpenWeatherMapService.instance.uvIndexPublishSubject
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         { response ->

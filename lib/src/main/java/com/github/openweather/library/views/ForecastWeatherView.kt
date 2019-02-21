@@ -10,11 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.baoyz.widget.PullRefreshLayout
+import com.github.openweather.library.R
 import com.github.openweather.library.adapter.ForecastListAdapter
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.extensions.getMostWeatherCondition
-import com.github.openweather.library.services.openweather.OpenWeatherService
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
@@ -49,7 +49,7 @@ class ForecastWeatherView(context: Context, attrs: AttributeSet?) : CoordinatorL
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {
-                val foundForecastModel = OpenWeatherService.instance.searchForecast(charSequence.toString())
+                val foundForecastModel = OpenWeatherMapService.instance.searchForecast(charSequence.toString())
                 val forecastList = foundForecastModel.list
                 val adapter = ForecastListAdapter(context!!, forecastList)
                 listView?.adapter = adapter
@@ -63,11 +63,11 @@ class ForecastWeatherView(context: Context, attrs: AttributeSet?) : CoordinatorL
             listView?.visibility = View.GONE
             progressBar?.visibility = View.VISIBLE
             searchEditText?.visibility = View.INVISIBLE
-            OpenWeatherService.instance.loadWeatherForecast()
+            OpenWeatherMapService.instance.loadWeatherForecast()
         }
 
         subscriptions = subscriptions.plus(
-                OpenWeatherService.instance.weatherForecastPublishSubject
+                OpenWeatherMapService.instance.weatherForecastPublishSubject
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 { response ->

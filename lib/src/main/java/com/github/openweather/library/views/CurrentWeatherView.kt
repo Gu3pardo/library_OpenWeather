@@ -5,12 +5,13 @@ import android.content.Context
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import com.github.openweather.library.R
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.extensions.doubleFormat
-import com.github.openweather.library.services.openweather.OpenWeatherService
-import guepardoapps.lib.openweather.R
+import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
@@ -22,6 +23,7 @@ class CurrentWeatherView(context: Context, attrs: AttributeSet?) : ConstraintLay
     private var temperatureTextView: TextView? = null
     private var humidityTextView: TextView? = null
     private var pressureTextView: TextView? = null
+    private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()
 
@@ -38,9 +40,13 @@ class CurrentWeatherView(context: Context, attrs: AttributeSet?) : ConstraintLay
         temperatureTextView = findViewById(R.id.lib_current_weather_temperature)
         humidityTextView = findViewById(R.id.lib_current_weather_humidity)
         pressureTextView = findViewById(R.id.lib_current_weather_pressure)
+        reloadImageButton = findViewById(R.id.lib_current_weather_reload)
+        reloadImageButton?.setOnClickListener {
+            OpenWeatherMapService.instance.loadWeatherCurrent()
+        }
 
         subscriptions = subscriptions.plus(
-                OpenWeatherService.instance.weatherCurrentPublishSubject
+                OpenWeatherMapService.instance.weatherCurrentPublishSubject
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 { response ->
@@ -48,7 +54,7 @@ class CurrentWeatherView(context: Context, attrs: AttributeSet?) : ConstraintLay
                                     if (currentWeather != null) {
                                         weatherImageView?.setImageResource(currentWeather.weatherCondition.wallpaperId)
                                         descriptionTextView?.text = currentWeather.description
-                                        temperatureTextView?.text = "${currentWeather.temperature.doubleFormat(2)}${ Constants.String.DegreeSign}C (${currentWeather.temperatureMin.doubleFormat(2)}${ Constants.String.DegreeSign}C - ${currentWeather.temperatureMax.doubleFormat(2)}${ Constants.String.DegreeSign}C)"
+                                        temperatureTextView?.text = "${currentWeather.temperature.doubleFormat(2)}${Constants.String.DegreeSign}C (${currentWeather.temperatureMin.doubleFormat(2)}${Constants.String.DegreeSign}C - ${currentWeather.temperatureMax.doubleFormat(2)}${Constants.String.DegreeSign}C)"
                                         humidityTextView?.text = "${currentWeather.humidity.doubleFormat(2)} %"
                                         pressureTextView?.text = "${currentWeather.pressure.doubleFormat(2)} mBar"
                                     }
