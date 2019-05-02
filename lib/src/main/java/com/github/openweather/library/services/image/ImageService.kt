@@ -25,12 +25,12 @@ class ImageService private constructor() : IImageService {
     private lateinit var context: Context
     private lateinit var networkController: NetworkController
 
-    var url: String? = null
+    private var url: String? = null
         private set(value) {
             field = value
             urlPublishSubject.onNext(RxOptional(value))
         }
-    override val urlPublishSubject = BehaviorSubject.create<RxOptional<String>>()!!
+    override val urlPublishSubject = BehaviorSubject.create<RxOptional<String>>()
     private var lastCallDate: Date = Date(0)
 
     private val onApiServiceListener = object : OnApiServiceListener {

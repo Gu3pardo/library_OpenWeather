@@ -7,8 +7,6 @@ fun Int.integerFormat(digits: Int): String = String.format(Locale.getDefault(), 
 
 fun Double.doubleFormat(digits: Int): String = String.format(Locale.getDefault(), "%.${digits}f", this)
 
-fun Float.floatFormat(digits: Int): String = String.format(Locale.getDefault(), "%.${digits}f", this)
-
 fun Number.isZero(): Boolean = this == Constants.Defaults.Zero
 
 fun Long.toMillis(): Long = (this * Constants.Defaults.Thousand)

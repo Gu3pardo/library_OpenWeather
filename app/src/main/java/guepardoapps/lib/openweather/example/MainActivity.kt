@@ -30,8 +30,6 @@ class MainActivity : FragmentActivity(), BottomNavigation.OnMenuItemSelectionLis
         OpenWeatherMapService.instance.wallpaperEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("set_wallpaper", false)
 
         OpenWeatherMapService.instance.receiverActivity = MainActivity::class.java
-        OpenWeatherMapService.instance.reloadEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("reload_enabled", false)
-        OpenWeatherMapService.instance.reloadTimeout = PreferenceManager.getDefaultSharedPreferences(this).getString("reload_frequency", "30").toLong() * 60 * 1000
 
         OpenWeatherMapService.instance.start()
 
