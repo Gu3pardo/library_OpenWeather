@@ -1,12 +1,12 @@
-# OpenWeather-Android - master branch
+# OpenWeather-Android
 
 [![Platform](https://img.shields.io/badge/platform-Android-blue.svg)](https://www.android.com)
-<a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
-<a target="_blank" href="https://android-arsenal.com/api?level=24" title="API24+"><img src="https://img.shields.io/badge/API-24+-blue.svg" /></a>
+[![Paypal](https://img.shields.io/badge/paypal-donate-blue.svg)](https://www.paypal.me/GuepardoApps)
+[![API](https://img.shields.io/badge/API-24+-blue.svg)](https://android-arsenal.com/api?level=24)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 [![](https://jitpack.io/v/OpenWeatherLib/OpenWeather-Android.svg)](https://jitpack.io/#OpenWeatherLib/OpenWeather-Android)
-[![Version](https://img.shields.io/badge/version-v1.8.0.190221-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.8.0)
+[![Version](https://img.shields.io/badge/version-v1.9.0.190502-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/v1.9.0)
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](lib)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
@@ -54,8 +54,6 @@ class MainActivity : AppCompatActivity() {
         OpenWeatherService.instance.notificationEnabled = true                          // Enable/Disable notifications
         OpenWeatherService.instance.wallpaperEnabled = true                             // Enable/Disable set of wallpaper
         OpenWeatherService.instance.receiverActivity = MainActivity::class.java         // Set receiver for notifications
-        OpenWeatherService.instance.reloadEnabled = true                                // Enable/Disable reload of data
-        OpenWeatherService.instance.reloadTimeout = 30.minutes.inMilliseconds           // Set timeout of reload of data in millisecond (using [TimeXt](https://github.com/TimeXt/TimeXt-Kotlin))
 		
         // Subscribe on weatherCurrentPublishSubject (Using ReactiveX2)
 		subscriptions = subscriptions.plus(
@@ -164,7 +162,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:v1.6.2'
+    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:v1.9.0'
 }
 ```
 
