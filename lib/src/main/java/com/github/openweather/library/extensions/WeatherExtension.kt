@@ -1,11 +1,9 @@
 package com.github.openweather.library.extensions
 
 import com.github.openweather.library.common.Constants
-import com.github.openweather.library.enums.ForecastDayTime
 import com.github.openweather.library.enums.ForecastListType
 import com.github.openweather.library.enums.WeatherCondition
 import com.github.openweather.library.models.WeatherForecast
-import com.github.openweather.library.models.WeatherForecastPart
 import java.util.*
 
 fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
@@ -76,15 +74,4 @@ fun WeatherForecast.getMaxHumidity(): Double {
     var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
     dataList = dataList.sortedByDescending { x -> x.humidity }
     return dataList.first().humidity
-}
-
-fun WeatherForecastPart.getForecastDayTime(): ForecastDayTime {
-    return when (this.dateTime.get(Calendar.HOUR_OF_DAY)) {
-        in 0..4 -> ForecastDayTime.Night
-        in 5..10 -> ForecastDayTime.Morning
-        in 11..14 -> ForecastDayTime.Midday
-        in 15..17 -> ForecastDayTime.Afternoon
-        in 18..20 -> ForecastDayTime.Evening
-        else -> ForecastDayTime.Night
-    }
 }

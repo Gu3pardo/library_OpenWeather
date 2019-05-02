@@ -1,15 +1,10 @@
 package com.github.openweather.library.services.openweathermap
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.app.WallpaperManager
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import com.github.guepardoapps.timext.kotlin.extensions.days
 import com.github.guepardoapps.timext.kotlin.extensions.minus
-import com.github.guepardoapps.timext.kotlin.extensions.minutes
 import com.github.openweather.library.R
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.controller.*
@@ -17,7 +12,6 @@ import com.github.openweather.library.converter.*
 import com.github.openweather.library.enums.*
 import com.github.openweather.library.extensions.*
 import com.github.openweather.library.models.*
-import com.github.openweather.library.receiver.PeriodicActionReceiver
 import com.github.openweather.library.services.api.OnApiServiceListener
 import com.github.openweather.library.tasks.ApiRestCallTask
 import com.google.gson.Gson
@@ -40,9 +34,6 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
     private val forecastWeatherNotificationId: Int = 260520182
     private val uvIndexNotificationId: Int = 260520183
 
-    private val minTimeoutMs: Long = 15.minutes.inMilliseconds.toLong()
-    private val maxTimeoutMs: Long = 1.days.inMilliseconds.toLong()
-
     private var mayLoad: Boolean = false
 
     private var converter: JsonToWeatherConverter = JsonToWeatherConverter()
@@ -59,7 +50,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             sharedPreferenceController.save(Constants.SharedPref.KeyCity, Gson().toJson(field))
             cityPublishSubject.onNext(RxOptional(value))
         }
-    override val cityPublishSubject = BehaviorSubject.create<RxOptional<City>>()!!
+    override val cityPublishSubject = BehaviorSubject.create<RxOptional<City>>()
     private var lastCityCallDate: Date = Date(0)
 
     var weatherCurrent: WeatherCurrent? = null
@@ -67,7 +58,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             field = value
             weatherCurrentPublishSubject.onNext(RxOptional(value))
         }
-    override val weatherCurrentPublishSubject = BehaviorSubject.create<RxOptional<WeatherCurrent>>()!!
+    override val weatherCurrentPublishSubject = BehaviorSubject.create<RxOptional<WeatherCurrent>>()
     private var lastWeatherCurrentCallDate: Date = Date(0)
 
     var weatherForecast: WeatherForecast? = null
@@ -75,7 +66,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             field = value
             weatherForecastPublishSubject.onNext(RxOptional(value))
         }
-    override val weatherForecastPublishSubject = BehaviorSubject.create<RxOptional<WeatherForecast>>()!!
+    override val weatherForecastPublishSubject = BehaviorSubject.create<RxOptional<WeatherForecast>>()
     private var lastWeatherForecastCallDate: Date = Date(0)
 
     var uvIndex: UvIndex? = null
@@ -83,7 +74,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             field = value
             uvIndexPublishSubject.onNext(RxOptional(value))
         }
-    override val uvIndexPublishSubject = BehaviorSubject.create<RxOptional<UvIndex>>()!!
+    override val uvIndexPublishSubject = BehaviorSubject.create<RxOptional<UvIndex>>()
     private var lastUvIndexCallDate: Date = Date(0)
 
     var carbonMonoxide: CarbonMonoxide? = null
@@ -91,7 +82,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             field = value
             carbonMonoxidePublishSubject.onNext(RxOptional(value))
         }
-    override val carbonMonoxidePublishSubject = BehaviorSubject.create<RxOptional<CarbonMonoxide>>()!!
+    override val carbonMonoxidePublishSubject = BehaviorSubject.create<RxOptional<CarbonMonoxide>>()
     private var lastCarbonMonoxideCallDate: Date = Date(0)
 
     var nitrogenDioxide: NitrogenDioxide? = null
@@ -99,7 +90,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             field = value
             nitrogenDioxidePublishSubject.onNext(RxOptional(value))
         }
-    override val nitrogenDioxidePublishSubject = BehaviorSubject.create<RxOptional<NitrogenDioxide>>()!!
+    override val nitrogenDioxidePublishSubject = BehaviorSubject.create<RxOptional<NitrogenDioxide>>()
     private var lastNitrogenDioxideCallDate: Date = Date(0)
 
     var ozone: Ozone? = null
@@ -107,7 +98,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             field = value
             ozonePublishSubject.onNext(RxOptional(value))
         }
-    override val ozonePublishSubject = BehaviorSubject.create<RxOptional<Ozone>>()!!
+    override val ozonePublishSubject = BehaviorSubject.create<RxOptional<Ozone>>()
     private var lastOzoneCallDate: Date = Date(0)
 
     var sulfurDioxide: SulfurDioxide? = null
@@ -115,7 +106,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             field = value
             sulfurDioxidePublishSubject.onNext(RxOptional(value))
         }
-    override val sulfurDioxidePublishSubject = BehaviorSubject.create<RxOptional<SulfurDioxide>>()!!
+    override val sulfurDioxidePublishSubject = BehaviorSubject.create<RxOptional<SulfurDioxide>>()
     private var lastSulfurDioxideCallDate: Date = Date(0)
 
     private val onApiServiceListener = object : OnApiServiceListener {
@@ -184,28 +175,6 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             changeWallpaper()
         }
 
-    override var reloadEnabled: Boolean = true
-        set(value) {
-            field = value
-            cancelReload()
-            if (field) {
-                scheduleReload()
-            }
-        }
-
-    override var reloadTimeout: Long = minTimeoutMs
-        set(value) {
-            field = when {
-                value < minTimeoutMs -> minTimeoutMs
-                value > maxTimeoutMs -> maxTimeoutMs
-                else -> value
-            }
-            cancelReload()
-            if (reloadEnabled) {
-                scheduleReload()
-            }
-        }
-
     private object Holder {
         @SuppressLint("StaticFieldLeak")
         val instance: OpenWeatherMapService = OpenWeatherMapService()
@@ -243,13 +212,10 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
         loadNitrogenDioxide(Calendar.getInstance().airPollutionCurrentDateTime(), 1)
         loadOzone(Calendar.getInstance().airPollutionCurrentDateTime(), 1)
         loadSulfurDioxide(Calendar.getInstance().airPollutionCurrentDateTime(), 1)
-
-        scheduleReload()
     }
 
     override fun dispose() {
         mayLoad = false
-        cancelReload()
     }
 
     override fun loadWeatherCurrent(): Boolean {
@@ -262,11 +228,6 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             weatherCurrent = weatherCurrent
         } else {
             doApiRestCall(DownloadType.CurrentWeather, String.format(currentWeatherUrl, city?.name, apiKey))
-
-            cancelReload()
-            if (reloadEnabled) {
-                scheduleReload()
-            }
         }
 
         return true
@@ -282,11 +243,6 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             weatherForecast = weatherForecast
         } else {
             doApiRestCall(DownloadType.ForecastWeather, String.format(forecastWeatherUrl, city?.name, apiKey))
-
-            cancelReload()
-            if (reloadEnabled) {
-                scheduleReload()
-            }
         }
 
         return true
@@ -302,11 +258,6 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             uvIndex = uvIndex
         } else {
             doApiRestCall(DownloadType.UvIndex, String.format(uvIndexUrl, city?.coordinates?.lat, city?.coordinates?.lon, apiKey))
-
-            cancelReload()
-            if (reloadEnabled) {
-                scheduleReload()
-            }
         }
 
         return true
@@ -344,11 +295,6 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
                             "${city?.coordinates?.lat?.doubleFormat(accuracy)},${city?.coordinates?.lon?.doubleFormat(accuracy)}",
                             dateTime,
                             apiKey))
-
-            cancelReload()
-            if (reloadEnabled) {
-                scheduleReload()
-            }
         }
 
         return true
@@ -391,26 +337,6 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
         weatherForecast.city = this.weatherForecast!!.city
         weatherForecast.list = foundEntries
         return weatherForecast
-    }
-
-    private fun scheduleReload() {
-        if (!mayLoad) {
-            return
-        }
-
-        if (reloadEnabled && networkController.isInternetConnected().second) {
-            val intent = Intent(context.applicationContext, PeriodicActionReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context, PeriodicActionReceiver.requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), reloadTimeout, pendingIntent)
-        }
-    }
-
-    private fun cancelReload() {
-        val intent = Intent(context.applicationContext, PeriodicActionReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, PeriodicActionReceiver.requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarm.cancel(pendingIntent)
     }
 
     private fun handleCarbonMonoxideDataUpdate(success: Boolean, jsonString: String) {

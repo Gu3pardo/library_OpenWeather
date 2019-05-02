@@ -14,9 +14,6 @@ interface IOpenWeatherMapService {
 
     var wallpaperEnabled: Boolean
 
-    var reloadEnabled: Boolean
-    var reloadTimeout: Long
-
     val cityPublishSubject: BehaviorSubject<RxOptional<City>>
     val weatherCurrentPublishSubject: BehaviorSubject<RxOptional<WeatherCurrent>>
     val weatherForecastPublishSubject: BehaviorSubject<RxOptional<WeatherForecast>>
