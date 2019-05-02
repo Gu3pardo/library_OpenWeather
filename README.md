@@ -28,6 +28,12 @@ Based on Kotlin, using Listener, Extensions and more.
 
 ---
 
+## Api Keys
+
+Required api keys are 
+- [x] https://unsplash.com/
+- [x] https://openweathermap.org/
+
 ## Integration
 
 First you have to register an account at [OpenWeatherMap.org](http://www.openweathermap.org/) and receive an API key.
