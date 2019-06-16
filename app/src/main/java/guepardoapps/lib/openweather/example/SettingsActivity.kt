@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package guepardoapps.lib.openweather.example
 
 import android.annotation.TargetApi
@@ -7,8 +9,6 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
 import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
 import android.preference.PreferenceManager
@@ -39,8 +39,6 @@ class SettingsActivity : AppCompatPreferenceActivity(), SharedPreferences.OnShar
             "notifications_weather_forecast" -> OpenWeatherMapService.instance.notificationEnabledWeatherForecast = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("notifications_weather_forecast", false)
             "notifications_uv_index" -> OpenWeatherMapService.instance.notificationEnabledUvIndex = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("notifications_uv_index", false)
             "set_wallpaper" -> OpenWeatherMapService.instance.wallpaperEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("set_wallpaper", false)
-            "reload_enabled" -> OpenWeatherMapService.instance.reloadEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("reload_enabled", false)
-            "reload_frequency" -> OpenWeatherMapService.instance.reloadTimeout = PreferenceManager.getDefaultSharedPreferences(this).getLong("reload_frequency", 30) * 60 * 1000
             else -> Log.e(SettingsActivity::class.java.simpleName, "Invalid key: $key")
         }
     }
@@ -48,35 +46,27 @@ class SettingsActivity : AppCompatPreferenceActivity(), SharedPreferences.OnShar
     /**
      * Set up the [android.app.ActionBar], if the API is available.
      */
-    private fun setupActionBar() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
+    private fun setupActionBar() = supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /**
      * {@inheritDoc}
      */
-    override fun onIsMultiPane(): Boolean {
-        return isXLargeTablet(this)
-    }
+    override fun onIsMultiPane(): Boolean = isXLargeTablet(this)
 
     /**
      * {@inheritDoc}
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    override fun onBuildHeaders(target: List<PreferenceActivity.Header>) {
-        loadHeadersFromResource(R.xml.pref_headers, target)
-    }
+    override fun onBuildHeaders(target: List<Header>) = loadHeadersFromResource(R.xml.pref_headers, target)
 
     /**
      * This method stops fragment injection in malicious applications.
      * Make sure to deny any unknown fragments here.
      */
-    override fun isValidFragment(fragmentName: String): Boolean {
-        return PreferenceFragment::class.java.name == fragmentName
-                || DataReloadPreferenceFragment::class.java.name == fragmentName
-                || NotificationPreferenceFragment::class.java.name == fragmentName
-                || WallpaperPreferenceFragment::class.java.name == fragmentName
-    }
+    override fun isValidFragment(fragmentName: String): Boolean =
+            PreferenceFragment::class.java.name == fragmentName
+                    || NotificationPreferenceFragment::class.java.name == fragmentName
+                    || WallpaperPreferenceFragment::class.java.name == fragmentName
 
     /**
      * This fragment shows notification preferences only. It is used when the
@@ -88,34 +78,6 @@ class SettingsActivity : AppCompatPreferenceActivity(), SharedPreferences.OnShar
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_notification)
             setHasOptionsMenu(true)
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            val id = item.itemId
-            if (id == android.R.id.home) {
-                startActivity(Intent(activity, SettingsActivity::class.java))
-                return true
-            }
-            return super.onOptionsItemSelected(item)
-        }
-    }
-
-    /**
-     * This fragment shows data and reload preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class DataReloadPreferenceFragment : PreferenceFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_data_reload)
-            setHasOptionsMenu(true)
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("reload_frequency"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -152,6 +114,7 @@ class SettingsActivity : AppCompatPreferenceActivity(), SharedPreferences.OnShar
 
     companion object {
 
+        /*
         /**
          * A preference value change listener that updates the preference's summary
          * to reflect its new value.
@@ -178,15 +141,16 @@ class SettingsActivity : AppCompatPreferenceActivity(), SharedPreferences.OnShar
             }
             true
         }
+        */
 
         /**
          * Helper method to determine if the device has an extra-large screen. For
          * example, 10" tablets are extra-large.
          */
-        private fun isXLargeTablet(context: Context): Boolean {
-            return context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
-        }
+        private fun isXLargeTablet(context: Context): Boolean =
+                context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
 
+        /*
         /**
          * Binds a preference's summary to its value. More specifically, when the
          * preference's value is changed, its summary (line of text below the
@@ -205,7 +169,8 @@ class SettingsActivity : AppCompatPreferenceActivity(), SharedPreferences.OnShar
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     PreferenceManager
                             .getDefaultSharedPreferences(preference.context)
-                            .getString(preference.key, ""))
+                            .getString(preference.key, String.empty))
         }
+        */
     }
 }

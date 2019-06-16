@@ -2,8 +2,8 @@ package com.github.openweather.library.tasks
 
 import android.os.AsyncTask
 import android.util.Log
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.DownloadType
+import com.github.openweather.library.extensions.empty
 import com.github.openweather.library.services.api.OnApiServiceListener
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,37 +15,30 @@ internal class ApiRestCallTask : AsyncTask<String, Void, String>() {
     lateinit var onApiServiceListener: OnApiServiceListener
 
     override fun doInBackground(vararg requestUrls: String?): String {
-        var result = Constants.String.Empty
+        var result = String.empty
 
-        if (downloadType == DownloadType.Null) {
-            return result
-        }
+        if (downloadType != DownloadType.Null) {
+            val okHttpClient = OkHttpClient()
+            requestUrls.forEach { requestUrl ->
+                try {
+                    val request = Request.Builder().url(requestUrl!!).build()
+                    val response = okHttpClient.newCall(request).execute()
+                    val responseBody = response.body()
 
-        val okHttpClient = OkHttpClient()
-        requestUrls.forEach { requestUrl ->
-            try {
-                val request = Request.Builder().url(requestUrl!!).build()
-                val response = okHttpClient.newCall(request).execute()
-                val responseBody = response.body()
-
-                if (responseBody != null) {
-                    result = responseBody.string()
-                } else {
-                    Log.e(tag, "ResponseBody is null!")
+                    if (responseBody != null) {
+                        result = responseBody.string()
+                    } else {
+                        Log.e(tag, "ResponseBody is null!")
+                    }
+                } catch (exception: Exception) {
+                    Log.e(tag, exception.message)
                 }
-            } catch (exception: Exception) {
-                Log.e(tag, exception.message)
             }
         }
 
         return result
     }
 
-    override fun onPostExecute(result: String?) {
-        if (result.isNullOrEmpty()) {
-            onApiServiceListener.onFinished(downloadType, Constants.String.Empty, false)
-            return
-        }
-        onApiServiceListener.onFinished(downloadType, result, true)
-    }
+    override fun onPostExecute(result: String?) =
+            onApiServiceListener.onFinished(downloadType, if (result.isNullOrEmpty()) String.empty else result, !result.isNullOrEmpty())
 }

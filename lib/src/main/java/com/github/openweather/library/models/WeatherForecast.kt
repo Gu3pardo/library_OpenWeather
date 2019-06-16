@@ -1,9 +1,8 @@
 package com.github.openweather.library.models
 
 import com.github.openweather.library.annotations.JsonKey
-import com.github.openweather.library.common.Constants
 
-@JsonKey(Constants.String.Empty, Constants.String.Empty)
+@JsonKey("", "")
 class WeatherForecast : JsonModel {
     private val tag: String = WeatherForecast::class.java.simpleName
 
@@ -11,7 +10,5 @@ class WeatherForecast : JsonModel {
 
     var list: List<WeatherForecastPart> = listOf()
 
-    override fun toString(): String {
-        return "{Class: $tag, City: $city, List: $list}"
-    }
+    override fun toString(): String = "{Class: $tag, City: $city, List: $list}"
 }

@@ -10,9 +10,9 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.github.openweather.library.R
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.ForecastListType
 import com.github.openweather.library.extensions.DDMMYYYY
+import com.github.openweather.library.extensions.degreeSign
 import com.github.openweather.library.extensions.doubleFormat
 import com.github.openweather.library.extensions.hhmm
 import com.github.openweather.library.models.WeatherForecastPart
@@ -47,17 +47,11 @@ class ForecastListAdapter(
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-    override fun getCount(): Int {
-        return list.size
-    }
+    override fun getCount(): Int = list.size
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
+    override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun getItem(position: Int): WeatherForecastPart {
-        return list[position]
-    }
+    override fun getItem(position: Int): WeatherForecastPart = list[position]
 
     @SuppressLint("SetTextI18n")
     override fun getView(position: Int, convertView: View?, parentView: ViewGroup?): View {
@@ -76,18 +70,18 @@ class ForecastListAdapter(
 
                 holder.weatherHeaderTextView.text =
                         forecastPart.dateTime.hhmm() + ", " +
-                        "${forecastPart.temperature.doubleFormat(2)} " +
-                        "${Constants.String.DegreeSign}C, " +
-                        forecastPart.description
+                                "${forecastPart.temperature.doubleFormat(2)} " +
+                                "${String.degreeSign}C, " +
+                                forecastPart.description
 
                 holder.weatherTemperatureView = rowView.findViewById(R.id.weatherTemperatureView)
                 holder.weatherTemperatureImageView = rowView.findViewById(R.id.weatherTemperatureImageView)
                 holder.weatherTemperatureTextView = rowView.findViewById(R.id.weatherTemperatureTextView)
                 holder.weatherTemperatureTextView.text =
                         "${forecastPart.temperatureMin.doubleFormat(2)} " +
-                        "${Constants.String.DegreeSign}C - " +
-                        "${forecastPart.temperatureMax.doubleFormat(2)} " +
-                        "${Constants.String.DegreeSign}C"
+                                "${String.degreeSign}C - " +
+                                "${forecastPart.temperatureMax.doubleFormat(2)} " +
+                                "${String.degreeSign}C"
 
                 holder.weatherPressureView = rowView.findViewById(R.id.weatherPressureView)
                 holder.weatherPressureImageView = rowView.findViewById(R.id.weatherPressureImageView)
@@ -104,7 +98,7 @@ class ForecastListAdapter(
                 holder.weatherWindTextView = rowView.findViewById(R.id.weatherWindTextView)
                 holder.weatherWindTextView.text =
                         "${forecastPart.windSpeed.doubleFormat(2)} m/s, " +
-                        "${forecastPart.windDegree.doubleFormat(2)} deg"
+                                "${forecastPart.windDegree.doubleFormat(2)} deg"
             }
             ForecastListType.DateDivider, ForecastListType.Null -> {
                 rowView = inflater.inflate(R.layout.listview_card_divider, parentView, false)

@@ -1,9 +1,8 @@
 package com.github.openweather.library.models
 
 import com.github.openweather.library.annotations.JsonKey
-import com.github.openweather.library.common.Constants
 
-@JsonKey(Constants.String.Empty, Constants.String.Empty)
+@JsonKey("", "")
 class NitrogenDioxideData : JsonModel {
     private val tag: String = NitrogenDioxideData::class.java.simpleName
 
@@ -16,7 +15,5 @@ class NitrogenDioxideData : JsonModel {
     @JsonKey("data", "no2_trop")
     var no2Trop: NitrogenDioxideDataHolder = NitrogenDioxideDataHolder()
 
-    override fun toString(): String {
-        return "{Class: $tag, No2: $no2, No2Strat: $no2Strat, No2Trop: $no2Trop}"
-    }
+    override fun toString(): String = "{Class: $tag, No2: $no2, No2Strat: $no2Strat, No2Trop: $no2Trop}"
 }

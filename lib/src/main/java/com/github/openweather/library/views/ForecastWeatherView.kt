@@ -12,7 +12,7 @@ import android.widget.*
 import com.baoyz.widget.PullRefreshLayout
 import com.github.openweather.library.R
 import com.github.openweather.library.adapter.ForecastListAdapter
-import com.github.openweather.library.common.Constants
+import com.github.openweather.library.extensions.empty
 import com.github.openweather.library.extensions.getMostWeatherCondition
 import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import io.reactivex.disposables.Disposable
@@ -77,7 +77,7 @@ class ForecastWeatherView(context: Context, attrs: AttributeSet?) : CoordinatorL
 
                                     val forecastWeather = response?.value
                                     if (forecastWeather != null) {
-                                        searchEditText?.setText(Constants.String.Empty)
+                                        searchEditText?.setText(String.empty)
 
                                         val forecastList = forecastWeather.list
                                         if (forecastList.isNotEmpty()) {

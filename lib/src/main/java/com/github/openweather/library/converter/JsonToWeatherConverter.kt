@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.ForecastListType
 import com.github.openweather.library.enums.WeatherCondition
+import com.github.openweather.library.extensions.empty
 import com.github.openweather.library.extensions.getJsonKey
 import com.github.openweather.library.extensions.getPropertyJsonKey
 import com.github.openweather.library.extensions.toMillis
@@ -181,7 +182,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             val dataListJsonArray = jsonObject.getJSONArray(weatherForecastPartC.getJsonKey().parent)
             var list = listOf<WeatherForecastPart>()
 
-            var previousDateString = Constants.String.Empty
+            var previousDateString = String.empty
 
             for (index in Constants.Defaults.Zero until dataListJsonArray.length() step 1) {
                 val dataJsonObject = dataListJsonArray.getJSONObject(index)

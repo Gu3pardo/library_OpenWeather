@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import com.github.openweather.library.R
-import com.github.openweather.library.common.Constants
+import com.github.openweather.library.extensions.degreeSign
 import com.github.openweather.library.extensions.doubleFormat
 import com.github.openweather.library.services.openweathermap.OpenWeatherMapService
 import io.reactivex.disposables.Disposable
@@ -54,7 +54,7 @@ class CurrentWeatherView(context: Context, attrs: AttributeSet?) : ConstraintLay
                                     if (currentWeather != null) {
                                         weatherImageView?.setImageResource(currentWeather.weatherCondition.wallpaperId)
                                         descriptionTextView?.text = currentWeather.description
-                                        temperatureTextView?.text = "${currentWeather.temperature.doubleFormat(2)}${Constants.String.DegreeSign}C (${currentWeather.temperatureMin.doubleFormat(2)}${Constants.String.DegreeSign}C - ${currentWeather.temperatureMax.doubleFormat(2)}${Constants.String.DegreeSign}C)"
+                                        temperatureTextView?.text = "${currentWeather.temperature.doubleFormat(2)}${String.degreeSign}C (${currentWeather.temperatureMin.doubleFormat(2)}${String.degreeSign}C - ${currentWeather.temperatureMax.doubleFormat(2)}${String.degreeSign}C)"
                                         humidityTextView?.text = "${currentWeather.humidity.doubleFormat(2)} %"
                                         pressureTextView?.text = "${currentWeather.pressure.doubleFormat(2)} mBar"
                                     }

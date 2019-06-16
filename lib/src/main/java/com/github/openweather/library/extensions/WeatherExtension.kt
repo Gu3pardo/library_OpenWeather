@@ -36,42 +36,49 @@ fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
         }
     }
 
-    weatherConditionCountList.sortByDescending { x -> x.count }
-    return weatherConditionCountList.first()
+    return weatherConditionCountList
+            .sortedByDescending { x -> x.count }
+            .first()
 }
 
-fun WeatherForecast.getMinTemperature(): Double {
-    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList = dataList.sortedBy { x -> x.temperatureMin }
-    return dataList.first().temperatureMin
-}
+fun WeatherForecast.getMinTemperature(): Double =
+        this.list
+                .filter { x -> x.listType == ForecastListType.Forecast }
+                .sortedBy { x -> x.temperatureMin }
+                .first()
+                .temperatureMin
 
-fun WeatherForecast.getMaxTemperature(): Double {
-    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList = dataList.sortedByDescending { x -> x.temperatureMax }
-    return dataList.first().temperatureMax
-}
+fun WeatherForecast.getMaxTemperature(): Double =
+        this.list
+                .filter { x -> x.listType == ForecastListType.Forecast }
+                .sortedByDescending { x -> x.temperatureMax }
+                .first()
+                .temperatureMax
 
-fun WeatherForecast.getMinPressure(): Double {
-    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList = dataList.sortedBy { x -> x.pressure }
-    return dataList.first().pressure
-}
+fun WeatherForecast.getMinPressure(): Double =
+        this.list
+                .filter { x -> x.listType == ForecastListType.Forecast }
+                .sortedBy { x -> x.pressure }
+                .first()
+                .pressure
 
-fun WeatherForecast.getMaxPressure(): Double {
-    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList = dataList.sortedByDescending { x -> x.pressure }
-    return dataList.first().pressure
-}
+fun WeatherForecast.getMaxPressure(): Double =
+        this.list
+                .filter { x -> x.listType == ForecastListType.Forecast }
+                .sortedByDescending { x -> x.pressure }
+                .first()
+                .pressure
 
-fun WeatherForecast.getMinHumidity(): Double {
-    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList = dataList.sortedBy { x -> x.humidity }
-    return dataList.first().humidity
-}
+fun WeatherForecast.getMinHumidity(): Double =
+        this.list
+                .filter { x -> x.listType == ForecastListType.Forecast }
+                .sortedBy { x -> x.humidity }
+                .first()
+                .humidity
 
-fun WeatherForecast.getMaxHumidity(): Double {
-    var dataList = this.list.filter { x -> x.listType == ForecastListType.Forecast }
-    dataList = dataList.sortedByDescending { x -> x.humidity }
-    return dataList.first().humidity
-}
+fun WeatherForecast.getMaxHumidity(): Double =
+        this.list
+                .filter { x -> x.listType == ForecastListType.Forecast }
+                .sortedByDescending { x -> x.humidity }
+                .first()
+                .humidity

@@ -10,8 +10,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 10900
-        versionName "1.9.0.190502"
+        versionCode 10901
+        versionName "1.9.1.190616"
     }
 
     buildTypes {
@@ -33,17 +33,17 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':lib')
 
-    implementation "androidx.annotation:annotation:$android_material_version"
-    implementation "androidx.appcompat:appcompat:$android_material_version"
-    implementation "androidx.cardview:cardview:$android_material_version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
-    implementation "androidx.core:core:$android_material_version"
-    implementation "androidx.cursoradapter:cursoradapter:$android_material_version"
-    implementation "androidx.documentfile:documentfile:$android_material_version"
-    implementation "androidx.legacy:legacy-support-v4:$android_material_version"
-    implementation "androidx.percentlayout:percentlayout:$android_material_version"
-    implementation "androidx.recyclerview:recyclerview:$android_material_version"
+    implementation "androidx.annotation:annotation:1.1.0"
+    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
+    implementation "androidx.core:core:1.0.2"
+    implementation "androidx.cursoradapter:cursoradapter:1.0.0"
+    implementation "androidx.documentfile:documentfile:1.0.1"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    implementation "androidx.percentlayout:percentlayout:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "it.sephiroth.android.library.bottomnavigation:bottom-navigation:$bottom_navigation_version"
+    implementation "it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

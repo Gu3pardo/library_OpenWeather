@@ -23,10 +23,4 @@ internal object Constants {
 
         const val KeyCity = "City"
     }
-
-    object String {
-        const val DegreeSign = 0x00B0.toChar()
-        const val Empty = ""
-        const val NewLine = "\n"
-    }
 }

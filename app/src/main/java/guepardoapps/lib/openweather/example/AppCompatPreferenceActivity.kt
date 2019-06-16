@@ -31,29 +31,17 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     val supportActionBar: ActionBar?
         get() = delegate.supportActionBar
 
-    fun setSupportActionBar(toolbar: Toolbar?) {
-        delegate.setSupportActionBar(toolbar)
-    }
+    fun setSupportActionBar(toolbar: Toolbar?) = delegate.setSupportActionBar(toolbar)
 
-    override fun getMenuInflater(): MenuInflater {
-        return delegate.menuInflater
-    }
+    override fun getMenuInflater(): MenuInflater = delegate.menuInflater
 
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        delegate.setContentView(layoutResID)
-    }
+    override fun setContentView(@LayoutRes layoutResID: Int) = delegate.setContentView(layoutResID)
 
-    override fun setContentView(view: View) {
-        delegate.setContentView(view)
-    }
+    override fun setContentView(view: View) = delegate.setContentView(view)
 
-    override fun setContentView(view: View, params: ViewGroup.LayoutParams) {
-        delegate.setContentView(view, params)
-    }
+    override fun setContentView(view: View, params: ViewGroup.LayoutParams) = delegate.setContentView(view, params)
 
-    override fun addContentView(view: View, params: ViewGroup.LayoutParams) {
-        delegate.addContentView(view, params)
-    }
+    override fun addContentView(view: View, params: ViewGroup.LayoutParams) = delegate.addContentView(view, params)
 
     override fun onPostResume() {
         super.onPostResume()
@@ -80,9 +68,7 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate.onDestroy()
     }
 
-    override fun invalidateOptionsMenu() {
-        delegate.invalidateOptionsMenu()
-    }
+    override fun invalidateOptionsMenu() = delegate.invalidateOptionsMenu()
 
     private val delegate: AppCompatDelegate by lazy {
         AppCompatDelegate.create(this, null)

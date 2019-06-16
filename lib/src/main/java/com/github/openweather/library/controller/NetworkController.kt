@@ -8,6 +8,7 @@ import android.net.wifi.WifiManager
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.github.openweather.library.common.Constants
+import com.github.openweather.library.extensions.*
 import java.net.NetworkInterface
 import java.net.SocketException
 
@@ -40,7 +41,7 @@ internal class NetworkController(@NonNull private val context: Context) : INetwo
                     if (inetAddress.isSiteLocalAddress) {
                         ip.append("SiteLocalAddress: ")
                                 .append(inetAddress.hostAddress)
-                                .append(Constants.String.NewLine)
+                                .append(String.newLine)
                     }
                 }
             }
@@ -48,7 +49,7 @@ internal class NetworkController(@NonNull private val context: Context) : INetwo
             Log.e(tag, exception.message)
             ip.append("Error: Something Wrong! ")
                     .append(exception.toString())
-                    .append(Constants.String.NewLine)
+                    .append(String.newLine)
         }
 
         return ip.toString()
@@ -84,7 +85,7 @@ internal class NetworkController(@NonNull private val context: Context) : INetwo
     override fun getWifiSsid(): String {
         val networkPair = isWifiConnected()
         if (!networkPair.second) {
-            return Constants.String.Empty
+            return String.empty
         }
 
         if (networkPair.first?.type == ConnectivityManager.TYPE_WIFI) {
@@ -92,7 +93,7 @@ internal class NetworkController(@NonNull private val context: Context) : INetwo
         }
 
         Log.w(tag, "Active network is not wifi: ${networkPair.first?.type}")
-        return Constants.String.Empty
+        return String.empty
     }
 
     override fun getWifiDBM(): Int {

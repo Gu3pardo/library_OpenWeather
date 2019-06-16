@@ -13,7 +13,5 @@ internal class Coordinates2 : JsonModel {
     @JsonKey("location", "lng")
     var lng: Double = Constants.Defaults.Coordinates
 
-    override fun toString(): String {
-        return "{Class: $tag, Lat: $lat, Lng: $lng}"
-    }
+    override fun toString(): String = "{Class: $tag, Lat: $lat, Lng: $lng}"
 }

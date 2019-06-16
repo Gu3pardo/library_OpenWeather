@@ -23,17 +23,11 @@ class CarbonMonoxideListAdapter(
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-    override fun getCount(): Int {
-        return list.size
-    }
+    override fun getCount(): Int = list.size
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
+    override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun getItem(position: Int): CarbonMonoxideData {
-        return list[position]
-    }
+    override fun getItem(position: Int): CarbonMonoxideData = list[position]
 
     @SuppressLint("SetTextI18n", "ViewHolder")
     override fun getView(position: Int, convertView: View?, parentView: ViewGroup?): View {

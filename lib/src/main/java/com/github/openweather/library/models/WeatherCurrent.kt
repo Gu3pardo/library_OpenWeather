@@ -3,17 +3,18 @@ package com.github.openweather.library.models
 import com.github.openweather.library.annotations.JsonKey
 import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.WeatherCondition
+import com.github.openweather.library.extensions.empty
 import java.util.*
 
-@JsonKey(Constants.String.Empty, "sys")
+@JsonKey("", "sys")
 class WeatherCurrent : JsonModel {
     private val tag: String = WeatherCurrent::class.java.simpleName
 
     @JsonKey("weather", "icon")
-    var icon: String = Constants.String.Empty
+    var icon: String = String.empty
 
     @JsonKey("weather", "description")
-    var description: String = Constants.String.Empty
+    var description: String = String.empty
 
     @JsonKey("weather", "main")
     var weatherCondition: WeatherCondition = WeatherCondition.Null
@@ -33,7 +34,7 @@ class WeatherCurrent : JsonModel {
     @JsonKey("main", "pressure")
     var pressure: Double = Constants.Defaults.Zero.toDouble()
 
-    @JsonKey(Constants.String.Empty, "visibility")
+    @JsonKey("", "visibility")
     var visibility: Int = Constants.Defaults.Zero
 
     @JsonKey("clouds", "all")
@@ -45,7 +46,7 @@ class WeatherCurrent : JsonModel {
     //@JsonKey("wind", "deg")
     //var windDegree: Double = Constants.Defaults.Zero.toDouble()
 
-    @JsonKey(Constants.String.Empty, "dt")
+    @JsonKey("", "dt")
     var dateTime: Calendar = Calendar.getInstance()
 
     @JsonKey("sys", "sunrise")
@@ -57,12 +58,10 @@ class WeatherCurrent : JsonModel {
     var city: City = City()
     var lastUpdate: Calendar = Calendar.getInstance()
 
-    override fun toString(): String {
-        return "{Class: $tag, City: $city, Icon: $icon, Description: $description, " +
-                "Temperature: $temperature, TemperatureMin: $temperatureMin, TemperatureMax: $temperatureMax, " +
-                "Humidity: $humidity, Pressure: $pressure, Visibility: $visibility, " +
-                "CloudsAll: $cloudsAll, WindSpeed: $windSpeed, " + //WindDegree: $windDegree, " +
-                "SunriseTime: $sunriseTime, SunsetTime: $sunsetTime, LastUpdate: $lastUpdate, " +
-                "WeatherCondition: $weatherCondition}"
-    }
+    override fun toString(): String = "{Class: $tag, City: $city, Icon: $icon, Description: $description, " +
+            "Temperature: $temperature, TemperatureMin: $temperatureMin, TemperatureMax: $temperatureMax, " +
+            "Humidity: $humidity, Pressure: $pressure, Visibility: $visibility, " +
+            "CloudsAll: $cloudsAll, WindSpeed: $windSpeed, " + //WindDegree: $windDegree, " +
+            "SunriseTime: $sunriseTime, SunsetTime: $sunsetTime, LastUpdate: $lastUpdate, " +
+            "WeatherCondition: $weatherCondition}"
 }

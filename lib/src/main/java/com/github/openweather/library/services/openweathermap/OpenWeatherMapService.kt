@@ -456,9 +456,9 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             val currentWeatherNotificationContent = NotificationContent(
                     currentWeatherNotificationId,
                     "Current Weather: " + weatherCurrent!!.description,
-                    weatherCurrent!!.temperature.doubleFormat(1) + "${Constants.String.DegreeSign}C, "
-                            + "(" + weatherCurrent!!.temperatureMin.doubleFormat(1) + "${Constants.String.DegreeSign}C - "
-                            + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${Constants.String.DegreeSign}C), "
+                    weatherCurrent!!.temperature.doubleFormat(1) + "${String.degreeSign}C, "
+                            + "(" + weatherCurrent!!.temperatureMin.doubleFormat(1) + "${String.degreeSign}C - "
+                            + weatherCurrent!!.temperatureMax.doubleFormat(1) + "${String.degreeSign}C), "
                             + weatherCurrent!!.pressure.doubleFormat(1) + "mBar, "
                             + weatherCurrent!!.humidity.doubleFormat(1) + "%",
                     weatherCurrent!!.weatherCondition.iconId,
@@ -476,8 +476,8 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             val forecastWeatherNotificationContent = NotificationContent(
                     forecastWeatherNotificationId,
                     "Forecast: " + weatherForecast!!.getMostWeatherCondition().description,
-                    weatherForecast!!.getMinTemperature().doubleFormat(1) + "${Constants.String.DegreeSign}C - "
-                            + weatherForecast!!.getMaxTemperature().doubleFormat(1) + "${Constants.String.DegreeSign}C, "
+                    weatherForecast!!.getMinTemperature().doubleFormat(1) + "${String.degreeSign}C - "
+                            + weatherForecast!!.getMaxTemperature().doubleFormat(1) + "${String.degreeSign}C, "
                             + weatherForecast!!.getMinPressure().doubleFormat(1) + "mBar - "
                             + weatherForecast!!.getMaxPressure().doubleFormat(1) + "mBar, "
                             + weatherForecast!!.getMinHumidity().doubleFormat(1) + "% - "

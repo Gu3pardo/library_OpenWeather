@@ -43,13 +43,9 @@ class MainActivity : FragmentActivity(), BottomNavigation.OnMenuItemSelectionLis
         OpenWeatherMapService.instance.dispose()
     }
 
-    override fun onMenuItemSelect(itemId: Int, position: Int, fromUser: Boolean) {
-        performMenuAction(itemId)
-    }
+    override fun onMenuItemSelect(itemId: Int, position: Int, fromUser: Boolean) = performMenuAction(itemId)
 
-    override fun onMenuItemReselect(itemId: Int, position: Int, fromUser: Boolean) {
-        performMenuAction(itemId)
-    }
+    override fun onMenuItemReselect(itemId: Int, position: Int, fromUser: Boolean) = performMenuAction(itemId)
 
     private fun performMenuAction(itemId: Int) {
         var fragment: androidx.fragment.app.Fragment? = null

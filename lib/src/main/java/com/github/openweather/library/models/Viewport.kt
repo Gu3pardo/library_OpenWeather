@@ -12,7 +12,5 @@ internal class Viewport : JsonModel {
     @JsonKey("viewport", "southwest")
     var southwest: Coordinates2 = Coordinates2()
 
-    override fun toString(): String {
-        return "{Class: $tag, Northeast: $northeast, Southwest: $southwest}"
-    }
+    override fun toString(): String = "{Class: $tag, Northeast: $northeast, Southwest: $southwest}"
 }

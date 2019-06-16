@@ -9,10 +9,11 @@ internal class JsonToImageUrlConverter : IJsonToImageUrlConverter {
 
     override fun convert(jsonString: String): String? {
         return try {
-            val jsonObject = JSONObject(jsonString)
-            val firstResultJsonObject = jsonObject.getJSONArray("results").getJSONObject(Constants.Defaults.Zero)
-            val urls = firstResultJsonObject.getJSONObject("urls")
-            urls.getString("small")
+            JSONObject(jsonString)
+                    .getJSONArray("results")
+                    .getJSONObject(Constants.Defaults.Zero)
+                    .getJSONObject("urls")
+                    .getString("small")
         } catch (exception: Exception) {
             Log.e(tag, exception.message)
             null
