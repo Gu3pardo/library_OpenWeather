@@ -5,6 +5,3 @@ val String.Companion.degreeSign: String
 
 val String.Companion.empty: String
     get() = ""
-
-val String.Companion.newLine: String
-    get() = "\n"

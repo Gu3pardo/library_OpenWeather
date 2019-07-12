@@ -16,13 +16,19 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult", "SetTextI18n")
-class CurrentWeatherView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+class CurrentWeatherView(context: Context, attrs: AttributeSet?)
+    : ConstraintLayout(context, attrs) {
 
     private var weatherImageView: ImageView? = null
+
     private var descriptionTextView: TextView? = null
+
     private var temperatureTextView: TextView? = null
+
     private var humidityTextView: TextView? = null
+
     private var pressureTextView: TextView? = null
+
     private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()

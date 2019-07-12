@@ -9,9 +9,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 internal class ApiRestCallTask : AsyncTask<String, Void, String>() {
+
     private val tag: String = ApiRestCallTask::class.java.simpleName
 
     lateinit var downloadType: DownloadType
+
     lateinit var onApiServiceListener: OnApiServiceListener
 
     override fun doInBackground(vararg requestUrls: String?): String {

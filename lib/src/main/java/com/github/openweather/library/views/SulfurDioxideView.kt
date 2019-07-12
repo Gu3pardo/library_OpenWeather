@@ -17,11 +17,15 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 @SuppressLint("CheckResult", "SetTextI18n")
-class SulfurDioxideView(context: Context, attrs: AttributeSet?) : CoordinatorLayout(context, attrs) {
+class SulfurDioxideView(context: Context, attrs: AttributeSet?)
+    : CoordinatorLayout(context, attrs) {
 
     private var progressBar: ProgressBar? = null
+
     private var fallbackTextView: TextView? = null
+
     private var pullRefreshLayout: PullRefreshLayout? = null
+
     private var listView: ListView? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()

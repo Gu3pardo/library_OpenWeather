@@ -1,7 +1,6 @@
 package com.github.openweather.library.converter
 
 import android.util.Log
-import com.github.openweather.library.common.Constants
 import org.json.JSONObject
 
 internal class JsonToImageUrlConverter : IJsonToImageUrlConverter {
@@ -11,7 +10,7 @@ internal class JsonToImageUrlConverter : IJsonToImageUrlConverter {
         return try {
             JSONObject(jsonString)
                     .getJSONArray("results")
-                    .getJSONObject(Constants.Defaults.Zero)
+                    .getJSONObject(0)
                     .getJSONObject("urls")
                     .getString("small")
         } catch (exception: Exception) {

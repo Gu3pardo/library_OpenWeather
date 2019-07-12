@@ -1,7 +1,6 @@
 package com.github.openweather.library.models
 
 import com.github.openweather.library.annotations.JsonKey
-import com.github.openweather.library.common.Constants
 import java.util.*
 
 @JsonKey("", "")
@@ -14,7 +13,7 @@ class UvIndex : JsonModel {
     var dateTime: Calendar = Calendar.getInstance()
 
     @JsonKey("", "value")
-    var value: Double = Constants.Defaults.Zero.toDouble()
+    var value: Double = 0.0
 
     override fun toString(): String = "{Class: $tag, Coordinates: $coordinates, DateTime: $dateTime, Value: $value}"
 }

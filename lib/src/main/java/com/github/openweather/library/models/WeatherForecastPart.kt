@@ -1,7 +1,6 @@
 package com.github.openweather.library.models
 
 import com.github.openweather.library.annotations.JsonKey
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.ForecastListType
 import com.github.openweather.library.enums.WeatherCondition
 import com.github.openweather.library.extensions.empty
@@ -23,37 +22,37 @@ class WeatherForecastPart : JsonModel {
     var weatherDefaultIcon: String = String.empty
 
     @JsonKey("main", "temp")
-    var temperature: Double = Constants.Defaults.Zero.toDouble()
+    var temperature: Double = 0.0
 
     @JsonKey("main", "temp_min")
-    var temperatureMin: Double = Constants.Defaults.Zero.toDouble()
+    var temperatureMin: Double = 0.0
 
     @JsonKey("main", "temp_max")
-    var temperatureMax: Double = Constants.Defaults.Zero.toDouble()
+    var temperatureMax: Double = 0.0
 
     @JsonKey("main", "temp_kf")
-    var temperatureKf: Double = Constants.Defaults.Zero.toDouble()
+    var temperatureKf: Double = 0.0
 
     @JsonKey("main", "pressure")
-    var pressure: Double = Constants.Defaults.Zero.toDouble()
+    var pressure: Double = 0.0
 
     @JsonKey("main", "sea_level")
-    var pressureSeaLevel: Double = Constants.Defaults.Zero.toDouble()
+    var pressureSeaLevel: Double = 0.0
 
     @JsonKey("main", "grnd_level")
-    var pressureGroundLevel: Double = Constants.Defaults.Zero.toDouble()
+    var pressureGroundLevel: Double = 0.0
 
     @JsonKey("main", "humidity")
-    var humidity: Double = Constants.Defaults.Zero.toDouble()
+    var humidity: Double = 0.0
 
     @JsonKey("clouds", "all")
-    var cloudsAll: Int = Constants.Defaults.Zero
+    var cloudsAll: Int = 0
 
     @JsonKey("wind", "speed")
-    var windSpeed: Double = Constants.Defaults.Zero.toDouble()
+    var windSpeed: Double = 0.0
 
     @JsonKey("wind", "deg")
-    var windDegree: Double = Constants.Defaults.Zero.toDouble()
+    var windDegree: Double = 0.0
 
     @JsonKey("", "dt")
     var dateTime: Calendar = Calendar.getInstance()

@@ -17,7 +17,9 @@ import com.github.openweather.library.models.NotificationContent
 internal class NotificationController(@NonNull private val context: Context) : INotificationController {
 
     private val channelId: String = "com.github.openweather.library"
+
     private val channelName: String = "OpenWeather"
+
     private val channelDescription: String = "Notifications for open weather library"
 
     private var notificationManager: NotificationManager? = null
@@ -32,12 +34,11 @@ internal class NotificationController(@NonNull private val context: Context) : I
 
     @Suppress("DEPRECATION")
     override fun create(notificationContent: NotificationContent) {
-        var bitmap = BitmapFactory.decodeResource(context.resources, notificationContent.largeIconId)
-        bitmap = bitmap.circleBitmap(bitmap.height, bitmap.width, Color.BLACK)
-
         val intent = Intent(context, notificationContent.receiver)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
+        var bitmap = BitmapFactory.decodeResource(context.resources, notificationContent.largeIconId)
+        bitmap = bitmap.circleBitmap(bitmap.height, bitmap.width, Color.BLACK)
         val wearableExtender = Notification.WearableExtender().setHintHideIcon(true).setBackground(bitmap)
 
         val notification: Notification
@@ -72,15 +73,10 @@ internal class NotificationController(@NonNull private val context: Context) : I
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel() {
-        val importance = NotificationManager.IMPORTANCE_LOW
-        val channel = NotificationChannel(channelId, channelName, importance)
-
-        channel.description = channelDescription
-        channel.enableLights(false)
-        //channel.lightColor = Color.GREEN
-        channel.enableVibration(false)
-        //channel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
-        notificationManager?.createNotificationChannel(channel)
-    }
+    private fun createNotificationChannel() = notificationManager?.createNotificationChannel(
+            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW).apply {
+                description = channelDescription
+                enableLights(false)
+                enableVibration(false)
+            })
 }

@@ -3,12 +3,16 @@ package com.github.openweather.library.controller
 import android.content.Context
 import android.util.Log
 import com.andreacioccarelli.cryptoprefs.CryptoPrefs
-import com.github.openweather.library.common.Constants
+import com.github.openweather.library.R
 
 class SharedPreferenceController(context: Context) : ISharedPreferenceController {
+
     private val tag: String = SharedPreferenceController::class.java.simpleName
 
-    private val cryptoPrefs: CryptoPrefs = CryptoPrefs(context, Constants.SharedPref.Name, Constants.SharedPref.CryptoKey)
+    private val cryptoPrefs: CryptoPrefs = CryptoPrefs(
+            context,
+            context.resources.getString(R.string.sharedPreferencesName),
+            context.resources.getString(R.string.sharedPreferencesCryptoKey))
 
     override fun <T : Any> save(key: String, value: T) {
         when (value::class) {

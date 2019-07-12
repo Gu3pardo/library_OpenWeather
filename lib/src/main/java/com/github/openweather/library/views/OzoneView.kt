@@ -18,11 +18,15 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 @SuppressLint("CheckResult", "SetTextI18n")
-class OzoneView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+class OzoneView(context: Context, attrs: AttributeSet?)
+    : ConstraintLayout(context, attrs) {
 
     private var valueTextView: TextView? = null
+
     private var coordinatesTextView: TextView? = null
+
     private var datetimeTextView: TextView? = null
+
     private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()

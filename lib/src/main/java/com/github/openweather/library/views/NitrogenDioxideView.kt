@@ -18,13 +18,19 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 @SuppressLint("CheckResult", "SetTextI18n")
-class NitrogenDioxideView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+class NitrogenDioxideView(context: Context, attrs: AttributeSet?)
+    : ConstraintLayout(context, attrs) {
 
     private var coordinatesTextView: TextView? = null
+
     private var datetimeTextView: TextView? = null
+
     private var valueTextView: TextView? = null
+
     private var valueStratTextView: TextView? = null
+
     private var valueTropTextView: TextView? = null
+
     private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()

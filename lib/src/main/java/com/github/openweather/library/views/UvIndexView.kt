@@ -14,10 +14,13 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult", "SetTextI18n")
-class UvIndexView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+class UvIndexView(context: Context, attrs: AttributeSet?)
+    : ConstraintLayout(context, attrs) {
 
     private var valueTextView: TextView? = null
+
     private var coordinatesTextView: TextView? = null
+
     private var reloadImageButton: ImageButton? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()

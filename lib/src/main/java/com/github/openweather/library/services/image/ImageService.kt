@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.github.guepardoapps.timext.kotlin.extensions.minus
-import com.github.openweather.library.common.Constants
+import com.github.guepardoapps.timext.kotlin.extensions.minutes
 import com.github.openweather.library.controller.NetworkController
 import com.github.openweather.library.converter.JsonToImageUrlConverter
 import com.github.openweather.library.enums.DownloadType
@@ -16,6 +16,7 @@ import io.reactivex.subjects.BehaviorSubject
 import java.util.*
 
 class ImageService private constructor() : IImageService {
+
     private val tag: String = ImageService::class.java.simpleName
 
     private val imageApiUrl: String = "https://api.unsplash.com/search/photos?client_id=%s&orientation=%s&query=%s"
@@ -23,6 +24,7 @@ class ImageService private constructor() : IImageService {
     private var converter: JsonToImageUrlConverter = JsonToImageUrlConverter()
 
     private lateinit var context: Context
+
     private lateinit var networkController: NetworkController
 
     private var url: String? = null
@@ -67,7 +69,7 @@ class ImageService private constructor() : IImageService {
             return false
         }
 
-        if (Date() - lastCallDate < Constants.Defaults.MinReloadDifference) {
+        if (Date() - lastCallDate < 5.minutes) {
             // Set it to itself again to trigger subscriptions
             url = url
         } else {

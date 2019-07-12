@@ -4,9 +4,10 @@ import android.annotation.SuppressLint
 import android.app.WallpaperManager
 import android.content.Context
 import android.util.Log
+import com.github.guepardoapps.timext.kotlin.TimeXt
 import com.github.guepardoapps.timext.kotlin.extensions.minus
+import com.github.guepardoapps.timext.kotlin.extensions.minutes
 import com.github.openweather.library.R
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.controller.*
 import com.github.openweather.library.converter.*
 import com.github.openweather.library.enums.*
@@ -20,18 +21,24 @@ import java.io.IOException
 import java.util.*
 
 class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
+
     private val tag: String = OpenWeatherMapService::class.java.simpleName
 
     private val geoCodeForCityUrl: String = "http://www.datasciencetoolkit.org/maps/api/geocode/json?address=%s"
+
     private val currentWeatherUrl: String = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&APPID=%s"
+
     private val forecastWeatherUrl: String = "http://api.openweathermap.org/data/2.5/forecast?q=%s&units=metric&APPID=%s"
+
     private val uvIndexUrl: String = "http://api.openweathermap.org/data/2.5/uvi?lat=%.2f&lon=%.2f&APPID=%s"
 
     // e.g. https://samples.openweathermap.org/pollution/v1/co/0.0,10.0/2016-12-25T01:04:08Z.json?appid=b1b15e88fa797225412429c1c50c122a1
     private val airPollutionUrl: String = "http://api.openweathermap.org/pollution/v1/%s/%s/%s.json?appid=%s"
 
     private val currentWeatherNotificationId: Int = 260520181
+
     private val forecastWeatherNotificationId: Int = 260520182
+
     private val uvIndexNotificationId: Int = 260520183
 
     private var mayLoad: Boolean = false
@@ -39,15 +46,22 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
     private var converter: JsonToWeatherConverter = JsonToWeatherConverter()
 
     private lateinit var context: Context
+
     private lateinit var networkController: NetworkController
+
     private lateinit var notificationController: NotificationController
+
     private lateinit var sharedPreferenceController: SharedPreferenceController
 
+    private val minReloadTime: TimeXt = 5.minutes
+
+    private val sharedPrefKeyCity: String = context.resources.getString(R.string.sharedPreferencesKeyCity)
+
     var city: City? = null
-        get() = Gson().fromJson<City>(sharedPreferenceController.load(Constants.SharedPref.KeyCity, Gson().toJson(field)), City::class.java)
+        get() = Gson().fromJson(sharedPreferenceController.load(sharedPrefKeyCity, Gson().toJson(field)), City::class.java)
         private set(value) {
             field = value ?: City()
-            sharedPreferenceController.save(Constants.SharedPref.KeyCity, Gson().toJson(field))
+            sharedPreferenceController.save(sharedPrefKeyCity, Gson().toJson(field))
             cityPublishSubject.onNext(RxOptional(value))
         }
     override val cityPublishSubject = BehaviorSubject.create<RxOptional<City>>()
@@ -191,11 +205,11 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
         this.notificationController = NotificationController(this.context)
         this.sharedPreferenceController = SharedPreferenceController(this.context)
 
-        if (!this.sharedPreferenceController.exists(Constants.SharedPref.KeyCity)) {
+        if (!this.sharedPreferenceController.exists(sharedPrefKeyCity)) {
             Log.i(tag, "Initial save of default city")
             val city = City()
             city.name = cityName
-            this.sharedPreferenceController.save(Constants.SharedPref.KeyCity, Gson().toJson(city))
+            this.sharedPreferenceController.save(sharedPrefKeyCity, Gson().toJson(city))
         }
 
         loadCityData(cityName)
@@ -223,7 +237,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             return false
         }
 
-        if (Date() - lastWeatherCurrentCallDate < Constants.Defaults.MinReloadDifference) {
+        if (Date() - lastWeatherCurrentCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             weatherCurrent = weatherCurrent
         } else {
@@ -238,7 +252,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             return false
         }
 
-        if (Date() - lastWeatherCurrentCallDate < Constants.Defaults.MinReloadDifference) {
+        if (Date() - lastWeatherCurrentCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             weatherForecast = weatherForecast
         } else {
@@ -253,7 +267,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             return false
         }
 
-        if (Date() - lastWeatherCurrentCallDate < Constants.Defaults.MinReloadDifference) {
+        if (Date() - lastWeatherCurrentCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             uvIndex = uvIndex
         } else {
@@ -276,16 +290,16 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
             return false
         }
 
-        if (downloadType == DownloadType.CarbonMonoxide && Date() - lastCarbonMonoxideCallDate < Constants.Defaults.MinReloadDifference) {
+        if (downloadType == DownloadType.CarbonMonoxide && Date() - lastCarbonMonoxideCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             carbonMonoxide = carbonMonoxide
-        } else if (downloadType == DownloadType.NitrogenDioxide && Date() - lastNitrogenDioxideCallDate < Constants.Defaults.MinReloadDifference) {
+        } else if (downloadType == DownloadType.NitrogenDioxide && Date() - lastNitrogenDioxideCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             nitrogenDioxide = nitrogenDioxide
-        } else if (downloadType == DownloadType.Ozone && Date() - lastOzoneCallDate < Constants.Defaults.MinReloadDifference) {
+        } else if (downloadType == DownloadType.Ozone && Date() - lastOzoneCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             ozone = ozone
-        } else if (downloadType == DownloadType.SulfurDioxide && Date() - lastSulfurDioxideCallDate < Constants.Defaults.MinReloadDifference) {
+        } else if (downloadType == DownloadType.SulfurDioxide && Date() - lastSulfurDioxideCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             sulfurDioxide = sulfurDioxide
         } else {
@@ -301,7 +315,7 @@ class OpenWeatherMapService private constructor() : IOpenWeatherMapService {
     }
 
     override fun loadCityData(cityName: String): Boolean {
-        if (Date() - lastCityCallDate < Constants.Defaults.MinReloadDifference) {
+        if (Date() - lastCityCallDate < minReloadTime) {
             // Set it to itself again to trigger subscriptions
             city = city
         } else {

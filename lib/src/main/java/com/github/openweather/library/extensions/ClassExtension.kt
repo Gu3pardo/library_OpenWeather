@@ -1,7 +1,6 @@
 package com.github.openweather.library.extensions
 
 import com.github.openweather.library.annotations.JsonKey
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.models.*
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -11,4 +10,4 @@ internal fun JsonModel.getPropertyJsonKey(propertyName: String): JsonKey = this:
 
 internal fun City.isDefault(): Boolean = id.isZero() && name.isBlank() && country.isBlank() && population.isZero() && coordinates.isDefault()
 
-internal fun Coordinates.isDefault(): Boolean = lat == Constants.Defaults.Coordinates && lon == Constants.Defaults.Coordinates
+internal fun Coordinates.isDefault(): Boolean = lat == 720.0 && lon == 720.0

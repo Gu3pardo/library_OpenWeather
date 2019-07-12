@@ -9,7 +9,7 @@
         It also provides notifications and wallpaper to display.
         Made with Kotlin.
     </string>
-    <string name="OpenWeatherAndroid_libraryVersion">1.9.0.190502</string>
+    <string name="OpenWeatherAndroid_libraryVersion">1.9.2.190712</string>
     <string name="OpenWeatherAndroid_libraryWebsite">https://github.com/OpenWeatherLib/OpenWeather-Android/</string>
     <string name="OpenWeatherAndroid_licenseId">mit</string>
     <string name="OpenWeatherAndroid_isOpenSource">true</string>

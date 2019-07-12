@@ -1,7 +1,6 @@
 package com.github.openweather.library.models
 
 import com.github.openweather.library.annotations.JsonKey
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.WeatherCondition
 import com.github.openweather.library.extensions.empty
 import java.util.*
@@ -20,28 +19,28 @@ class WeatherCurrent : JsonModel {
     var weatherCondition: WeatherCondition = WeatherCondition.Null
 
     @JsonKey("main", "temp")
-    var temperature: Double = Constants.Defaults.Zero.toDouble()
+    var temperature: Double = 0.0
 
     @JsonKey("main", "temp_min")
-    var temperatureMin: Double = Constants.Defaults.Zero.toDouble()
+    var temperatureMin: Double = 0.0
 
     @JsonKey("main", "temp_max")
-    var temperatureMax: Double = Constants.Defaults.Zero.toDouble()
+    var temperatureMax: Double = 0.0
 
     @JsonKey("main", "humidity")
-    var humidity: Double = Constants.Defaults.Zero.toDouble()
+    var humidity: Double = 0.0
 
     @JsonKey("main", "pressure")
-    var pressure: Double = Constants.Defaults.Zero.toDouble()
+    var pressure: Double = 0.0
 
     @JsonKey("", "visibility")
-    var visibility: Int = Constants.Defaults.Zero
+    var visibility: Int = 0
 
     @JsonKey("clouds", "all")
-    var cloudsAll: Int = Constants.Defaults.Zero
+    var cloudsAll: Int = 0
 
     @JsonKey("wind", "speed")
-    var windSpeed: Double = Constants.Defaults.Zero.toDouble()
+    var windSpeed: Double = 0.0
 
     //@JsonKey("wind", "deg")
     //var windDegree: Double = Constants.Defaults.Zero.toDouble()

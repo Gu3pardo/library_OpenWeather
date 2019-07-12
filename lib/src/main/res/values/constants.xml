@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="openWeatherIntentServiceIntentActionKey">Action</string>
+
+    <string name="sharedPreferencesName">OpenWeatherLib</string>
+    <string name="sharedPreferencesCryptoKey">Tc56di8=</string>
+    <string name="sharedPreferencesKeyCity">City</string>
+</resources>

@@ -19,13 +19,19 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult", "SetTextI18n")
-class ForecastWeatherView(context: Context, attrs: AttributeSet?) : CoordinatorLayout(context, attrs) {
+class ForecastWeatherView(context: Context, attrs: AttributeSet?)
+    : CoordinatorLayout(context, attrs) {
 
     private var forecastImageView: ImageView? = null
+
     private var searchEditText: EditText? = null
+
     private var progressBar: ProgressBar? = null
+
     private var fallbackTextView: TextView? = null
+
     private var pullRefreshLayout: PullRefreshLayout? = null
+
     private var listView: ListView? = null
 
     private var subscriptions: Array<Disposable?> = arrayOf()

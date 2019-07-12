@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 10901
-        versionName "1.9.1.190616"
+        versionCode 10902
+        versionName "1.9.2.190712"
     }
 
     buildTypes {
@@ -42,7 +42,7 @@ dependencies {
     implementation "androidx.annotation:annotation:1.1.0"
     implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "androidx.cardview:cardview:1.0.0"
-    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta2"
     implementation "androidx.core:core:1.0.2"
     implementation "androidx.cursoradapter:cursoradapter:1.0.0"
     implementation "androidx.documentfile:documentfile:1.0.1"

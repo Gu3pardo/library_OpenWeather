@@ -17,31 +17,40 @@ import com.github.openweather.library.extensions.doubleFormat
 import com.github.openweather.library.extensions.hhmm
 import com.github.openweather.library.models.WeatherForecastPart
 
-class ForecastListAdapter(
-        @NonNull private val context: Context,
-        @NonNull private val list: List<WeatherForecastPart>) : BaseAdapter() {
+class ForecastListAdapter(@NonNull private val context: Context, @NonNull private val list: List<WeatherForecastPart>)
+    : BaseAdapter() {
 
     private class Holder {
         lateinit var dividerCardTitleText: TextView
 
         lateinit var weatherConditionView: View
+
         lateinit var weatherConditionImageView: ImageView
+
         lateinit var weatherHeaderTextView: TextView
 
         lateinit var weatherTemperatureView: View
+
         lateinit var weatherTemperatureImageView: ImageView
+
         lateinit var weatherTemperatureTextView: TextView
 
         lateinit var weatherPressureView: View
+
         lateinit var weatherPressureImageView: ImageView
+
         lateinit var weatherPressureTextView: TextView
 
         lateinit var weatherHumidityView: View
+
         lateinit var weatherHumidityImageView: ImageView
+
         lateinit var weatherHumidityTextView: TextView
 
         lateinit var weatherWindView: View
+
         lateinit var weatherWindImageView: ImageView
+
         lateinit var weatherWindTextView: TextView
     }
 

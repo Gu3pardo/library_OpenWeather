@@ -1,6 +1,5 @@
 package com.github.openweather.library.extensions
 
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.ForecastListType
 import com.github.openweather.library.enums.WeatherCondition
 import com.github.openweather.library.models.WeatherForecast
@@ -20,7 +19,7 @@ fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
             WeatherCondition.Squalls,
             WeatherCondition.Sun,
             WeatherCondition.Thunderstorm)
-    weatherConditionCountList.forEach { x -> x.count = Constants.Defaults.Zero }
+    weatherConditionCountList.forEach { x -> x.count = 0 }
 
     val futureCalendar: Calendar = Calendar.getInstance()
     futureCalendar.add(Calendar.DAY_OF_YEAR, days)
@@ -36,49 +35,41 @@ fun WeatherForecast.getMostWeatherCondition(days: Int = -1): WeatherCondition {
         }
     }
 
-    return weatherConditionCountList
-            .sortedByDescending { x -> x.count }
-            .first()
+    return weatherConditionCountList.maxBy { x -> x.count }!!
 }
 
 fun WeatherForecast.getMinTemperature(): Double =
         this.list
                 .filter { x -> x.listType == ForecastListType.Forecast }
-                .sortedBy { x -> x.temperatureMin }
-                .first()
+                .minBy { x -> x.temperatureMin }!!
                 .temperatureMin
 
 fun WeatherForecast.getMaxTemperature(): Double =
         this.list
                 .filter { x -> x.listType == ForecastListType.Forecast }
-                .sortedByDescending { x -> x.temperatureMax }
-                .first()
+                .maxBy { x -> x.temperatureMax }!!
                 .temperatureMax
 
 fun WeatherForecast.getMinPressure(): Double =
         this.list
                 .filter { x -> x.listType == ForecastListType.Forecast }
-                .sortedBy { x -> x.pressure }
-                .first()
+                .minBy { x -> x.pressure }!!
                 .pressure
 
 fun WeatherForecast.getMaxPressure(): Double =
         this.list
                 .filter { x -> x.listType == ForecastListType.Forecast }
-                .sortedByDescending { x -> x.pressure }
-                .first()
+                .maxBy { x -> x.pressure }!!
                 .pressure
 
 fun WeatherForecast.getMinHumidity(): Double =
         this.list
                 .filter { x -> x.listType == ForecastListType.Forecast }
-                .sortedBy { x -> x.humidity }
-                .first()
+                .minBy { x -> x.humidity }!!
                 .humidity
 
 fun WeatherForecast.getMaxHumidity(): Double =
         this.list
                 .filter { x -> x.listType == ForecastListType.Forecast }
-                .sortedByDescending { x -> x.humidity }
-                .first()
+                .maxBy { x -> x.humidity }!!
                 .humidity

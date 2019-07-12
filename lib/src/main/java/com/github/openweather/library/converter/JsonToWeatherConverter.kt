@@ -1,7 +1,6 @@
 package com.github.openweather.library.converter
 
 import android.util.Log
-import com.github.openweather.library.common.Constants
 import com.github.openweather.library.enums.ForecastListType
 import com.github.openweather.library.enums.WeatherCondition
 import com.github.openweather.library.extensions.empty
@@ -13,18 +12,23 @@ import org.json.JSONObject
 import java.util.*
 
 internal class JsonToWeatherConverter : IJsonToWeatherConverter {
+
     private val tag: String = JsonToWeatherConverter::class.java.simpleName
 
     private val codeKey: String = "cod"
+
     private val successCode: Int = 200
 
     private val statusKey: String = "status"
+
     private val okCode: String = "OK"
 
     private val dateKey: String = "dt_txt"
+
     private val dateSplitter: String = " "
 
     private val messageKey: String = "message"
+
     private val errorMessage: String = "not found"
 
     override fun convertToCity(jsonString: String): City2? {
@@ -36,11 +40,11 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
                 return null
             }
 
-            val resultsJsonObject = jsonObject.getJSONArray(city2.getJsonKey().key).getJSONObject(Constants.Defaults.Zero)
+            val resultsJsonObject = jsonObject.getJSONArray(city2.getJsonKey().key).getJSONObject(0)
             val addressComponentJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::addressComponents.name).key)
 
             val addressComponentCity = AddressComponent()
-            val addressComponentCityJsonObject = addressComponentJsonArray.getJSONObject(Constants.Defaults.Zero)
+            val addressComponentCityJsonObject = addressComponentJsonArray.getJSONObject(0)
             addressComponentCity.shortName = addressComponentCityJsonObject.getString(addressComponentCity.getPropertyJsonKey(addressComponentCity::shortName.name).key)
             addressComponentCity.longName = addressComponentCityJsonObject.getString(addressComponentCity.getPropertyJsonKey(addressComponentCity::longName.name).key)
             val addressComponentCityTypesJsonArray = addressComponentCityJsonObject.getJSONArray(addressComponentCity.getPropertyJsonKey(addressComponentCity::types.name).key)
@@ -84,7 +88,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             city2.geometry.location.lng = locationJsonObject.getDouble(city2.geometry.location.getPropertyJsonKey(city2.geometry.location::lng.name).key)
 
             val typesJsonArray = resultsJsonObject.getJSONArray(city2.getPropertyJsonKey(city2::types.name).key)
-            for (index in Constants.Defaults.Zero until typesJsonArray.length() step 1) {
+            for (index in 0 until typesJsonArray.length() step 1) {
                 city2.types = city2.types.plus(typesJsonArray.getString(index))
             }
 
@@ -120,7 +124,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             weatherCurrent.sunriseTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunriseTime.name).key).toMillis()
             weatherCurrent.sunsetTime.timeInMillis = sysJsonObject.getLong(weatherCurrent.getPropertyJsonKey(weatherCurrent::sunsetTime.name).key).toMillis()
 
-            val details = jsonObject.getJSONArray(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).parent).getJSONObject(Constants.Defaults.Zero)
+            val details = jsonObject.getJSONArray(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).parent).getJSONObject(0)
             weatherCurrent.icon = details.getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::icon.name).key)
             weatherCurrent.description = details.getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::description.name).key)
             val main = details.getString(weatherCurrent.getPropertyJsonKey(weatherCurrent::weatherCondition.name).key)
@@ -184,12 +188,12 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
 
             var previousDateString = String.empty
 
-            for (index in Constants.Defaults.Zero until dataListJsonArray.length() step 1) {
+            for (index in 0 until dataListJsonArray.length() step 1) {
                 val dataJsonObject = dataListJsonArray.getJSONObject(index)
 
                 val currentDateString = dataJsonObject.getString(dateKey).split(dateSplitter).first()
 
-                if (index == Constants.Defaults.Zero || !currentDateString.contains(previousDateString)) {
+                if (index == 0 || !currentDateString.contains(previousDateString)) {
                     val weatherForecastPartDivider = WeatherForecastPart()
                     weatherForecastPartDivider.listType = ForecastListType.DateDivider
 
@@ -219,7 +223,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
         val weatherForecastPart = WeatherForecastPart()
         try {
             val jsonObjectWeather = jsonObject
-                    .getJSONArray(weatherForecastPart.getJsonKey().key).getJSONObject(Constants.Defaults.Zero)
+                    .getJSONArray(weatherForecastPart.getJsonKey().key).getJSONObject(0)
 
             weatherForecastPart.main = jsonObjectWeather.getString(weatherForecastPart.getPropertyJsonKey(weatherForecastPart::main.name).key)
             weatherForecastPart.weatherCondition = WeatherCondition.valueOf(weatherForecastPart.main)
@@ -299,7 +303,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             val dataListJsonArray = jsonObject.getJSONArray(carbonMonoxideDataC.getJsonKey().parent)
             var list = listOf<CarbonMonoxideData>()
 
-            for (index in Constants.Defaults.Zero until dataListJsonArray.length() step 1) {
+            for (index in 0 until dataListJsonArray.length() step 1) {
                 val dataJsonObject = dataListJsonArray.getJSONObject(index)
 
                 val carbonMonoxideData = CarbonMonoxideData()
@@ -405,7 +409,7 @@ internal class JsonToWeatherConverter : IJsonToWeatherConverter {
             val dataListJsonArray = jsonObject.getJSONArray(sulfurDioxideDataC.getJsonKey().parent)
             var list = listOf<SulfurDioxideData>()
 
-            for (index in Constants.Defaults.Zero until dataListJsonArray.length() step 1) {
+            for (index in 0 until dataListJsonArray.length() step 1) {
                 val dataJsonObject = dataListJsonArray.getJSONObject(index)
 
                 val sulfurDioxideData = SulfurDioxideData()
