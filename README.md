@@ -179,9 +179,9 @@ dependencies {
 
 ## Contributors
 
-| [<img alt="GuepardoApps" src="https://avatars0.githubusercontent.com/u/21952813?v=4&s=117" width="117"/>](https://github.com/GuepardoApps) |
+| [<img alt="JonasSchubert" src="https://avatars0.githubusercontent.com/u/21952813?v=4&s=117" width="117"/>](https://github.com/JonasSchubert) |
 | :---------------------------------------------------------------------------------------------------------------------------------------: |
-| [GuepardoApps](https://github.com/GuepardoApps) |
+| [Jonas Schubert](https://github.com/JonasSchubert) |
 
 ## License
 
@@ -190,7 +190,7 @@ OpenWeather-Android is distributed under the MIT license. [See LICENSE](LICENSE.
 ```
 MIT License
 
-Copyright (c) 2018 - 2019 GuepardoApps (Jonas Schubert)
+Copyright (c) 2018 - 2019 Jonas Schubert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
