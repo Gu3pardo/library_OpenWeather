@@ -10,8 +10,8 @@ android {
         applicationId "guepardoapps.library.openweather.example"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 10902
-        versionName "1.9.2.190712"
+        versionCode 10903
+        versionName "1.9.3.191109"
     }
 
     buildTypes {
@@ -34,10 +34,10 @@ dependencies {
     implementation project(':lib')
 
     implementation "androidx.annotation:annotation:1.1.0"
-    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "androidx.cardview:cardview:1.0.0"
-    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta2"
-    implementation "androidx.core:core:1.0.2"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta3"
+    implementation "androidx.core:core:1.1.0"
     implementation "androidx.cursoradapter:cursoradapter:1.0.0"
     implementation "androidx.documentfile:documentfile:1.0.1"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"

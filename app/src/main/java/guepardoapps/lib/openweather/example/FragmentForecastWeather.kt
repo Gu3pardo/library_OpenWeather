@@ -10,7 +10,7 @@ import com.github.openweather.library.services.openweathermap.OpenWeatherMapServ
 
 class FragmentForecastWeather : Fragment() {
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         OpenWeatherMapService.instance.loadWeatherForecast()
     }

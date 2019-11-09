@@ -6,7 +6,6 @@ import android.preference.PreferenceActivity
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup

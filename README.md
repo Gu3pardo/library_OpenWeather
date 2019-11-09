@@ -1,14 +1,14 @@
 # OpenWeather-Android
 
 [![Platform](https://img.shields.io/badge/platform-Android-blue.svg)](https://www.android.com)
-[![Paypal](https://img.shields.io/badge/paypal-donate-blue.svg)](https://www.paypal.me/GuepardoApps)
-[![API](https://img.shields.io/badge/API-24+-blue.svg)](https://android-arsenal.com/api?level=24)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Paypal](https://img.shields.io/badge/paypal-donate-blue.svg)](https://www.paypal.me/GuepardoApps)
 
 [![](https://jitpack.io/v/OpenWeatherLib/OpenWeather-Android.svg)](https://jitpack.io/#OpenWeatherLib/OpenWeather-Android)
-[![Version](https://img.shields.io/badge/version-1.9.2.190712-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/1.9.2)
+[![Version](https://img.shields.io/badge/version-1.9.3.191109-green.svg)](https://github.com/OpenWeatherLib/OpenWeather-Android/releases/tag/1.9.3)
 [![Build](https://img.shields.io/badge/build-passing-green.svg)](lib)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![API](https://img.shields.io/badge/API-24+-blue.svg)](https://android-arsenal.com/api?level=24)
 
 ## About
 
@@ -31,6 +31,7 @@ Based on Kotlin, using Listener, Extensions and more.
 ## Api Keys
 
 Required api keys are 
+
 - [x] https://unsplash.com/
 - [x] https://openweathermap.org/
 
@@ -168,7 +169,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:1.9.2'
+    implementation 'com.github.OpenWeatherLib.OpenWeatherLib-Android:lib:1.9.3'
 }
 ```
 
@@ -176,6 +177,36 @@ dependencies {
 
 - Use at least JVM 1.8
 
+## Contributors
+
+| [<img alt="GuepardoApps" src="https://avatars0.githubusercontent.com/u/21952813?v=4&s=117" width="117"/>](https://github.com/GuepardoApps) |
+| :---------------------------------------------------------------------------------------------------------------------------------------: |
+| [GuepardoApps](https://github.com/GuepardoApps) |
+
 ## License
 
 OpenWeather-Android is distributed under the MIT license. [See LICENSE](LICENSE.md) for details.
+
+```
+MIT License
+
+Copyright (c) 2018 - 2019 GuepardoApps (Jonas Schubert)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
