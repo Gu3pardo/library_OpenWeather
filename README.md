@@ -190,7 +190,7 @@ OpenWeather-Android is distributed under the MIT license. [See LICENSE](LICENSE.
 ```
 MIT License
 
-Copyright (c) 2018 - 2019 Jonas Schubert
+Copyright (c) 2017 - 2020 Jonas Schubert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
